@@ -5,11 +5,5 @@ dependencies {
     compile("org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}")
     compile("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}")
     compile("org.apache.tomcat.embed:tomcat-embed-logging-juli:8.5.2")
-    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.6")
-    compile("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.9.6")
-    compile("com.fasterxml.jackson.module:jackson-module-parameter-names:2.9.6")
-    compile("com.fasterxml.jackson.core:jackson-databind:2.9.6")
     compile("org.reflections:reflections:0.9.11")
-    compile project(":woowahan-di-support")
-    compile project(":woowahan-was-bootstraper")
 }

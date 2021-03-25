@@ -2,4 +2,4 @@ rootProject.name = 'woowahan-di'
 include 'woowahan-di-framework'
 include 'woowahan-app'
 include 'woowahan-di-support'
-
+include 'woowahan-was-bootstraper'
