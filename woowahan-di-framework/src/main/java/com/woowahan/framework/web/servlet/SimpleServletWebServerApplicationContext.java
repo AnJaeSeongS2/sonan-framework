@@ -22,6 +22,10 @@ public class SimpleServletWebServerApplicationContext {
         StaticLifeCycleEventBus.send(SimpleLifeCycle.AFTER_START_EVENT);
     }
 
+
+    /**
+     * TODO: addShutdownHook 이 항상 보장되지 않을탠데, 검토바람.
+     */
     private void registerShutdownHandler() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> webServer.stop()));
     }

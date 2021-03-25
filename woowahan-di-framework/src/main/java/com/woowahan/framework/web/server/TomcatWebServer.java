@@ -5,6 +5,9 @@ import org.apache.catalina.startup.Tomcat;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
+/**
+ * WebApplicationServer 인터페이스화 할 것. SPI염두할 것.
+ */
 public class TomcatWebServer {
     private static final Log logger = LogFactory.getLog(TomcatWebServer.class);
 
