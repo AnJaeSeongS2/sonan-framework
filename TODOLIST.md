@@ -21,7 +21,7 @@
 | 16|DI xml은 제외할 것.                                       |      |        |             |        |               |
 | 17|TomcatWebServer -> WebApplicationServer 로 변경, Tomcat 은 구현체중 하나로 간다. WebApplicationServer변경시 어떻게 대응할 것인지 고려함. SPI로 기본적으로는 Tomcat으로 구동되게 한다. |      |        |             |        |               |
 | 18|Gradle 개념 습득                                          |      |        |             |        |               |
-| 19|logback 사용법 습득 및 적용                               |      |        |             |        |               |
+| 19|logback 사용법 습득 및 적용                               | DONE | 100% | 2021-03-26 | 2021-03-26 | 1h |
 | 20|servlet 3.0 NIO Servlet으로 구현할 까..? Transaction 필요도 없잖아. |      |        |             |        |               |
 | 21|HandlersTypes interface for reducing class scanning time<br />https://opennote46.tistory.com/168 |      |        |             |        |               |
 | 22|WebAppBackendFramework이므로, servlet 개념을 몰라도 작성가능하게 개발돼야한다. |      |        |             |        |               |
