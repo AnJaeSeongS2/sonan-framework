@@ -1,6 +1,8 @@
 package com.woowahan.framework.web.server;
 
 import com.woowahan.framework.web.servlet.ServletContextInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
@@ -8,6 +10,7 @@ import javax.servlet.ServletException;
 import java.util.Set;
 
 public class TomcatStarter implements ServletContainerInitializer {
+    private static final Logger logger = LoggerFactory.getLogger(TomcatStarter.class);
     private final ServletContextInitializer initializers;
 
     public TomcatStarter(ServletContextInitializer initializers) {
@@ -16,6 +19,7 @@ public class TomcatStarter implements ServletContainerInitializer {
 
     @Override
     public void onStartup(Set<Class<?>> c, ServletContext ctx) throws ServletException {
+        logger.info("<<<TEST>>> Logback Tomcat Starting...");
         initializers.onStartup(ctx);
     }
 }
