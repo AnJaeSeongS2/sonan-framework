@@ -6,4 +6,5 @@ dependencies {
     compile("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}")
     compile("org.apache.tomcat.embed:tomcat-embed-logging-juli:8.5.2")
     compile("org.reflections:reflections:0.9.11")
+    compile project(":woowahan-context")
 }
