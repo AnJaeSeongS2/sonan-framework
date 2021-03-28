@@ -1,5 +1,16 @@
 # woowahan-di-framework
 
+## 목표 설정
+* di에 대한 기능 구현을 우선 진행.
+* **!(중요치 않음)**원본 문서에서, di-framework의 동작방식이 spring-webmvc 와 같아야함을 언급하지 않았으므로, spring-webflux와 유사한 방식의 설계로 진행.
+* web > webflux | webmvc 처럼 공통 annotation은 parent module에 포함시킴.
+* 이미 만들어진 Annotation 기반 프로그래밍 모델을 재사용할 예정.
+
+
+
+
+---
+## 원본 문서 
 `woowahan-di-framework` 은 `HttpServlet` 의 빈 껍데기뿐인 구현체 `DispatcherServlet`를 가지고 있습니다.
 
 ```java
@@ -35,7 +46,7 @@ public class DispatcherServlet extends HttpServlet {
               }       
           }
         ```
-        
+    
 3. 정적 Resource 와 Json 응답을 처리할 수 있어야 합니다.
     - Json 응답 처리는 `Fasterxml Jackson` 을 사용해주세요.
     - `resources/static` 하위 경로의 리소스를 내려줄 수 있어야 합니다. 

@@ -38,3 +38,6 @@
 | 31 |**mvc module**<br />Controller내에서 **@RequestMapping** 으로 class, method에 처리. **@RequestBody** 로 json input을 java Object로 자동전환.<br />**@ResponseBody**로 java Object output을 json output으로 자동전환 (Jackson이 사용됨)<br />**@PathVariable**로  @RequestMapping에서 전달된 url내의 variable을 로직에서 제공받음.<br />Controller에 대해:<br />이 제품은, api호출시, data만 반환하면 되므로 RestController같은 annotation만 지원하면 된다. 차후 확장기능으로 view resolver가 추가되면, Controller기능도 추가지원할 수 있을 것... | | | | | |
 | 32 |**!(부차기능)**<br />validation module**<br />유효성 검사 (di 책임은 아닌듯.) **@Valid, @InitBinder**<br />외부 origin에서의 접근 허용부분 처리**@CrossOrigin** | | | | | |
 | 33 |**!(부차기능)**<br />mvc (동기)건 webflux (비동기) 상관없게 동작하게 | | | | | |
+| 34 |context @scope 관련 기능으로 request, session정도는 구분지을 수 있게. | | | | | |
+| 35 |war로 패키징될 때, web.xml에 servlet지정 및 적용 테스트. | | | | | |
+| 36 |WebFlux를 밴치마킹하려면, RouteFunctions, RouteFunction 참고바람. | | | | | |
