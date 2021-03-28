@@ -1,6 +1,6 @@
-package com.woowahan.framework.web.server;
+package com.woowahan.framework.container.server;
 
-import com.woowahan.framework.web.servlet.ServletContextInitializer;
+import com.woowahan.framework.container.servlet.ServletContextInitializer;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 

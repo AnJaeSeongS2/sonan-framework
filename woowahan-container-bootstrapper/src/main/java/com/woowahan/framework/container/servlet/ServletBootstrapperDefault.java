@@ -1,21 +1,22 @@
-package com.woowahan.framework.web.servlet;
+package com.woowahan.framework.container.servlet;
 
-import com.woowahan.framework.web.SimpleLifeCycle;
-import com.woowahan.framework.web.StaticLifeCycleEventBus;
-import com.woowahan.framework.web.server.TomcatWebServer;
-import com.woowahan.framework.web.server.TomcatWebServerFactory;
-import com.woowahan.framework.web.server.filter.CharacterEncodingFilter;
+import com.woowahan.framework.container.Bootstrapper;
+import com.woowahan.framework.container.lifecycle.SimpleLifeCycle;
+import com.woowahan.framework.container.lifecycle.StaticLifeCycleEventBus;
+import com.woowahan.framework.container.server.TomcatWebServer;
+import com.woowahan.framework.container.server.TomcatWebServerFactory;
+import com.woowahan.framework.container.server.filter.CharacterEncodingFilter;
 
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
-public class SimpleServletWebServerApplicationContext {
+public class ServletBootstrapperDefault implements Bootstrapper {
     public static final String DISPATCHER_SERVLET_NAME = "dispatcherServlet";
 
     private TomcatWebServer webServer;
 
-    public void refresh() {
+    public void boot() {
         createWebServer();
         registerShutdownHandler();
         start();

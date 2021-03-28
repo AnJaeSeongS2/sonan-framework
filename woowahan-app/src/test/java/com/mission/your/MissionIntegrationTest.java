@@ -1,6 +1,6 @@
 package com.mission.your;
 
-import com.woowahan.framework.web.StaticLifeCycleEventBus;
+import com.woowahan.framework.container.lifecycle.StaticLifeCycleEventBus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;

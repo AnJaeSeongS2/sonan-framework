@@ -1,6 +1,6 @@
-package com.woowahan.framework.web.server;
+package com.woowahan.framework.container.server;
 
-import com.woowahan.framework.web.servlet.ServletContextInitializer;
+import com.woowahan.framework.container.servlet.ServletContextInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

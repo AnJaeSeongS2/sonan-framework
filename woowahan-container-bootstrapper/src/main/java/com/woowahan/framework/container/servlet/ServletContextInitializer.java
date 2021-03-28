@@ -1,4 +1,4 @@
-package com.woowahan.framework.web.servlet;
+package com.woowahan.framework.container.servlet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;

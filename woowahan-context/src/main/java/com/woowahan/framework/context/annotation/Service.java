@@ -1,4 +1,4 @@
-package com.woowahan.framework.web.annotation;
+package com.woowahan.framework.context.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

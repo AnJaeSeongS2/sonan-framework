@@ -41,3 +41,4 @@
 | 34 |context @scope 관련 기능으로 request, session정도는 구분지을 수 있게. | | | | | |
 | 35 |war로 패키징될 때, web.xml에 servlet지정 및 적용 테스트. | | | | | |
 | 36 |WebFlux를 밴치마킹하려면, RouteFunctions, RouteFunction 참고바람. | | | | | |
+| 37 |**#woowahan-context** module 새로 추가. container-bootstrapper <-> context <-> di-framework  로 진행하고,  di-framework입장에서는, context가 servlet's context인 지, 다른 container 의 context를 통해서인 지 모르게 끔. | | | | | |

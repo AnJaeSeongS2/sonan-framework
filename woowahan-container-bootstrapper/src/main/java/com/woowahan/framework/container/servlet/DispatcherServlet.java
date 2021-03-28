@@ -1,10 +1,6 @@
-package com.woowahan.framework.web.servlet;
+package com.woowahan.framework.container.servlet;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * todo : Implementation {@link javax.servlet.Servlet#service}

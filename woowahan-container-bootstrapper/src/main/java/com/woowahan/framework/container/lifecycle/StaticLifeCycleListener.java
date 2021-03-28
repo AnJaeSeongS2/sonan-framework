@@ -1,4 +1,4 @@
-package com.woowahan.framework.web;
+package com.woowahan.framework.container.lifecycle;
 
 @FunctionalInterface
 public interface StaticLifeCycleListener {
