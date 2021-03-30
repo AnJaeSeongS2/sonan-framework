@@ -1,4 +1,5 @@
 rootProject.name = 'woowahan-di'
+include 'woowahan-java-util'
 include 'woowahan-di-framework'
 include 'woowahan-app'
 include 'woowahan-di-support'
