@@ -2,9 +2,9 @@
 
 ## 목표 설정
 * di에 대한 기능 구현을 우선 진행.
-* **!(중요치 않음)**원본 문서에서, di-framework의 동작방식이 spring-webmvc 와 같아야함을 언급하지 않았으므로, spring-webflux와 유사한 방식의 설계로 진행.
-* web > webflux | webmvc 처럼 공통 annotation은 parent module에 포함시킴.
-* 이미 만들어진 Annotation 기반 프로그래밍 모델을 재사용할 예정.
+* 과제의 의도는 프로그래밍 습관체크라는 점을 명심. 구현의 아이디어도 과제 내용에 대해서 확장해야지. 프레임워크 기본 기능을 확장가능하게 개발해놓는 것을 목표로 설정할 것. ex) web > webflux | webmvc 처럼 공통 annotation은 parent module에 포함시킴.
+* 이미 작성된 Annotation을 재사용할 것.
+* 요구사항을 매번 작업시작전에 재확인할 것.
 
 
 

@@ -42,3 +42,8 @@
 | 35 |war로 패키징될 때, web.xml에 servlet지정 및 적용 테스트. | | | | | |
 | 36 |WebFlux를 밴치마킹하려면, RouteFunctions, RouteFunction 참고바람. | | | | | |
 | 37 |**#woowahan-context** module 새로 추가. container-bootstrapper <-> context <-> di-framework  로 진행하고,  di-framework입장에서는, context가 servlet's context인 지, 다른 container 의 context를 통해서인 지 모르게 끔. | | | | | |
+| 38 |DispatcherServlet구현시, HandlerMapping기반으로 dispatch되게끔 작성. | | | | | |
+| 39 |Bean이 Context에 저장되게끔 진행.<br />BeanDefinition, BeanDefinition 기반으로 getBean이 처리되는 것을 원함.<br />Singleton, prototype만 지원. (이 과제는 session엔 관심이 없다.) | | | | | |
+| 40 |bean Singleton 내부에 prototype일 경우, 항상 새 field값을 사용하게끔 옵션 제공.<br />singleton은 web-application-context상의 map으로 관리. prototype인 경우 그냥 생성해서 제공. 따로 관리안함. | | | | | |
+| 41 |bean name을 위해 각 @Component의 value 는 name으로 식별될 것. bean name auto define 기본전략은,  Bean가 붙은 ClassSimpleName, methodName, fieldName 임. | | | | | |
+| 42 |**(!오버스펙)** **context Hierarchy**<br />servlet-context에서 root-web-applicatoin-context, dispatcher's web-application-context를 구분하려면 아래를 참고.<br />https://codediver.tistory.com/147<br />https://jaehun2841.github.io/2018/10/21/2018-10-21-spring-context/#webxml-%EC%9D%B4%EB%9E%80<br />https://live-everyday.tistory.com/164 | | | | | |
