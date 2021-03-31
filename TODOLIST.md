@@ -30,7 +30,7 @@
 | 22|WebAppBackendFramework이므로, servlet 개념을 몰라도 작성가능하게 개발돼야한다. |      |        |             |        |               |
 | 23 |gradlew 개념 습득 | | | | | |
 | 24 |spring-bean 에서 존재하는 bean managing 부분 이전, WebApplicationContext에 bean을 관리 + scope존재  + 이 context는 ServletContext를 통해 저장됨. (FrameworkServlet 참고) Spring-context module에서 Bean관리 annot포함됨. Bean scope관련 로직도 포함됨 + FW에 대응되는 context관련됨.<br />ctx.registerBean(O) 처럼 webApplicationContext에 bean이 자동 등록될 것. | | | | | |
-| 25 |bean 처리에 대한 기본 기능 스펙정리<br />multi same type bean 에 대한 충돌 처리<br />bean id 처리<br />bean scope처리<br />bean 사용할 때 편하게 처리<br />bean | | | | | |
+| 25 |bean 처리에 대한 기본 기능 스펙정리<br />multi same type bean 에 대한 충돌 처리<br />bean id 처리<br />bean scope처리<br /> | DONE | 100% | 03-30 | 04-01 | (곂침) |
 | 26 |**!(부차기능)**<br />transaction 처리 가 가능하게끔 확장 고려(Transaction - AOP - Bean) (bean입장에서는 transaction 처리가 될 것을 고려한 개발할 필요가 없다. 관심사가 나뉘어있음. Transaction moudle 측이 알아서 bean이 변화될 때 <<<< 처리를 추가로 하) | | | | | |
 | 27 |**!(부차기능)**<br />기본적인 aop 모듈은 필요할 듯. 공통 호출로직, 공통 비지니스 로직 상황별 로깅 관련 지원.<br />spring은 proxy기반 aop이므로, 기존 비지니스로직(target)은 proxy화 되고, proxy에서 상황별 advice로직과 본래 target 로직이 수행될 것이다. | | | | | |
 | 29 |**di module**<br />@Service, @Repository (DB말고 file기반 처리 추가예정), @Controller, @Configuration with @Bean, @Autowired, @Qulifier 필수 제공<br />미지원: @Lazy - MSA에서는 Lazy는 좋지 못하다. Readiness로 진입했을 때 최적의 성능을 보여주길 바람. @Component - 너무 포괄적인 anno이므로 제거. | | | | | |
@@ -41,11 +41,14 @@
 | 34 |context @scope 관련 기능으로 request, session정도는 구분지을 수 있게. | | | | | |
 | 35 |war로 패키징될 때, web.xml에 servlet지정 및 적용 테스트. | | | | | |
 | 36 |WebFlux를 밴치마킹하려면, RouteFunctions, RouteFunction 참고바람. | | | | | |
-| 37 |**#woowahan-context** module 새로 추가. container-bootstrapper <-> context <-> di-framework  로 진행하고,  di-framework입장에서는, context가 servlet's context인 지, 다른 container 의 context를 통해서인 지 모르게 끔. | | | | | |
+| 37 |**#woowahan-context** module 새로 추가. container-bootstrapper <-> context <-> di-framework  로 진행하고,  di-framework입장에서는, context가 servlet's context인 지, 다른 container 의 context를 통해서인 지 모르게 끔. | DONE | 100% | 03-30 | 04-01 | 30m |
 | 38 |DispatcherServlet구현시, HandlerMapping기반으로 dispatch되게끔 작성. | | | | | |
-| 39 |Bean이 Context에 저장되게끔 진행.<br />BeanDefinition, BeanDefinition 기반으로 getBean이 처리되는 것을 원함.<br />Singleton, prototype만 지원. (이 과제는 session엔 관심이 없다.) | | | | | |
+| 39 |Bean이 Context에 저장되게끔 진행.<br />BeanDefinition, BeanDefinition 기반으로 getBean이 처리되는 것을 원함.<br />Singleton, prototype만 지원. (이 과제는 session엔 관심이 없다.) | DONE    |   100% |       03-30 | 04-01 | 2h |
 | 40 |bean Singleton 내부에 prototype일 경우, 항상 새 field값을 사용하게끔 옵션 제공.<br />singleton은 web-application-context상의 map으로 관리. prototype인 경우 그냥 생성해서 제공. 따로 관리안함. | | | | | |
 | 41 |bean name을 위해 각 @Component의 value 는 name으로 식별될 것. bean name auto define 기본전략은,  Bean가 붙은 ClassSimpleName, methodName, fieldName 임. | | | | | |
-| 42 |**(!오버스펙)** **context Hierarchy**<br />servlet-context에서 root-web-applicatoin-context, dispatcher's web-application-context를 구분하려면 아래를 참고.<br />https://codediver.tistory.com/147<br />https://jaehun2841.github.io/2018/10/21/2018-10-21-spring-context/#webxml-%EC%9D%B4%EB%9E%80<br />https://live-everyday.tistory.com/164 | WORKING | 60% | 03-30 | | 3h |
+| 42 |**(!오버스펙)** **context Hierarchy**<br />servlet-context에서 root-web-applicatoin-context, dispatcher's web-application-context를 구분하려면 아래를 참고.<br />https://codediver.tistory.com/147<br />https://jaehun2841.github.io/2018/10/21/2018-10-21-spring-context/#webxml-%EC%9D%B4%EB%9E%80<br />https://live-everyday.tistory.com/164 | WORKING | 100% | 03-30 | 04-01 | 3h |
 | 43 |woowahan-java-util 추가. <br />NotNull, Nullable 가독성, 등을 위해 추가. | DONE | 100% | 03-31 | 03-31 | 30m |
-| 44 |Mockito 는 외부종속성이지만, test에만 사용하므로 요구사항 구현 제한에서 빠질 수 있다. 이를 활용해 ServletContext같은 것의 mocking처리를 한다. | WORKING | 50% | 03-31 | ~ | 30m |
+| 44 |Mockito 는 외부종속성이지만, test에만 사용하므로 요구사항 구현 제한에서 빠질 수 있다. 이를 활용해 ServletContext같은 것의 mocking처리를 한다. | WORKING | 60% | 03-31 | ~ | 30m |
+| 45 |1. BeanIdentifier : ClassName:BeanName<br />2. BeanDefinition : ClassName:BeanName:Scope<br />3. BeanDefinitionRegistry 구현체 추가. (ex: GenericApplicationContext)<br />bean에 대한 정보를 GenericApplicationContext에서 관리. | DONE | 100% | 03-31 | 04-01 | 3h |
+| 46 |bean 등록에 대한 작성을 annotation기반으로 진행할 탠데, compile타임에 Same BeanIdentifier exception 이 발생해야한다. runtime에 문제생기면 상당히 개발하기 불편하다. |  |  |  |  |  |
+| 47 |04-01자 커밋에 logback처리가 누락돼있다. 재 정검 바람. |  |  |  |  |  |
