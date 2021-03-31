@@ -46,4 +46,6 @@
 | 39 |Bean이 Context에 저장되게끔 진행.<br />BeanDefinition, BeanDefinition 기반으로 getBean이 처리되는 것을 원함.<br />Singleton, prototype만 지원. (이 과제는 session엔 관심이 없다.) | | | | | |
 | 40 |bean Singleton 내부에 prototype일 경우, 항상 새 field값을 사용하게끔 옵션 제공.<br />singleton은 web-application-context상의 map으로 관리. prototype인 경우 그냥 생성해서 제공. 따로 관리안함. | | | | | |
 | 41 |bean name을 위해 각 @Component의 value 는 name으로 식별될 것. bean name auto define 기본전략은,  Bean가 붙은 ClassSimpleName, methodName, fieldName 임. | | | | | |
-| 42 |**(!오버스펙)** **context Hierarchy**<br />servlet-context에서 root-web-applicatoin-context, dispatcher's web-application-context를 구분하려면 아래를 참고.<br />https://codediver.tistory.com/147<br />https://jaehun2841.github.io/2018/10/21/2018-10-21-spring-context/#webxml-%EC%9D%B4%EB%9E%80<br />https://live-everyday.tistory.com/164 | | | | | |
+| 42 |**(!오버스펙)** **context Hierarchy**<br />servlet-context에서 root-web-applicatoin-context, dispatcher's web-application-context를 구분하려면 아래를 참고.<br />https://codediver.tistory.com/147<br />https://jaehun2841.github.io/2018/10/21/2018-10-21-spring-context/#webxml-%EC%9D%B4%EB%9E%80<br />https://live-everyday.tistory.com/164 | WORKING | 60% | 03-30 | | 3h |
+| 43 |woowahan-java-util 추가. <br />NotNull, Nullable 가독성, 등을 위해 추가. | DONE | 100% | 03-31 | 03-31 | 30m |
+| 44 |Mockito 는 외부종속성이지만, test에만 사용하므로 요구사항 구현 제한에서 빠질 수 있다. 이를 활용해 ServletContext같은 것의 mocking처리를 한다. | WORKING | 50% | 03-31 | ~ | 30m |

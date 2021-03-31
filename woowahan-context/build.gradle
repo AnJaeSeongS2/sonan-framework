@@ -2,4 +2,5 @@ dependencies {
     compile project(":woowahan-java-util")
     compile("ch.qos.logback:logback-classic:1.2.3")
     compile("org.reflections:reflections:0.9.11")
+    testImplementation("javax.servlet:javax.servlet-api:3.1.0")
 }
