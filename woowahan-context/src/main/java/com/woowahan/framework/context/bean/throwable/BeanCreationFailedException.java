@@ -6,7 +6,7 @@ package com.woowahan.framework.context.bean.throwable;
  * Created by Jaeseong on 2021/04/01
  * Git Hub : https://github.com/AnJaeSeongS2
  */
-public class BeanCreationFailedException extends RuntimeException{
+public class BeanCreationFailedException extends BeanException {
 
     /**
      * @param msg the detail message

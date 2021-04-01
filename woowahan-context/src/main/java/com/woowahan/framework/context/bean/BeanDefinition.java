@@ -1,6 +1,6 @@
 package com.woowahan.framework.context.bean;
 
-import com.woowahan.util.annotation.NotNull;
+import com.woowahan.util.annotation.Nullable;
 
 import java.util.Objects;
 
@@ -14,17 +14,15 @@ import java.util.Objects;
  * Git Hub : https://github.com/AnJaeSeongS2
  */
 public class BeanDefinition {
-    @NotNull
     private BeanIdentifier id;
-    @NotNull
     private Scope scope;
 
-    public BeanDefinition(@NotNull BeanIdentifier id, @NotNull Scope scope) {
+    public BeanDefinition(BeanIdentifier id, Scope scope) {
         this.id = id;
         this.scope = scope;
     }
 
-    public BeanDefinition(@NotNull String beanClassCannonicalName, String beanName, @NotNull Scope scope) {
+    public BeanDefinition(String beanClassCannonicalName, @Nullable String beanName, Scope scope) {
         this.id = new BeanIdentifier(beanClassCannonicalName, beanName);
         this.scope = scope;
     }
@@ -37,24 +35,22 @@ public class BeanDefinition {
         return Scope.Singleton.equals(scope);
     }
 
-    public boolean isSameScope(@NotNull Scope scope) {
+    public boolean isSameScope(Scope scope) {
         return this.scope.equals(scope);
     }
 
-    public boolean isSameId(@NotNull BeanIdentifier id) {
+    public boolean isSameId(BeanIdentifier id) {
         return this.id.equals(id);
     }
 
-    @NotNull
     public BeanIdentifier getId() {
         return id;
     }
-    @NotNull
+
     public Scope getScope() {
         return scope;
     }
 
-    @NotNull
     public String getBeanClassCanonicalName() {
         return id.getClassCanonicalName();
     }
