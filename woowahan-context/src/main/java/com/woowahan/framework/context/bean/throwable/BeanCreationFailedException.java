@@ -6,12 +6,12 @@ package com.woowahan.framework.context.bean.throwable;
  * Created by Jaeseong on 2021/04/01
  * Git Hub : https://github.com/AnJaeSeongS2
  */
-public class BeanFailedCreationException extends RuntimeException{
+public class BeanCreationFailedException extends RuntimeException{
 
     /**
      * @param msg the detail message
      */
-    public BeanFailedCreationException(String msg) {
+    public BeanCreationFailedException(String msg) {
         super(msg);
     }
 
@@ -19,7 +19,7 @@ public class BeanFailedCreationException extends RuntimeException{
      * @param msg the detail message
      * @param cause the root cause
      */
-    public BeanFailedCreationException(String msg, Throwable cause) {
+    public BeanCreationFailedException(String msg, Throwable cause) {
         super(msg, cause);
     }
 }

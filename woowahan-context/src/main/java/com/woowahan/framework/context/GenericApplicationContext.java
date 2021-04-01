@@ -4,7 +4,7 @@ import com.woowahan.framework.context.bean.BeanDefinition;
 import com.woowahan.framework.context.bean.BeanIdentifier;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotRegisteredException;
 import com.woowahan.framework.context.bean.throwable.BeanException;
-import com.woowahan.framework.context.bean.throwable.BeanFailedCreationException;
+import com.woowahan.framework.context.bean.throwable.BeanCreationFailedException;
 import com.woowahan.util.annotation.NotNull;
 
 import java.util.Collections;
@@ -69,31 +69,31 @@ public class GenericApplicationContext<T> extends ApplicationContext {
     public Object getBean(@NotNull BeanIdentifier id) {
         if (beanIdToDef.containsKey(id)) {
             // id에 해당하는 definition이 등록돼있는 케이스.
-
             Object bean;
             BeanDefinition definition = beanIdToDef.get(id);
-            switch (definition.getScope()) {
-                case Singleton:
-                    if (singletonBeans.containsKey(id)) {
-                        return singletonBeans.get(id);
-                    }
-                    //TODO: createBean
-                    bean = new RuntimeException("TODO: createBean");
-                    singletonBeans.put(id, bean);
-                    break;
-                case Prototype:
-                default:
-                    // create bean always.
-                    //TODO: createBean
-                    bean = new RuntimeException("TODO: createBean");
-                    break;
+            try {
+                switch (definition.getScope()) {
+                    case Singleton:
+                        if (singletonBeans.containsKey(id)) {
+                            return singletonBeans.get(id);
+                        }
+                        bean = createBean(definition);
+                        singletonBeans.put(id, bean);
+                        break;
+                    case Prototype:
+                    default:
+                        // create bean always.
+                        bean = createBean(definition);
+                        break;
+                }
+            } catch (Exception e) {
+                throw new BeanCreationFailedException("The ApplicationContext is can't create Bean with this BeanDefinition. current ApplicationContext: " + toString() + ", current BeanIdentifier: " + id.toString(), e);
             }
             return bean;
         } else {
             // id에 해당하는 definition이 등록돼있지 않은 케이스.
-
             if (getParent() == null) {
-                throw new BeanFailedCreationException("The ApplicationContext is not have BeanDefinition matched with current BeanIdentifier. current ApplicationContext: " + toString() + ", current BeanIdentifier: " + id.toString());
+                throw new BeanCreationFailedException("The ApplicationContext is not have BeanDefinition matched with current BeanIdentifier. current ApplicationContext: " + toString() + ", current BeanIdentifier: " + id.toString());
             }
             return getParent().getBean(id);
         }
@@ -127,5 +127,9 @@ public class GenericApplicationContext<T> extends ApplicationContext {
     @Override
     public ApplicationContext getRoot() {
         return this.getterRootApplicationContext.apply(this.contextHolder);
+    }
+
+    private Object createBean(@NotNull BeanDefinition definition) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        return this.beanClassLoader.loadClass(definition.getBeanClassCanonicalName()).newInstance();
     }
 }

@@ -4,7 +4,8 @@ import com.woowahan.framework.context.bean.BeanDefinition;
 import com.woowahan.framework.context.bean.BeanIdentifier;
 import com.woowahan.framework.context.bean.Scope;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotRegisteredException;
-import com.woowahan.framework.context.bean.throwable.BeanFailedCreationException;
+import com.woowahan.framework.context.bean.throwable.BeanCreationFailedException;
+import com.woowahan.util.reflect.Util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.ServletContext;
+
+import java.lang.reflect.InvocationTargetException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -78,7 +81,7 @@ class GenericApplicationContextTest {
     @Test
     void getBeanNoBeanDefinition() {
         BeanIdentifier id = new BeanIdentifier("java.lang.RuntimeException", null);
-        assertThrows(BeanFailedCreationException.class, () -> rootApplicationContext.getBean(id));
+        assertThrows(BeanCreationFailedException.class, () -> rootApplicationContext.getBean(id));
     }
 
     @Test
@@ -105,5 +108,14 @@ class GenericApplicationContextTest {
 
         Object singleton3 = childApplicationContext.getBean(id);
         assertTrue(singleton1 == singleton3);
+    }
+
+    @Test
+    void createBean() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        BeanIdentifier id = new BeanIdentifier("java.lang.RuntimeException", null);
+        BeanDefinition definition = new BeanDefinition("java.lang.RuntimeException", null, Scope.Singleton);
+        rootApplicationContext.register(definition);
+
+        assertNotNull(Util.invokeMethod(rootApplicationContext, "createBean", new Class<?>[]{BeanDefinition.class}, definition));
     }
 }
