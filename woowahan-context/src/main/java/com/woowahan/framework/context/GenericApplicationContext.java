@@ -69,27 +69,11 @@ public class GenericApplicationContext<T> extends ApplicationContext {
     public Object getBean(@NotNull BeanIdentifier id) {
         if (beanIdToDef.containsKey(id)) {
             // id에 해당하는 definition이 등록돼있는 케이스.
-            Object bean;
-            BeanDefinition definition = beanIdToDef.get(id);
             try {
-                switch (definition.getScope()) {
-                    case Singleton:
-                        if (singletonBeans.containsKey(id)) {
-                            return singletonBeans.get(id);
-                        }
-                        bean = createBean(definition);
-                        singletonBeans.put(id, bean);
-                        break;
-                    case Prototype:
-                    default:
-                        // create bean always.
-                        bean = createBean(definition);
-                        break;
-                }
+                return getBean(beanIdToDef.get(id));
             } catch (Exception e) {
                 throw new BeanCreationFailedException("The ApplicationContext is can't create Bean with this BeanDefinition. current ApplicationContext: " + toString() + ", current BeanIdentifier: " + id.toString(), e);
             }
-            return bean;
         } else {
             // id에 해당하는 definition이 등록돼있지 않은 케이스.
             if (getParent() == null) {
@@ -129,7 +113,28 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         return this.getterRootApplicationContext.apply(this.contextHolder);
     }
 
+    @NotNull
     private Object createBean(@NotNull BeanDefinition definition) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         return this.beanClassLoader.loadClass(definition.getBeanClassCanonicalName()).newInstance();
+    }
+
+    @NotNull
+    private Object getBean(@NotNull BeanDefinition definition) {
+        Object bean;
+        switch (definition.getScope()) {
+            case Singleton:
+                if (singletonBeans.containsKey(definition.getId())) {
+                    return singletonBeans.get(definition.getId());
+                }
+                bean = createBean(definition);
+                singletonBeans.put(definition.getId(), bean);
+                break;
+            case Prototype:
+            default:
+                // create bean always.
+                bean = createBean(definition);
+                break;
+        }
+        return bean;
     }
 }
