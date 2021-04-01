@@ -63,27 +63,27 @@ class GenericApplicationContextTest {
 
     @Test
     void register() {
-        BeanIdentifier id = new BeanIdentifier(String.class, null);
+        BeanIdentifier id = new BeanIdentifier("java.lang.String", null);
         BeanDefinition definition1 = new BeanDefinition(id, Scope.Singleton);
         BeanDefinition definition2 = new BeanDefinition(id, Scope.Prototype);
         assertDoesNotThrow(() -> rootApplicationContext.register(definition1));
         assertThrows(BeanDefinitionNotRegisteredException.class, () -> rootApplicationContext.register(definition2));
 
 
-        BeanIdentifier idOther = new BeanIdentifier(String.class, "other");
+        BeanIdentifier idOther = new BeanIdentifier("java.lang.String", "other");
         BeanDefinition definitionOther = new BeanDefinition(idOther, Scope.Singleton);
         assertDoesNotThrow(() -> rootApplicationContext.register(definitionOther));
     }
 
     @Test
     void getBeanNoBeanDefinition() {
-        BeanIdentifier id = new BeanIdentifier(RuntimeException.class, null);
+        BeanIdentifier id = new BeanIdentifier("java.lang.RuntimeException", null);
         assertThrows(BeanFailedCreationException.class, () -> rootApplicationContext.getBean(id));
     }
 
     @Test
     void getBeanPrototype() {
-        BeanIdentifier id = new BeanIdentifier(RuntimeException.class, null);
+        BeanIdentifier id = new BeanIdentifier("java.lang.RuntimeException", null);
         BeanDefinition definition = new BeanDefinition(id, Scope.Prototype);
         assertDoesNotThrow(() -> rootApplicationContext.register(definition));
         Object prototype1 = rootApplicationContext.getBean(id);
@@ -96,7 +96,7 @@ class GenericApplicationContextTest {
 
     @Test
     void getBeanSingleton() {
-        BeanIdentifier id = new BeanIdentifier(RuntimeException.class, null);
+        BeanIdentifier id = new BeanIdentifier("java.lang.RuntimeException", null);
         BeanDefinition definition = new BeanDefinition(id, Scope.Singleton);
         assertDoesNotThrow(() -> rootApplicationContext.register(definition));
         Object singleton1 = rootApplicationContext.getBean(id);

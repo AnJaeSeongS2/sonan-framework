@@ -12,19 +12,19 @@ class BeanIdentifierTest {
 
     @Test
     void testToString() {
-        assertEquals("java.lang.String:aaaa", new BeanIdentifier(String.class, "aaaa").toString());
-        assertEquals("java.lang.String:", new BeanIdentifier(String.class, null).toString());
-        assertEquals("java.lang.String:aaaa", new BeanIdentifier(String.class, "aaaa").genId());
-        assertEquals("java.lang.String:", new BeanIdentifier(String.class, null).genId());
+        assertEquals("java.lang.String:aaaa", new BeanIdentifier("java.lang.String", "aaaa").toString());
+        assertEquals("java.lang.String:", new BeanIdentifier("java.lang.String", null).toString());
+        assertEquals("java.lang.String:aaaa", new BeanIdentifier("java.lang.String", "aaaa").genId());
+        assertEquals("java.lang.String:", new BeanIdentifier("java.lang.String", null).genId());
     }
 
     @Test
     void testEquals() {
-        assertEquals(true, new BeanIdentifier(String.class, "aaaa").equals(new BeanIdentifier(String.class, "aaaa")));
-        assertEquals(true, new BeanIdentifier(String.class, null).equals(new BeanIdentifier(String.class, null)));
+        assertEquals(true, new BeanIdentifier("java.lang.String", "aaaa").equals(new BeanIdentifier("java.lang.String", "aaaa")));
+        assertEquals(true, new BeanIdentifier("java.lang.String", null).equals(new BeanIdentifier("java.lang.String", null)));
 
-        assertEquals(false, new BeanIdentifier(Integer.class, "aaaa").equals(new BeanIdentifier(String.class, "aaaa")));
-        assertEquals(false, new BeanIdentifier(String.class, "aaaa").equals(new BeanIdentifier(String.class, "bbbb")));
-        assertEquals(false, new BeanIdentifier(String.class, "aaaa").equals(new BeanIdentifier(String.class, null)));
+        assertEquals(false, new BeanIdentifier("java.lang.Integer", "aaaa").equals(new BeanIdentifier("java.lang.String", "aaaa")));
+        assertEquals(false, new BeanIdentifier("java.lang.String", "aaaa").equals(new BeanIdentifier("java.lang.String", "bbbb")));
+        assertEquals(false, new BeanIdentifier("java.lang.String", "aaaa").equals(new BeanIdentifier("java.lang.String", null)));
     }
 }

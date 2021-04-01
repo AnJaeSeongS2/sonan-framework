@@ -17,6 +17,7 @@ import java.util.function.Function;
  * ApplicationContext의 기본 구현체.
  * T는 ApplicationContext를 저장할 vendor의 ContextHolder이다. (ex: ServletContext)
  * 현 ApplicationContext내에서 BeanDefinition을 관리한다.
+ * bean 생성도 ApplicationContext가 가진 beanClassLoader를 통해서 진행한다.
  *
  * @thread-safe
  * Created by Jaeseong on 2021/03/31
@@ -35,7 +36,11 @@ public class GenericApplicationContext<T> extends ApplicationContext {
     /**
      * ApplicationContext를 저장하는 vendor별 contextHolder
      */
+    @NotNull
     private final T contextHolder;
+
+    @NotNull
+    private final ClassLoader beanClassLoader;
 
     /**
      * vendor의 contextHolder에서 applicationContext를 추출하는 function.
@@ -55,6 +60,8 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         this.beanDefs = Collections.newSetFromMap(new ConcurrentHashMap<BeanDefinition, Boolean>());
         this.beanIdToDef = new ConcurrentHashMap<BeanIdentifier, BeanDefinition>();
         this.singletonBeans = new ConcurrentHashMap<BeanIdentifier, Object>();
+
+        this.beanClassLoader = Thread.currentThread().getContextClassLoader();
     }
 
     @Override

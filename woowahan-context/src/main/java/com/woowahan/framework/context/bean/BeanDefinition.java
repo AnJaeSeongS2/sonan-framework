@@ -24,8 +24,8 @@ public class BeanDefinition {
         this.scope = scope;
     }
 
-    public BeanDefinition(@NotNull Class<?> beanClassObj, String beanName, @NotNull Scope scope) {
-        this.id = new BeanIdentifier(beanClassObj, beanName);
+    public BeanDefinition(@NotNull String beanClassCannonicalName, String beanName, @NotNull Scope scope) {
+        this.id = new BeanIdentifier(beanClassCannonicalName, beanName);
         this.scope = scope;
     }
 
@@ -55,8 +55,8 @@ public class BeanDefinition {
     }
 
     @NotNull
-    public Class<?> getClassObj() {
-        return id.getClassObj();
+    public String getBeanClassCanonicalName() {
+        return id.getClassCanonicalName();
     }
 
     @Override

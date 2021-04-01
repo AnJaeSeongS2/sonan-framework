@@ -12,32 +12,32 @@ import java.util.Objects;
  */
 public class BeanIdentifier {
     @NotNull
-    private Class<?> classObj;
+    private String classCanonicalName;
     @NotNull
-    private String name;
+    private String beanName;
 
-    public BeanIdentifier(@NotNull Class<?> classObj, String name) {
-        this.classObj = classObj;
-        if (name == null) {
-            this.name = "";
+    public BeanIdentifier(@NotNull String classCanonicalName, String beanName) {
+        this.classCanonicalName = classCanonicalName;
+        if (beanName == null) {
+            this.beanName = "";
         } else {
-            this.name = name;
+            this.beanName = beanName;
         }
     }
 
     @NotNull
-    public String getName() {
-        return name;
+    public String getBeanName() {
+        return beanName;
     }
 
     @NotNull
-    public Class<?> getClassObj() {
-        return classObj;
+    public String getClassCanonicalName() {
+        return classCanonicalName;
     }
 
     @NotNull
     public String genId() {
-        return classObj.getCanonicalName() + ":" + name;
+        return classCanonicalName + ":" + beanName;
     }
 
     @Override
@@ -51,11 +51,11 @@ public class BeanIdentifier {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BeanIdentifier beanId = (BeanIdentifier) o;
-        return Objects.equals(classObj, beanId.classObj) && Objects.equals(name, beanId.name);
+        return Objects.equals(classCanonicalName, beanId.classCanonicalName) && Objects.equals(beanName, beanId.beanName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(classObj, name);
+        return Objects.hash(classCanonicalName, beanName);
     }
 }

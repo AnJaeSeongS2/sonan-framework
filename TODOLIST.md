@@ -52,3 +52,4 @@
 | 45 |1. BeanIdentifier : ClassName:BeanName<br />2. BeanDefinition : ClassName:BeanName:Scope<br />3. BeanDefinitionRegistry 구현체 추가. (ex: GenericApplicationContext)<br />bean에 대한 정보를 GenericApplicationContext에서 관리. | DONE | 100% | 03-31 | 04-01 | 3h |
 | 46 |bean 등록에 대한 작성을 annotation기반으로 진행할 탠데, compile타임에 Same BeanIdentifier exception 이 발생해야한다. runtime에 문제생기면 상당히 개발하기 불편하다. |  |  |  |  |  |
 | 47 |04-01자 커밋에 logback처리가 누락돼있다. 재 정검 바람. |  |  |  |  |  |
+| 48 |BeanDefinition은 ApplicationContext측에서의 classLoader 기반으로 정의되어야 한다.<br />BeanIdentifier는 Class<?> 를 보유하면 ClassLoading을 ApplicationContext측이 아닌, BeanIdentifier를 생성한 측에서 해버린다. Class<? >이 아닌 String className기반으로 변경이 필요하다. 그이후, 확인된 classLoader기반으로 Class.forName으로 불러와야한다. | WORKING |  |  |  |  |
