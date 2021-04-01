@@ -1,6 +1,6 @@
 package com.woowahan.framework.context.bean;
 
-import com.woowahan.util.annotation.NotNull;
+import com.woowahan.util.annotation.Nullable;
 
 import java.util.Objects;
 
@@ -11,12 +11,10 @@ import java.util.Objects;
  * Git Hub : https://github.com/AnJaeSeongS2
  */
 public class BeanIdentifier {
-    @NotNull
     private String classCanonicalName;
-    @NotNull
     private String beanName;
 
-    public BeanIdentifier(@NotNull String classCanonicalName, String beanName) {
+    public BeanIdentifier(String classCanonicalName, @Nullable String beanName) {
         this.classCanonicalName = classCanonicalName;
         if (beanName == null) {
             this.beanName = "";
@@ -25,23 +23,19 @@ public class BeanIdentifier {
         }
     }
 
-    @NotNull
     public String getBeanName() {
         return beanName;
     }
 
-    @NotNull
     public String getClassCanonicalName() {
         return classCanonicalName;
     }
 
-    @NotNull
     public String genId() {
         return classCanonicalName + ":" + beanName;
     }
 
     @Override
-    @NotNull
     public String toString() {
         return genId();
     }

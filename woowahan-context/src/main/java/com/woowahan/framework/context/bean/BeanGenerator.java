@@ -1,7 +1,6 @@
 package com.woowahan.framework.context.bean;
 
-import com.woowahan.framework.context.bean.throwable.BeanException;
-import com.woowahan.util.annotation.NotNull;
+import com.woowahan.framework.context.bean.throwable.BeanCreationFailedException;
 
 /**
  * BeanGenerator는 getBean을 통해 생성된 Bean을 반환한다.
@@ -19,6 +18,5 @@ public interface BeanGenerator {
      * @param id the BeanIdentifier of the bean to retrieve
      * @return an instance of the bean
      */
-    @NotNull
-    Object getBean(BeanIdentifier id) throws BeanException;
+    Object getBean(BeanIdentifier id) throws BeanCreationFailedException;
 }

@@ -85,37 +85,41 @@ class GenericApplicationContextTest {
     }
 
     @Test
-    void getBeanPrototype() {
+    void createBean() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         BeanIdentifier id = new BeanIdentifier("java.lang.RuntimeException", null);
-        BeanDefinition definition = new BeanDefinition(id, Scope.Prototype);
+        BeanDefinition definition = new BeanDefinition("java.lang.RuntimeException", null, Scope.Singleton);
         assertDoesNotThrow(() -> rootApplicationContext.register(definition));
-        Object prototype1 = rootApplicationContext.getBean(id);
-        Object prototype2 = rootApplicationContext.getBean(id);
-        assertFalse(prototype1 == prototype2);
 
-        Object prototype3 = childApplicationContext.getBean(id);
-        assertFalse(prototype1 == prototype3);
+        assertNotNull(Util.invokeMethod(rootApplicationContext, "createBean", new Class<?>[]{BeanDefinition.class}, definition));
+    }
+
+    @Test
+    void getBeanPrototype() {
+        assertDoesNotThrow(() -> {
+            BeanIdentifier id = new BeanIdentifier("java.lang.RuntimeException", null);
+            BeanDefinition definition = new BeanDefinition(id, Scope.Prototype);
+            assertDoesNotThrow(() -> rootApplicationContext.register(definition));
+            Object prototype1 = rootApplicationContext.getBean(id);
+            Object prototype2 = rootApplicationContext.getBean(id);
+            assertFalse(prototype1 == prototype2);
+
+            Object prototype3 = childApplicationContext.getBean(id);
+            assertFalse(prototype1 == prototype3);
+        });
     }
 
     @Test
     void getBeanSingleton() {
-        BeanIdentifier id = new BeanIdentifier("java.lang.RuntimeException", null);
-        BeanDefinition definition = new BeanDefinition(id, Scope.Singleton);
-        assertDoesNotThrow(() -> rootApplicationContext.register(definition));
-        Object singleton1 = rootApplicationContext.getBean(id);
-        Object singleton2 = rootApplicationContext.getBean(id);
-        assertTrue(singleton1 == singleton2);
+        assertDoesNotThrow(() -> {
+            BeanIdentifier id = new BeanIdentifier("java.lang.RuntimeException", null);
+            BeanDefinition definition = new BeanDefinition(id, Scope.Singleton);
+            assertDoesNotThrow(() -> rootApplicationContext.register(definition));
+            Object singleton1 = rootApplicationContext.getBean(id);
+            Object singleton2 = rootApplicationContext.getBean(id);
+            assertTrue(singleton1 == singleton2);
 
-        Object singleton3 = childApplicationContext.getBean(id);
-        assertTrue(singleton1 == singleton3);
-    }
-
-    @Test
-    void createBean() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        BeanIdentifier id = new BeanIdentifier("java.lang.RuntimeException", null);
-        BeanDefinition definition = new BeanDefinition("java.lang.RuntimeException", null, Scope.Singleton);
-        rootApplicationContext.register(definition);
-
-        assertNotNull(Util.invokeMethod(rootApplicationContext, "createBean", new Class<?>[]{BeanDefinition.class}, definition));
+            Object singleton3 = childApplicationContext.getBean(id);
+            assertTrue(singleton1 == singleton3);
+        });
     }
 }

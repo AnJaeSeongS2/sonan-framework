@@ -1,7 +1,6 @@
 package com.woowahan.framework.context.bean;
 
 import com.woowahan.framework.context.bean.throwable.BeanException;
-import com.woowahan.util.annotation.NotNull;
 
 /**
  * @see BeanDefinition 을 보관하고 관리하는 주체.
@@ -18,5 +17,5 @@ public interface BeanDefinitionRegistry {
      * @param definition
      * @throws BeanException
      */
-    void register(@NotNull BeanDefinition definition) throws BeanException;
+    void register(BeanDefinition definition) throws BeanException;
 }

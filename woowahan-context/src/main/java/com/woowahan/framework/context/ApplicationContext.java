@@ -2,7 +2,7 @@ package com.woowahan.framework.context;
 
 import com.woowahan.framework.context.bean.BeanDefinitionRegistry;
 import com.woowahan.framework.context.bean.BeanGenerator;
-import com.woowahan.util.annotation.NotNull;
+import com.woowahan.util.annotation.Nullable;
 
 /**
  * ApplicationContext는 vendor에 상관없이 vendor로 지정된 context에서 계층을 이루며 저장된다.
@@ -22,6 +22,7 @@ public abstract class ApplicationContext implements BeanGenerator, BeanDefinitio
      * and this is the root of the context hierarchy.
      * @return the parent context, or {@code null} if there is no parent
      */
+    @Nullable
     public abstract ApplicationContext getParent();
 
     /**
@@ -29,7 +30,6 @@ public abstract class ApplicationContext implements BeanGenerator, BeanDefinitio
      * and this is the root of the context hierarchy.
      * @return the parent context, or {@code null} if there is no parent
      */
-    @NotNull
     public abstract ApplicationContext getRoot();
 
     @Override
