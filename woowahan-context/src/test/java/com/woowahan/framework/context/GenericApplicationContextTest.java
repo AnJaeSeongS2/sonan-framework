@@ -4,7 +4,7 @@ import com.woowahan.framework.context.bean.BeanDefinition;
 import com.woowahan.framework.context.bean.BeanIdentifier;
 import com.woowahan.framework.context.bean.Scope;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotRegisteredException;
-import com.woowahan.framework.context.bean.throwable.BeanCreationFailedException;
+import com.woowahan.framework.context.bean.throwable.BeanNotFoundException;
 import com.woowahan.util.reflect.Util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.ServletContext;
-
 import java.lang.reflect.InvocationTargetException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +24,6 @@ import static org.mockito.Mockito.mock;
  */
 @ExtendWith(MockitoExtension.class)
 class GenericApplicationContextTest {
-
     private ServletContext servletContext;
 
     //parent
@@ -81,7 +79,7 @@ class GenericApplicationContextTest {
     @Test
     void getBeanNoBeanDefinition() {
         BeanIdentifier id = new BeanIdentifier("java.lang.RuntimeException", null);
-        assertThrows(BeanCreationFailedException.class, () -> rootApplicationContext.getBean(id));
+        assertThrows(BeanNotFoundException.class, () -> rootApplicationContext.getBean(id));
     }
 
     @Test

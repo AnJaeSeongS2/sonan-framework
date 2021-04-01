@@ -4,6 +4,7 @@ import com.woowahan.framework.context.bean.BeanDefinition;
 import com.woowahan.framework.context.bean.BeanIdentifier;
 import com.woowahan.framework.context.bean.throwable.BeanCreationFailedException;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotRegisteredException;
+import com.woowahan.framework.context.bean.throwable.BeanNotFoundException;
 import com.woowahan.util.annotation.Nullable;
 
 import java.util.Collections;
@@ -58,14 +59,18 @@ public class GenericApplicationContext<T> extends ApplicationContext {
     }
 
     @Override
-    public Object getBean(BeanIdentifier id) throws BeanCreationFailedException {
+    public Object getBean(BeanIdentifier id) throws BeanNotFoundException {
         if (beanIdToDef.containsKey(id)) {
             // id에 해당하는 definition이 등록돼있는 케이스.
-            return getBean(beanIdToDef.get(id));
+            try {
+                return getBean(beanIdToDef.get(id));
+            } catch (BeanCreationFailedException e) {
+                throw new BeanNotFoundException(e, "[INNER]" + e.getMessage());
+            }
         } else {
             // id에 해당하는 definition이 등록돼있지 않은 케이스.
             if (getParent() == null) {
-                throw new BeanCreationFailedException("The ApplicationContext is not have BeanDefinition matched with current BeanIdentifier. current ApplicationContext: " + toString() + ", current BeanIdentifier: " + id.toString());
+                throw new BeanNotFoundException("The ApplicationContext is not have BeanDefinition matched with current BeanIdentifier. current ApplicationContext: " + toString() + ", current BeanIdentifier: " + id.toString());
             }
             return getParent().getBean(id);
         }
