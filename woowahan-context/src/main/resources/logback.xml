@@ -18,8 +18,32 @@
 		</encoder>
 	</appender>
 
+	<turboFilter class="ch.qos.logback.classic.turbo.MarkerFilter">
+		<Name>LIFE_CYCLE_FILTER</Name>
+		<Marker>LIFE_CYCLE</Marker>
+		<OnMatch>ACCEPT</OnMatch>
+	</turboFilter>
+
+	<turboFilter class="ch.qos.logback.classic.turbo.MarkerFilter">
+		<Name>MESSAGE_FILTER</Name>
+		<Marker>MESSAGE</Marker>
+		<OnMatch>ACCEPT</OnMatch>
+	</turboFilter>
+
+	<turboFilter class="ch.qos.logback.classic.turbo.MarkerFilter">
+		<Name>DEV_FILTER</Name>
+		<Marker>DEV</Marker>
+		<OnMatch>ACCEPT</OnMatch>
+	</turboFilter>
+
+	<turboFilter class="ch.qos.logback.classic.turbo.MarkerFilter">
+		<Name>PROD_FILTER</Name>
+		<Marker>PROD</Marker>
+		<OnMatch>DENY</OnMatch>
+	</turboFilter>
+
 	<root>
-		<level>INFO</level>
+		<level>TRACE</level>
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="FILE_ROLLING" />
 	</root>

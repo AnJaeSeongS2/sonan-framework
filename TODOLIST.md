@@ -51,7 +51,7 @@
 | 44 |Mockito 는 외부종속성이지만, test에만 사용하므로 요구사항 구현 제한에서 빠질 수 있다. 이를 활용해 ServletContext같은 것의 mocking처리를 한다. | WORKING | 60% | 03-31 | ~ | 30m |
 | 45 |1. BeanIdentifier : ClassName:BeanName<br />2. BeanDefinition : ClassName:BeanName:Scope<br />3. BeanDefinitionRegistry 구현체 추가. (ex: GenericApplicationContext)<br />bean에 대한 정보를 GenericApplicationContext에서 관리. | DONE | 100% | 03-31 | 04-01 | 3h |
 | 46 |bean 등록에 대한 작성을 annotation기반으로 진행할 탠데, compile타임에 Same BeanIdentifier exception 이 발생해야한다. runtime에 문제생기면 상당히 개발하기 불편하다. |  |  |  |  |  |
-| 47 |04-01자 커밋에 logback처리가 누락돼있다. 재 정검 바람. |  |  |  |  |  |
+| 47 |logback-support 모듈 추가. <br />logbook 사용에 공통화될 부분, 및 정책을 이 모듈에 공통화. | DONE | 100% | 04-01 | 04-01 | 30m |
 | 48 |BeanDefinition은 ApplicationContext측에서의 classLoader 기반으로 정의되어야 한다.<br />BeanIdentifier는 Class<?> 를 보유하면 ClassLoading을 ApplicationContext측이 아닌, BeanIdentifier를 생성한 측에서 해버린다. Class<? >이 아닌 String className기반으로 변경이 필요하다. 그이후, 확인된 classLoader기반으로 Class.forName으로 불러와야한다. | DONE | 100% | 04-01 | 04-01 | 1h |
 | 49 |JAVA지만, Scala나 Kotlin 언어처럼 @Nullable을 추가하는 정책으로 변경.<br /> | DONE | 100% | 04-01 | 04-01 | 20m |
 | 50 |java언어이므로 (Default는 nullable) field/method/param, etc..에 @NotNull을 추가하는 정책을 취했는데, 이게 가독성을 해치고 작업 능률을 떨어트린다. java지만 default는  notNull인 것으로 취급하며 진행한다. 차후 @Nullable, @NotNull 이 compile타임에 영향을 주면 될 것. |  |  |  |  |  |

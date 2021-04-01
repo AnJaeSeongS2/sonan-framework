@@ -5,7 +5,10 @@ import com.woowahan.framework.context.bean.BeanIdentifier;
 import com.woowahan.framework.context.bean.throwable.BeanCreationFailedException;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotRegisteredException;
 import com.woowahan.framework.context.bean.throwable.BeanNotFoundException;
+import com.woowahan.logback.support.Markers;
 import com.woowahan.util.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Map;
@@ -24,6 +27,7 @@ import java.util.function.Function;
  * Git Hub : https://github.com/AnJaeSeongS2
  */
 public class GenericApplicationContext<T> extends ApplicationContext {
+    private static final Logger logger = LoggerFactory.getLogger(GenericApplicationContext.class);
     @Nullable
     private final ApplicationContext parent;
     private final Map<BeanIdentifier, Object> singletonBeans;
@@ -47,6 +51,7 @@ public class GenericApplicationContext<T> extends ApplicationContext {
      * @param getterRootApplicationContext contextHolder로부터 ApplicationContext를 추출하는 Function
      */
     public GenericApplicationContext(@Nullable ApplicationContext parent, T contextHolder, Function<T, ApplicationContext> getterRootApplicationContext) {
+        logger.trace(Markers.LIFE_CYCLE.get(), "try init GenericApplicationContext...");
         this.parent = parent;
         this.contextHolder = contextHolder;
         this.getterRootApplicationContext = getterRootApplicationContext;
@@ -56,14 +61,17 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         this.singletonBeans = new ConcurrentHashMap<BeanIdentifier, Object>();
 
         this.beanClassLoader = Thread.currentThread().getContextClassLoader();
+        logger.info(Markers.LIFE_CYCLE.get(), "success init GenericApplicationContext as " + this);
     }
 
     @Override
     public Object getBean(BeanIdentifier id) throws BeanNotFoundException {
+        logger.trace(Markers.LIFE_CYCLE.get(), "try getBean...");
+        Object bean;
         if (beanIdToDef.containsKey(id)) {
             // id에 해당하는 definition이 등록돼있는 케이스.
             try {
-                return getBean(beanIdToDef.get(id));
+                bean = getBean(beanIdToDef.get(id));
             } catch (BeanCreationFailedException e) {
                 throw new BeanNotFoundException(e, "[INNER]" + e.getMessage());
             }
@@ -72,8 +80,10 @@ public class GenericApplicationContext<T> extends ApplicationContext {
             if (getParent() == null) {
                 throw new BeanNotFoundException("The ApplicationContext is not have BeanDefinition matched with current BeanIdentifier. current ApplicationContext: " + toString() + ", current BeanIdentifier: " + id.toString());
             }
-            return getParent().getBean(id);
+            bean = getParent().getBean(id);
         }
+        logger.trace(Markers.LIFE_CYCLE.get(), "success getBean as " + bean);
+        return bean;
     }
 
     @Override
@@ -84,6 +94,7 @@ public class GenericApplicationContext<T> extends ApplicationContext {
 
         beanDefs.add(definition);
         beanIdToDef.put(definition.getId(), definition);
+        logger.trace(Markers.LIFE_CYCLE.get(), "finish register BeanDefinition as " + definition);
     }
 
     /**
@@ -107,7 +118,10 @@ public class GenericApplicationContext<T> extends ApplicationContext {
     }
 
     private Object createBean(BeanDefinition definition) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        return this.beanClassLoader.loadClass(definition.getBeanClassCanonicalName()).newInstance();
+        logger.trace(Markers.LIFE_CYCLE.get(), "try createBean...");
+        Object bean = this.beanClassLoader.loadClass(definition.getBeanClassCanonicalName()).newInstance();
+        logger.trace(Markers.LIFE_CYCLE.get(), "success createBean as " + bean);
+        return bean;
     }
 
     private Object getBean(BeanDefinition definition) throws BeanCreationFailedException {
