@@ -28,11 +28,11 @@ public class BeanDefinition {
     }
 
     public boolean isPrototype() {
-        return Scope.Prototype.equals(scope);
+        return Scope.PROTOTYPE.equals(scope);
     }
 
     public boolean isSingleton() {
-        return Scope.Singleton.equals(scope);
+        return Scope.SINGLETON.equals(scope);
     }
 
     public boolean isSameScope(Scope scope) {

@@ -65,14 +65,14 @@ class GenericApplicationContextTest {
     @Test
     void register() {
         BeanIdentifier id = new BeanIdentifier("java.lang.String", null);
-        BeanDefinition definition1 = new BeanDefinition(id, Scope.Singleton);
-        BeanDefinition definition2 = new BeanDefinition(id, Scope.Prototype);
+        BeanDefinition definition1 = new BeanDefinition(id, Scope.SINGLETON);
+        BeanDefinition definition2 = new BeanDefinition(id, Scope.PROTOTYPE);
         assertDoesNotThrow(() -> rootApplicationContext.register(definition1));
         assertThrows(BeanDefinitionNotRegisteredException.class, () -> rootApplicationContext.register(definition2));
 
 
         BeanIdentifier idOther = new BeanIdentifier("java.lang.String", "other");
-        BeanDefinition definitionOther = new BeanDefinition(idOther, Scope.Singleton);
+        BeanDefinition definitionOther = new BeanDefinition(idOther, Scope.SINGLETON);
         assertDoesNotThrow(() -> rootApplicationContext.register(definitionOther));
     }
 
@@ -85,7 +85,7 @@ class GenericApplicationContextTest {
     @Test
     void createBean() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         BeanIdentifier id = new BeanIdentifier("java.lang.RuntimeException", null);
-        BeanDefinition definition = new BeanDefinition("java.lang.RuntimeException", null, Scope.Singleton);
+        BeanDefinition definition = new BeanDefinition("java.lang.RuntimeException", null, Scope.SINGLETON);
         assertDoesNotThrow(() -> rootApplicationContext.register(definition));
 
         assertNotNull(Util.invokeMethod(rootApplicationContext, "createBean", new Class<?>[]{BeanDefinition.class}, definition));
@@ -95,7 +95,7 @@ class GenericApplicationContextTest {
     void getBeanPrototype() {
         assertDoesNotThrow(() -> {
             BeanIdentifier id = new BeanIdentifier("java.lang.RuntimeException", null);
-            BeanDefinition definition = new BeanDefinition(id, Scope.Prototype);
+            BeanDefinition definition = new BeanDefinition(id, Scope.PROTOTYPE);
             assertDoesNotThrow(() -> rootApplicationContext.register(definition));
             Object prototype1 = rootApplicationContext.getBean(id);
             Object prototype2 = rootApplicationContext.getBean(id);
@@ -110,7 +110,7 @@ class GenericApplicationContextTest {
     void getBeanSingleton() {
         assertDoesNotThrow(() -> {
             BeanIdentifier id = new BeanIdentifier("java.lang.RuntimeException", null);
-            BeanDefinition definition = new BeanDefinition(id, Scope.Singleton);
+            BeanDefinition definition = new BeanDefinition(id, Scope.SINGLETON);
             assertDoesNotThrow(() -> rootApplicationContext.register(definition));
             Object singleton1 = rootApplicationContext.getBean(id);
             Object singleton2 = rootApplicationContext.getBean(id);

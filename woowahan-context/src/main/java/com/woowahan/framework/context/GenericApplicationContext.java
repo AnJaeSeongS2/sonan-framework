@@ -128,14 +128,14 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         try {
             Object bean;
             switch (definition.getScope()) {
-                case Singleton:
+                case SINGLETON:
                     if (singletonBeans.containsKey(definition.getId())) {
                         return singletonBeans.get(definition.getId());
                     }
                     bean = createBean(definition);
                     singletonBeans.put(definition.getId(), bean);
                     break;
-                case Prototype:
+                case PROTOTYPE:
                 default:
                     // create bean always.
                     bean = createBean(definition);

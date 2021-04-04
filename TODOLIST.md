@@ -19,6 +19,7 @@
 | 10|**!(부차기능)**LifeCycle 관련 기능 추가 바람. (요구조건에는 없음. 그러나, app자체의 start가 완료됐을 때, log도 찍고 etc.. 해줘야 할 듯. 공통로직 관련되어...) |      |        |             |        |               |
 | 11|Tomcat기반으로 부팅되는 개념인 듯. (별도 모듈화가 좋을 듯. ex: was-bootstraper) | WORKING | 20% | 03-27 |  | 1h |
 | 13|@Service, @Repository 클래스 스캔  빈 주입시 Service가 다른 Service를 주입하는 경우 고려 @Inject가 없는 경우 기본생성자를 이용하여 빈으로 등록 그 외 경우는 initializeInjectedBeans로 빈 등록 @Inject에 필요한 객체를 찾아서 주입 / 생성 기존의 @Controller를 스캔하는 ControllerScanner 클래스를 확장된 BeanScanner와 통합 |      |        |             |        |               |
+| 13.5 |Component 등록과정에서 고려할 점. <br />inner class, anonymous class |  | | | | |
 | 14|@Configuration 어노테이션으로 빈 설정                     |      |        |             |        |               |
 | 15|di , mvc 분리해야할 듯.                                   |      |        |             |        |               |
 | 16|DI xml은 제외할 것.                                       |      |        |             |        |               |
@@ -33,7 +34,7 @@
 | 25 |bean 처리에 대한 기본 기능 스펙정리<br />multi same type bean 에 대한 충돌 처리<br />bean id 처리<br />bean scope처리<br /> | DONE | 100% | 03-30 | 04-01 | (곂침) |
 | 26 |**!(부차기능)**<br />transaction 처리 가 가능하게끔 확장 고려(Transaction - AOP - Bean) (bean입장에서는 transaction 처리가 될 것을 고려한 개발할 필요가 없다. 관심사가 나뉘어있음. Transaction moudle 측이 알아서 bean이 변화될 때 <<<< 처리를 추가로 하) | | | | | |
 | 27 |**!(부차기능)**<br />기본적인 aop 모듈은 필요할 듯. 공통 호출로직, 공통 비지니스 로직 상황별 로깅 관련 지원.<br />spring은 proxy기반 aop이므로, 기존 비지니스로직(target)은 proxy화 되고, proxy에서 상황별 advice로직과 본래 target 로직이 수행될 것이다. | | | | | |
-| 29 |**di module**<br />@Service, @Repository (DB말고 file기반 처리 추가예정), @Controller, @Configuration with @Bean, @Autowired, @Qulifier 필수 제공<br />미지원: @Lazy - MSA에서는 Lazy는 좋지 못하다. Readiness로 진입했을 때 최적의 성능을 보여주길 바람. @Component - 너무 포괄적인 anno이므로 제거. | | | | | |
+| 29 |**di module**<br />@Service, @Controller, @Configuration with @Bean, @Autowired, @Qulifier 필수 제공<br />미지원: @Lazy - MSA에서는 Lazy는 좋지 못하다. Readiness로 진입했을 때 최적의 성능을 보여주길 바람. | | | | | |
 | 30 |**!(부차기능)**<br />**repo module**<br />@Repository에 대응될 부분. 기본 vendor는 file or json형태에 대응쉬운 mongodb예정. | | | | | |
 | 31 |**mvc module**<br />Controller내에서 **@RequestMapping** 으로 class, method에 처리. **@RequestBody** 로 json input을 java Object로 자동전환.<br />**@ResponseBody**로 java Object output을 json output으로 자동전환 (Jackson이 사용됨)<br />**@PathVariable**로  @RequestMapping에서 전달된 url내의 variable을 로직에서 제공받음.<br />Controller에 대해:<br />이 제품은, api호출시, data만 반환하면 되므로 RestController같은 annotation만 지원하면 된다. 차후 확장기능으로 view resolver가 추가되면, Controller기능도 추가지원할 수 있을 것... | | | | | |
 | 32 |**!(부차기능)**<br />validation module**<br />유효성 검사 (di 책임은 아닌듯.) **@Valid, @InitBinder**<br />외부 origin에서의 접근 허용부분 처리**@CrossOrigin** | | | | | |
@@ -54,5 +55,7 @@
 | 47 |logback-support 모듈 추가. <br />logbook 사용에 공통화될 부분, 및 정책을 이 모듈에 공통화. | DONE | 100% | 04-01 | 04-01 | 30m |
 | 48 |BeanDefinition은 ApplicationContext측에서의 classLoader 기반으로 정의되어야 한다.<br />BeanIdentifier는 Class<?> 를 보유하면 ClassLoading을 ApplicationContext측이 아닌, BeanIdentifier를 생성한 측에서 해버린다. Class<? >이 아닌 String className기반으로 변경이 필요하다. 그이후, 확인된 classLoader기반으로 Class.forName으로 불러와야한다. | DONE | 100% | 04-01 | 04-01 | 1h |
 | 49 |JAVA지만, Scala나 Kotlin 언어처럼 @Nullable을 추가하는 정책으로 변경.<br /> | DONE | 100% | 04-01 | 04-01 | 20m |
-| 50 |java언어이므로 (Default는 nullable) field/method/param, etc..에 @NotNull을 추가하는 정책을 취했는데, 이게 가독성을 해치고 작업 능률을 떨어트린다. java지만 default는  notNull인 것으로 취급하며 진행한다. 차후 @Nullable, @NotNull 이 compile타임에 영향을 주면 될 것. |  |  |  |  |  |
+| 50 |java언어이므로 (Default는 nullable인 java...) field/method/param, etc..에 @NotNull을 추가하는 정책을 취했는데, 이게 가독성을 해치고 작업 능률을 떨어트린다. java지만 default는  notNull인 것으로 취급하며 진행한다. 차후 @Nullable, @NotNull 이 compile타임에 영향을 주면 될 것. | DONE | 100% | 04-01 | 04-01 | 10m |
+| 51 |logback 처리될 로직은 start, end사이에 공통화가 가능해 보인다. aop개념을 짧은시간내에 접목시킬 수 있는 지 확인 할 것. | | | | | |
+| 52 |ComponentScan을 통해 Component들이 Bean으로서 BeanDefinition이 적절하게 등록되게 변경 | WORKING | 20% | 04-04 | | |
 
