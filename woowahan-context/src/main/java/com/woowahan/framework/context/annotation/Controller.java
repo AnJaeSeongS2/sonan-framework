@@ -1,6 +1,4 @@
-package com.woowahan.framework.web.annotation;
-
-import com.woowahan.framework.context.annotation.Component;
+package com.woowahan.framework.context.annotation;
 
 import java.lang.annotation.*;
 

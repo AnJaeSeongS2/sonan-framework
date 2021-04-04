@@ -17,14 +17,22 @@ public class BeanDefinition {
     private BeanIdentifier id;
     private Scope scope;
 
-    public BeanDefinition(BeanIdentifier id, Scope scope) {
+    public BeanDefinition(BeanIdentifier id, @Nullable Scope scope) {
         this.id = id;
-        this.scope = scope;
+        if (scope == null) {
+            this.scope = Scope.SINGLETON;
+        } else {
+            this.scope = scope;
+        }
     }
 
-    public BeanDefinition(String beanClassCannonicalName, @Nullable String beanName, Scope scope) {
+    public BeanDefinition(String beanClassCannonicalName, @Nullable String beanName, @Nullable Scope scope) {
         this.id = new BeanIdentifier(beanClassCannonicalName, beanName);
-        this.scope = scope;
+        if (scope == null) {
+            this.scope = Scope.SINGLETON;
+        } else {
+            this.scope = scope;
+        }
     }
 
     public boolean isPrototype() {
