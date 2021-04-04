@@ -4,6 +4,8 @@ import java.lang.annotation.*;
 
 /**
  * @see {@link BeanRegistrable} BeanRegistrable에 포함된다.
+ *
+ * String value() return beanName
  * Created by Jaeseong on 2021/04/04
  * Git Hub : https://github.com/AnJaeSeongS2
  */
@@ -11,5 +13,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Configuration {
-    String beanName() default "";
+    /**
+     * @return beanName
+     */
+    String value() default "";
 }
