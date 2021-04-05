@@ -1,9 +1,8 @@
-package com.woowahan.framework.context.bean;
+package com.woowahan.util.classloader;
 
-import com.woowahan.framework.context.beanInOfBasePackage.ControllerInOfBasePackageTest;
-import com.woowahan.framework.context.beanOutOfBasePackage.ControllerOutOfPackageTest;
+import com.woowahan.util.classloader.inBasePackage.TestClassIn;
+import com.woowahan.util.classloader.outBasePackage.TestClassOut;
 import org.junit.jupiter.api.Test;
-import org.reflections.Reflections;
 
 import java.net.URLClassLoader;
 
@@ -20,7 +19,7 @@ class FirstChildOnBasePackageClassLoaderTest {
         ClassLoader parentCL = Thread.currentThread().getContextClassLoader();
         FirstChildOnBasePackageClassLoader childLoader = new FirstChildOnBasePackageClassLoader(((URLClassLoader)parentCL).getURLs(), parentCL, "");
 
-        String canonicalName = BeanIdentifierTest.class.getCanonicalName();
+        String canonicalName = TestClassIn.class.getCanonicalName();
         Class<?> parentClass = parentCL.loadClass(canonicalName);
         Class<?> childClass = childLoader.loadClass(canonicalName);
 
@@ -32,9 +31,9 @@ class FirstChildOnBasePackageClassLoaderTest {
     @Test
     void loadClassInAndOutOfBasePackage() throws ClassNotFoundException {
         ClassLoader parentCL = Thread.currentThread().getContextClassLoader();
-        FirstChildOnBasePackageClassLoader childLoader = new FirstChildOnBasePackageClassLoader(((URLClassLoader)parentCL).getURLs(), parentCL, "com.woowahan.framework.context.beanInOfBasePackage");
+        FirstChildOnBasePackageClassLoader childLoader = new FirstChildOnBasePackageClassLoader(((URLClassLoader)parentCL).getURLs(), parentCL, "com.woowahan.util.classloader.inBasePackage");
 
-        String canonicalName = ControllerOutOfPackageTest.class.getCanonicalName();
+        String canonicalName = TestClassOut.class.getCanonicalName();
         Class<?> parentClass = parentCL.loadClass(canonicalName);
         Class<?> childClass = childLoader.loadClass(canonicalName);
 
@@ -43,7 +42,7 @@ class FirstChildOnBasePackageClassLoaderTest {
         assertEquals(parentClass, childClass);
 
 
-        canonicalName = ControllerInOfBasePackageTest.class.getCanonicalName();
+        canonicalName = TestClassIn.class.getCanonicalName();
         parentClass = parentCL.loadClass(canonicalName);
         childClass = childLoader.loadClass(canonicalName);
 
