@@ -16,11 +16,11 @@ class BeanDefinitionGeneratorTest {
 
     @Test
     void get() throws BeanDefinitionNotGeneratedException {
-        BeanDefinitionGenerator generator = new BeanDefinitionGenerator((URLClassLoader) Thread.currentThread().getContextClassLoader(), "com.woowahan.framework.context.beanInOfBasePackage");
-        assertTrue(generator.get().contains(new BeanDefinition("com.woowahan.framework.context.beanInOfBasePackage.ConfigurationTest", null, null)));
-        assertTrue(generator.get().contains(new BeanDefinition("com.woowahan.framework.context.beanInOfBasePackage.ControllerInOfBasePackageTest", null, null)));
-        assertTrue(generator.get().contains(new BeanDefinition("com.woowahan.framework.context.beanInOfBasePackage.ServiceTest", null, null)));
-        assertFalse(generator.get().contains(new BeanDefinition("com.woowahan.framework.context.beanOutOfBasePackage.ControllerOutOfPackageTest", null, null)));
+        BeanDefinitionHolder holder = new BeanDefinitionHolder((URLClassLoader) Thread.currentThread().getContextClassLoader(), "com.woowahan.framework.context.beanInOfBasePackage");
+        assertTrue(holder.get().contains(new BeanDefinition("com.woowahan.framework.context.beanInOfBasePackage.ConfigurationTest", null, null)));
+        assertTrue(holder.get().contains(new BeanDefinition("com.woowahan.framework.context.beanInOfBasePackage.ControllerInOfBasePackageTest", null, null)));
+        assertTrue(holder.get().contains(new BeanDefinition("com.woowahan.framework.context.beanInOfBasePackage.ServiceTest", null, null)));
+        assertFalse(holder.get().contains(new BeanDefinition("com.woowahan.framework.context.beanOutOfBasePackage.ControllerOutOfPackageTest", null, null)));
 
     }
 }

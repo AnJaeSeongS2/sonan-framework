@@ -3,9 +3,12 @@ package com.woowahan.framework.context.bean;
 import com.woowahan.framework.context.annotation.BeanRegistrable;
 import com.woowahan.framework.context.annotation.Configuration;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotGeneratedException;
+import com.woowahan.logback.support.Markers;
 import com.woowahan.util.annotation.Nullable;
 import com.woowahan.util.classloader.FirstChildOnBasePackageClassLoader;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -20,7 +23,8 @@ import java.util.Set;
  * Created by Jaeseong on 2021/04/04
  * Git Hub : https://github.com/AnJaeSeongS2
  */
-public class BeanDefinitionGenerator {
+public class BeanDefinitionHolder {
+    private static final Logger logger = LoggerFactory.getLogger(BeanDefinitionHolder.class);
 
     /**
      * parent > beanMetaClassLoader 관계.
@@ -32,7 +36,9 @@ public class BeanDefinitionGenerator {
 
     private final Set<BeanDefinition> beanDefinitionSet;
 
-    public BeanDefinitionGenerator(@Nullable URLClassLoader parentCL, @Nullable String basePackage) throws BeanDefinitionNotGeneratedException {
+    public BeanDefinitionHolder(@Nullable URLClassLoader parentCL, @Nullable String basePackage) throws BeanDefinitionNotGeneratedException {
+        if (logger.isDebugEnabled())
+            logger.debug(Markers.LIFE_CYCLE.get(), "Start create BeanDefinitionHolder");
         if (basePackage == null) {
             this.basePackage = "";
         } else {
@@ -60,11 +66,16 @@ public class BeanDefinitionGenerator {
             }
 
             for (Class<?> clazz: beanRegistrableClasses) {
-                beanDefinitionSet.add(genBeanDefinition(clazz));
+                BeanDefinition definition = genBeanDefinition(clazz);
+                beanDefinitionSet.add(definition);
+                if (logger.isDebugEnabled())
+                    logger.debug(Markers.LIFE_CYCLE.get(), "Created BeanDefinition " + definition.toString());
             }
         } catch (Exception e) {
             throw new BeanDefinitionNotGeneratedException(e);
         }
+        if (logger.isDebugEnabled())
+            logger.debug(Markers.LIFE_CYCLE.get(), "Created BeanDefinitionHolder.");
     }
 
     public Set<BeanDefinition> get() throws BeanDefinitionNotGeneratedException {

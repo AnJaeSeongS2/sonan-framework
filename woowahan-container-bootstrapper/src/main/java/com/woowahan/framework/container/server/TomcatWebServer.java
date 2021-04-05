@@ -36,12 +36,14 @@ public class TomcatWebServer {
     }
 
     public void start() {
-        logger.info("Tomcat started on port(s): " + tomcat.getConnector().getPort());
+        if (logger.isInfoEnabled())
+            logger.info("Tomcat started on port(s): " + tomcat.getConnector().getPort());
     }
 
     public void stop()  {
         try {
-            logger.info("Tomcat stopped on port(s): " + tomcat.getConnector().getPort());
+            if (logger.isInfoEnabled())
+                logger.info("Tomcat stopped on port(s): " + tomcat.getConnector().getPort());
             this.tomcat.stop();
             this.tomcat.destroy();
         } catch (LifecycleException ex) {

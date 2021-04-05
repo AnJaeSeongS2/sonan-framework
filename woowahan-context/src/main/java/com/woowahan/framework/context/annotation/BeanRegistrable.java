@@ -94,6 +94,6 @@ public enum BeanRegistrable {
     }
 
     private static Object getValueFromAnnotation(Annotation annotation) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        return Util.invokeMethodAnyway(annotation, "value");
+        return Util.invokeMethod(annotation, "value");
     }
 }

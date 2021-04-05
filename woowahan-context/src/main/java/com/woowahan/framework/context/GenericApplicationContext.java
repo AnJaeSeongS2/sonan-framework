@@ -51,7 +51,8 @@ public class GenericApplicationContext<T> extends ApplicationContext {
      * @param getterRootApplicationContext contextHolder로부터 ApplicationContext를 추출하는 Function
      */
     public GenericApplicationContext(@Nullable ApplicationContext parent, T contextHolder, Function<T, ApplicationContext> getterRootApplicationContext) {
-        logger.trace(Markers.LIFE_CYCLE.get(), "try init GenericApplicationContext...");
+        if (logger.isTraceEnabled())
+            logger.trace(Markers.LIFE_CYCLE.get(), "try init GenericApplicationContext...");
         this.parent = parent;
         this.contextHolder = contextHolder;
         this.getterRootApplicationContext = getterRootApplicationContext;
@@ -61,12 +62,14 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         this.singletonBeans = new ConcurrentHashMap<BeanIdentifier, Object>();
 
         this.beanClassLoader = Thread.currentThread().getContextClassLoader();
-        logger.info(Markers.LIFE_CYCLE.get(), "success init GenericApplicationContext as " + this);
+        if (logger.isDebugEnabled())
+            logger.debug(Markers.LIFE_CYCLE.get(), "success init GenericApplicationContext as " + this);
     }
 
     @Override
     public Object getBean(BeanIdentifier id) throws BeanNotFoundException {
-        logger.trace(Markers.LIFE_CYCLE.get(), "try getBean...");
+        if (logger.isTraceEnabled())
+            logger.trace(Markers.LIFE_CYCLE.get(), "try getBean...");
         Object bean;
         if (beanIdToDef.containsKey(id)) {
             // id에 해당하는 definition이 등록돼있는 케이스.
@@ -82,7 +85,8 @@ public class GenericApplicationContext<T> extends ApplicationContext {
             }
             bean = getParent().getBean(id);
         }
-        logger.trace(Markers.LIFE_CYCLE.get(), "success getBean as " + bean);
+        if (logger.isTraceEnabled())
+            logger.trace(Markers.LIFE_CYCLE.get(), "success getBean as " + bean);
         return bean;
     }
 
@@ -94,7 +98,8 @@ public class GenericApplicationContext<T> extends ApplicationContext {
 
         beanDefs.add(definition);
         beanIdToDef.put(definition.getId(), definition);
-        logger.trace(Markers.LIFE_CYCLE.get(), "finish register BeanDefinition as " + definition);
+        if (logger.isTraceEnabled())
+            logger.trace(Markers.LIFE_CYCLE.get(), "finish register BeanDefinition as " + definition);
     }
 
     /**
@@ -118,9 +123,11 @@ public class GenericApplicationContext<T> extends ApplicationContext {
     }
 
     private Object createBean(BeanDefinition definition) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        logger.trace(Markers.LIFE_CYCLE.get(), "try createBean...");
+        if (logger.isTraceEnabled())
+            logger.trace(Markers.LIFE_CYCLE.get(), "try createBean...");
         Object bean = this.beanClassLoader.loadClass(definition.getBeanClassCanonicalName()).newInstance();
-        logger.trace(Markers.LIFE_CYCLE.get(), "success createBean as " + bean);
+        if (logger.isTraceEnabled())
+            logger.trace(Markers.LIFE_CYCLE.get(), "success createBean as " + bean);
         return bean;
     }
 
