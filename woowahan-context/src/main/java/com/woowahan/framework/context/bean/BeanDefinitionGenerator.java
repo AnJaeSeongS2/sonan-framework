@@ -1,6 +1,5 @@
 package com.woowahan.framework.context.bean;
 
-import com.woowahan.framework.context.annotation.Bean;
 import com.woowahan.framework.context.annotation.BeanRegistrable;
 import com.woowahan.framework.context.annotation.Configuration;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotGeneratedException;
@@ -10,7 +9,6 @@ import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
-import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.util.HashSet;
 import java.util.Set;
@@ -92,19 +90,19 @@ public class BeanDefinitionGenerator {
         }
     }
 
-    private void setBeanClassesAboutBeanAnnotationOnConfiguration(Set<Class<?>> configurations, Class<? extends Annotation> configurationAnnotationType) {
-        if (Configuration.class.getCanonicalName().equals(configurationAnnotationType.getCanonicalName())) {
-            // check @Bean annotation on custom Method in Class Type.
-            configurations.forEach((clazz) -> {
-                for (Method declaredMethod : clazz.getDeclaredMethods()) {
-                    for (Annotation declaredAnnotation : declaredMethod.getDeclaredAnnotations()) {
-                        if (Bean.class.getCanonicalName().equals(declaredAnnotation.annotationType().getCanonicalName())) {
-
-                            // TODO @Bean으로 등록될 Method도 Bean으로써 등록되게 기능 구현.
-                        }
-                    }
-                }
-            });
-        }
-    }
+//    private void setBeanClassesAboutBeanAnnotationOnConfiguration(Set<Class<?>> configurations, Class<? extends Annotation> configurationAnnotationType) {
+//        if (Configuration.class.getCanonicalName().equals(configurationAnnotationType.getCanonicalName())) {
+//            // check @Bean annotation on custom Method in Class Type.
+//            configurations.forEach((clazz) -> {
+//                for (Method declaredMethod : clazz.getDeclaredMethods()) {
+//                    for (Annotation declaredAnnotation : declaredMethod.getDeclaredAnnotations()) {
+//                        if (Bean.class.getCanonicalName().equals(declaredAnnotation.annotationType().getCanonicalName())) {
+//
+//                            // TODO @Bean으로 등록될 Method도 Bean으로써 등록되게 기능 구현.
+//                        }
+//                    }
+//                }
+//            });
+//        }
+//    }
 }
