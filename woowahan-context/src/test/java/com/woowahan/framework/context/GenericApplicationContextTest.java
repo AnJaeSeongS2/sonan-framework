@@ -88,7 +88,7 @@ class GenericApplicationContextTest {
         BeanDefinition definition = new BeanDefinition("java.lang.RuntimeException", null, Scope.SINGLETON);
         assertDoesNotThrow(() -> rootApplicationContext.register(definition));
 
-        assertNotNull(Util.invokeMethod(rootApplicationContext, "createBean", new Class<?>[]{BeanDefinition.class}, definition));
+        assertNotNull(Util.invokeMethodAnyway(rootApplicationContext, "createBean", new Class<?>[]{BeanDefinition.class}, definition));
     }
 
     @Test
