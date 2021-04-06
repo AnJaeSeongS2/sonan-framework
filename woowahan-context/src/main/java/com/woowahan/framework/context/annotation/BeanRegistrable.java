@@ -1,7 +1,7 @@
 package com.woowahan.framework.context.annotation;
 
 import com.woowahan.framework.context.bean.throwable.BeanException;
-import com.woowahan.util.reflect.UtilMethod;
+import com.woowahan.util.reflect.ReflectionUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -94,6 +94,6 @@ public enum BeanRegistrable {
     }
 
     private static Object getValueFromAnnotation(Annotation annotation) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        return UtilMethod.invokeMethod(annotation, "value");
+        return ReflectionUtil.invokeMethod(annotation, "value");
     }
 }
