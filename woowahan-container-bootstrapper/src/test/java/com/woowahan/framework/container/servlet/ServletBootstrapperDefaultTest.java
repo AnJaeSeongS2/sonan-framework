@@ -6,7 +6,8 @@ import com.woowahan.framework.context.bean.BeanDefinitionHolder;
 import com.woowahan.framework.context.bean.BeanIdentifier;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotGeneratedException;
 import com.woowahan.framework.context.bean.throwable.BeanNotFoundException;
-import com.woowahan.util.reflect.Util;
+import com.woowahan.util.reflect.UtilField;
+import com.woowahan.util.reflect.UtilMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,12 +62,12 @@ class ServletBootstrapperDefaultTest {
     @Test
     void selfInitialize() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
         ServletBootstrapperDefault bootstrapper = new ServletBootstrapperDefault();
-        Util.invokeMethodAnyway(bootstrapper, "initBeanDefinitionHolder", new Class<?>[]{URLClassLoader.class, String.class}, (URLClassLoader) Thread.currentThread().getContextClassLoader(), "com.woowahan.framework.container.servlet.beanInOfBasePackage");
-        Util.setFieldAnyway(bootstrapper, "rootAppCtx", rootApplicationContext);
+        UtilMethod.invokeMethodAnyway(bootstrapper, "initBeanDefinitionHolder", new Class<?>[]{URLClassLoader.class, String.class}, (URLClassLoader) Thread.currentThread().getContextClassLoader(), "com.woowahan.framework.container.servlet.beanInOfBasePackage");
+        UtilField.setFieldAnyway(bootstrapper, "rootAppCtx", rootApplicationContext);
 
         // test target
-        Util.invokeMethodAnyway(bootstrapper, "selfInitialize", new Class<?>[]{ServletContext.class}, servletContext);
-        GenericApplicationContext<ServletContext> rootAppCtx = (GenericApplicationContext<ServletContext>) Util.getFieldAnyway(bootstrapper, "rootAppCtx");
+        UtilMethod.invokeMethodAnyway(bootstrapper, "selfInitialize", new Class<?>[]{ServletContext.class}, servletContext);
+        GenericApplicationContext<ServletContext> rootAppCtx = (GenericApplicationContext<ServletContext>) UtilField.getFieldAnyway(bootstrapper, "rootAppCtx");
         assertDoesNotThrow(() -> rootAppCtx.getBean(new BeanIdentifier("com.woowahan.framework.container.servlet.beanInOfBasePackage.ControllerInOfBasePackageTest", null)));
         assertThrows(BeanNotFoundException.class,() -> rootAppCtx.getBean(new BeanIdentifier("com.woowahan.framework.container.servlet.beanOutOfBasePackage.ControllerOutOfBasePackageTest", null)));
     }

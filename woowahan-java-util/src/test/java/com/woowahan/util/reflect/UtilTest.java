@@ -15,128 +15,68 @@ import static org.junit.jupiter.api.Assertions.*;
 class UtilTest {
 
     @Test
-    public void invokeMethod() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        Parent parent = new Parent();
-        Child child = new Child();
-        assertEquals("a", Util.invokeMethod(parent, "getA"));
-        assertThrows(NoSuchMethodException.class, () -> Util.invokeMethod(parent, "getC"));
-        assertEquals("a", Util.invokeMethod(child, "getA"));
-        assertEquals("c", Util.invokeMethod(child, "getC"));
-
-        assertThrows(NoSuchMethodException.class, () -> Util.invokeMethod(parent, "getB"));
-        assertThrows(NoSuchMethodException.class, () -> Util.invokeMethod(child, "getB"));
-    }
-
-    @Test
-    public void invokeMethodAnyway() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        TestClass obj = new TestClass();
-        assertEquals("successMethod", Util.invokeMethodAnyway(obj, "method"));
-        assertThrows(NoSuchMethodException.class, () -> Util.invokeMethodAnyway(obj, "method", new Class<?>[]{String.class, String.class}, "a", "b"));
-        assertEquals("successMethodab", Util.invokeMethodAnyway(obj, "methodManyParams", new Class<?>[]{String.class, String.class}, "a", "b"));
-        assertEquals("sucessMethodOnAnnotation", Util.invokeMethodAnyway(AnnotationOnClass.class.getDeclaredAnnotations()[0], "method"));
-
-        Parent parent = new Parent();
-        Child child = new Child();
-        assertEquals("a", Util.invokeMethodAnyway(parent, "getA"));
-        assertThrows(NoSuchMethodException.class, () -> Util.invokeMethodAnyway(parent, "getC"));
-        assertEquals("a", Util.invokeMethodAnyway(child, "getA"));
-        assertEquals("c", Util.invokeMethodAnyway(child, "getC"));
-
-        assertEquals("b", Util.invokeMethodAnyway(parent, "getB"));
-        assertEquals("b", Util.invokeMethodAnyway(child, "getB"));
-    }
-
-    @Test
-    public void invokeStaticMethod() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        assertEquals("a", Util.invokeStaticMethod(Parent.class, "genA"));
-        assertThrows(NoSuchMethodException.class, () -> Util.invokeStaticMethod(Parent.class, "genC"));
-        assertEquals("a", Util.invokeStaticMethod(Child.class, "genA"));
-        assertEquals("c", Util.invokeStaticMethod(Child.class, "genC"));
-
-        assertThrows(NoSuchMethodException.class, () -> Util.invokeStaticMethod(Parent.class, "genB"));
-        assertThrows(NoSuchMethodException.class, () -> Util.invokeStaticMethod(Child.class, "genB"));
-    }
-
-    @Test
-    public void invokeStaticMethodAnyway() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        assertEquals("a", Util.invokeStaticMethodAnyway(Parent.class, "genA"));
-        assertThrows(NoSuchMethodException.class, () -> Util.invokeStaticMethodAnyway(Parent.class, "genC"));
-        assertEquals("a", Util.invokeStaticMethodAnyway(Child.class, "genA"));
-        assertEquals("c", Util.invokeStaticMethodAnyway(Child.class, "genC"));
-
-        assertEquals("b", Util.invokeStaticMethodAnyway(Parent.class, "genB"));
-        assertEquals("b", Util.invokeStaticMethodAnyway(Child.class, "genB"));
-    }
-
-    @Test
     public void getField() throws IllegalAccessException, NoSuchFieldException {
         Parent parent = new Parent();
         Child child = new Child();
-        assertEquals("a", Util.getField(parent, "a"));
-        assertEquals("a", Util.getField(child, "a"));
-        assertEquals("c", Util.getField(child, "c"));
-        assertThrows(NoSuchFieldException.class, () -> Util.getField(parent, "c"));
-        assertThrows(NoSuchFieldException.class, () -> Util.getField(parent, "b"));
-        assertThrows(NoSuchFieldException.class, () -> Util.getField(child, "b"));
+        assertEquals("a", UtilField.getField(parent, "a"));
+        assertEquals("a", UtilField.getField(child, "a"));
+        assertEquals("c", UtilField.getField(child, "c"));
+        assertThrows(NoSuchFieldException.class, () -> UtilField.getField(parent, "c"));
+        assertThrows(NoSuchFieldException.class, () -> UtilField.getField(parent, "b"));
+        assertThrows(NoSuchFieldException.class, () -> UtilField.getField(child, "b"));
     }
 
     @Test
     public void getFieldAnyway() throws IllegalAccessException, NoSuchFieldException {
         Parent parent = new Parent();
         Child child = new Child();
-        assertEquals("a", Util.getFieldAnyway(parent, "a"));
-        assertEquals("a", Util.getFieldAnyway(child, "a"));
-        assertEquals("c", Util.getFieldAnyway(child, "c"));
-        assertEquals("d", Util.getFieldAnyway(child, "d"));
-        assertEquals("b", Util.getFieldAnyway(child, "b"));
-        assertThrows(NoSuchFieldException.class, () -> assertEquals("c", Util.getFieldAnyway(parent, "c")));
+        assertEquals("a", UtilField.getFieldAnyway(parent, "a"));
+        assertEquals("a", UtilField.getFieldAnyway(child, "a"));
+        assertEquals("c", UtilField.getFieldAnyway(child, "c"));
+        assertEquals("d", UtilField.getFieldAnyway(child, "d"));
+        assertEquals("b", UtilField.getFieldAnyway(child, "b"));
+        assertThrows(NoSuchFieldException.class, () -> assertEquals("c", UtilField.getFieldAnyway(parent, "c")));
     }
 
     @Test
     public void setField() throws IllegalAccessException, NoSuchFieldException {
         Parent parent = new Parent();
         Child child = new Child();
-        Util.setField(parent, "a", "aa");
-        Util.setField(child, "a", "aa");
-        Util.setField(child, "c", "cc");
-        assertThrows(NoSuchFieldException.class, () -> Util.setField(parent, "c", "cc"));
-        assertThrows(NoSuchFieldException.class, () -> Util.setField(parent, "b", "bb"));
-        assertThrows(NoSuchFieldException.class, () -> Util.setField(child, "b", "bb"));
+        UtilField.setField(parent, "a", "aa");
+        UtilField.setField(child, "a", "aa");
+        UtilField.setField(child, "c", "cc");
+        assertThrows(NoSuchFieldException.class, () -> UtilField.setField(parent, "c", "cc"));
+        assertThrows(NoSuchFieldException.class, () -> UtilField.setField(parent, "b", "bb"));
+        assertThrows(NoSuchFieldException.class, () -> UtilField.setField(child, "b", "bb"));
 
-        assertEquals("aa", Util.getField(parent, "a"));
-        assertEquals("aa", Util.getField(child, "a"));
-        assertEquals("cc", Util.getField(child, "c"));
+        assertEquals("aa", UtilField.getField(parent, "a"));
+        assertEquals("aa", UtilField.getField(child, "a"));
+        assertEquals("cc", UtilField.getField(child, "c"));
     }
 
     @Test
     public void setFieldAnyway() throws IllegalAccessException, NoSuchFieldException {
         Parent parent = new Parent();
         Child child = new Child();
-        Util.setFieldAnyway(parent, "a", "aa");
-        Util.setFieldAnyway(child, "a", "aa");
-        Util.setFieldAnyway(child, "c", "cc");
-        Util.setFieldAnyway(child, "d", "dd");
-        Util.setFieldAnyway(child, "b", "bb");
-        assertThrows(NoSuchFieldException.class, () -> Util.setFieldAnyway(parent, "c", "cc"));
+        UtilField.setFieldAnyway(parent, "a", "aa");
+        UtilField.setFieldAnyway(child, "a", "aa");
+        UtilField.setFieldAnyway(child, "c", "cc");
+        UtilField.setFieldAnyway(child, "d", "dd");
+        UtilField.setFieldAnyway(child, "b", "bb");
+        assertThrows(NoSuchFieldException.class, () -> UtilField.setFieldAnyway(parent, "c", "cc"));
 
 
-        assertEquals("aa", Util.getFieldAnyway(parent, "a"));
-        assertEquals("aa", Util.getFieldAnyway(child, "a"));
-        assertEquals("cc", Util.getFieldAnyway(child, "c"));
-        assertEquals("dd", Util.getFieldAnyway(child, "d"));
-        assertEquals("bb", Util.getFieldAnyway(child, "b"));
+        assertEquals("aa", UtilField.getFieldAnyway(parent, "a"));
+        assertEquals("aa", UtilField.getFieldAnyway(child, "a"));
+        assertEquals("cc", UtilField.getFieldAnyway(child, "c"));
+        assertEquals("dd", UtilField.getFieldAnyway(child, "d"));
+        assertEquals("bb", UtilField.getFieldAnyway(child, "b"));
     }
 
     @Test
     void findFieldAnyway() throws NoSuchFieldException {
-        assertEquals(Child.class, Util.findFieldAnyway(Child.class, (field) -> field.getName().equals("d")).getDeclaringClass());
-        assertEquals(Parent.class, Util.findFieldAnyway(Child.class, (field) -> field.getName().equals("b")).getDeclaringClass());
-    }
-
-    @Test
-    void findMethodAnyway() throws NoSuchMethodException {
-        assertEquals("getD", Util.findMethodAnyway(Child.class, (method) -> method.getName().equals("getD")).getName());
-        assertEquals("genB", Util.findMethodAnyway(Child.class, (method) -> method.getName().equals("genB")).getName());
+        assertEquals(Child.class, UtilField.findFieldAnyway(Child.class, (field) -> field.getName().equals("d")).getDeclaringClass());
+        assertEquals(Parent.class, UtilField.findFieldAnyway(Child.class, (field) -> field.getName().equals("b")).getDeclaringClass());
     }
 }
 

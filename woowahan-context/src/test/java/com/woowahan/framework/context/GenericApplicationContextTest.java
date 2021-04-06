@@ -5,7 +5,7 @@ import com.woowahan.framework.context.bean.BeanIdentifier;
 import com.woowahan.framework.context.bean.Scope;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotRegisteredException;
 import com.woowahan.framework.context.bean.throwable.BeanNotFoundException;
-import com.woowahan.util.reflect.Util;
+import com.woowahan.util.reflect.UtilMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -88,7 +88,7 @@ class GenericApplicationContextTest {
         BeanDefinition definition = new BeanDefinition("java.lang.RuntimeException", null, Scope.SINGLETON);
         assertDoesNotThrow(() -> rootApplicationContext.register(definition));
 
-        assertNotNull(Util.invokeMethodAnyway(rootApplicationContext, "createBean", new Class<?>[]{BeanDefinition.class}, definition));
+        assertNotNull(UtilMethod.invokeMethodAnyway(rootApplicationContext, "createBean", new Class<?>[]{BeanDefinition.class}, definition));
     }
 
     @Test
