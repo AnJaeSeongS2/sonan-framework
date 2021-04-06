@@ -29,49 +29,68 @@ public class ReflectionUtil {
     }
 
     /**
-     * weakness to multithread programming.
+     * weakness to capsulization, multithread programming
      * so, jdk 1.9 deprecated about setAccessible(boolean).
-     * but, this method exists for Test logics.
+     *
      * @param target
      * @param fieldName
      * @param fieldObject
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
      */
-    public static synchronized void setFieldAnyway(Object target, String fieldName, Object fieldObject) throws NoSuchFieldException, IllegalAccessException {
+    public static void setFieldAnyway(Object target, String fieldName, Object fieldObject) throws NoSuchFieldException, IllegalAccessException {
         Field field;
         try {
             field = getFieldMetaAnyway(target.getClass(), (innerField) -> innerField.getName().equals(fieldName));
         } catch (NoSuchFieldException e) {
             throw new NoSuchFieldException(String.format("%s, fieldName : %s", e.getMessage(), fieldName));
         }
-        boolean savedAccessible = field.isAccessible();
-        field.setAccessible(true);
-        field.set(target, fieldObject);
-        field.setAccessible(savedAccessible);
+
+        synchronized (field) {
+            boolean savedAccessible = field.isAccessible();
+            field.setAccessible(true);
+            field.set(target, fieldObject);
+            field.setAccessible(savedAccessible);
+        }
     }
 
     /**
-     * weakness to multithread programming.
+     * weakness to capsulization, multithread programming
      * so, jdk 1.9 deprecated about setAccessible(boolean).
-     * but, this method exists for Test logics.
+     *
      * @param target
      * @param fieldName
      * @return
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
      */
-    public static synchronized Object getFieldAnyway(Object target, String fieldName) throws NoSuchFieldException, IllegalAccessException {
-        Field field;
+    public static Object getFieldAnyway(Object target, String fieldName) throws NoSuchFieldException, IllegalAccessException {
         try {
-            field = getFieldMetaAnyway(target.getClass(), (innerField) -> innerField.getName().equals(fieldName));
+            return getFieldAnyway(target, (innerField) -> innerField.getName().equals(fieldName));
         } catch (NoSuchFieldException e) {
             throw new NoSuchFieldException(String.format("%s, fieldName : %s", e.getMessage(), fieldName));
         }
-        boolean savedAccessible = field.isAccessible();
-        field.setAccessible(true);
-        Object result = field.get(target);
-        field.setAccessible(savedAccessible);
+    }
+
+    /**
+     * weakness to capsulization, multithread programming
+     * so, jdk 1.9 deprecated about setAccessible(boolean).
+     *
+     * @param target
+     * @return filterForFindFirst
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
+    public static Object getFieldAnyway(Object target, Predicate<Field> filterForFindFirst) throws NoSuchFieldException, IllegalAccessException {
+        Field field = getFieldMetaAnyway(target.getClass(), filterForFindFirst);
+
+        Object result;
+        synchronized (field) {
+            boolean savedAccessible = field.isAccessible();
+            field.setAccessible(true);
+            result = field.get(target);
+            field.setAccessible(savedAccessible);
+        }
         return result;
     }
 
@@ -121,9 +140,9 @@ public class ReflectionUtil {
     }
 
     /**
-     * weakness to multithread programming.
+     * weakness to capsulization, multithread programming.
      * so, jdk 1.9 deprecated about setAccessible(boolean).
-     * but, this method exists for Test logics.
+     *
      * @param target
      * @param methodName
      * @return
@@ -131,14 +150,14 @@ public class ReflectionUtil {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public static synchronized Object invokeMethodAnyway(Object target, String methodName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static Object invokeMethodAnyway(Object target, String methodName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         return invokeMethodAnyway(target, methodName, new Class[0], new Object[0]);
     }
 
     /**
-     * weakness to multithread programming.
+     * weakness to capsulization, multithread programming.
      * so, jdk 1.9 deprecated about setAccessible(boolean).
-     * but, this method exists for Test logics.
+     *
      * @param target
      * @param methodName
      * @param methodParamTypes
@@ -148,25 +167,46 @@ public class ReflectionUtil {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public static synchronized Object invokeMethodAnyway(Object target, String methodName, Class<?>[] methodParamTypes, Object... argsForInvoke) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static Object invokeMethodAnyway(Object target, String methodName, Class<?>[] methodParamTypes, Object... argsForInvoke) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        return invokeMethodAnyway(target, (innerMethod) -> {
+            if (innerMethod.getName().equals(methodName) && Arrays.equals(methodParamTypes, innerMethod.getParameterTypes())) {
+                if (!Modifier.isStatic(innerMethod.getModifiers())) {
+                    return true;
+                }
+                throw new NoSuchMethodRuntimeException(String.format("method : [%s] is not found at target : [%s]", methodName, target.getClass()));
+            }
+            return false;
+        }, methodParamTypes, argsForInvoke);
+    }
+
+    /**
+     * weakness to capsulization, multithread programming.
+     * so, jdk 1.9 deprecated about setAccessible(boolean).
+     *
+     * @param target
+     * @param filterForFindFirst
+     * @param methodParamTypes
+     * @param argsForInvoke
+     * @return
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     */
+    public static Object invokeMethodAnyway(Object target, Predicate<Method> filterForFindFirst, Class<?>[] methodParamTypes, Object... argsForInvoke) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Method method;
         try {
-            method = getMethodMetaAnyway(target.getClass(), (innerMethod) -> {
-                if (innerMethod.getName().equals(methodName) && Arrays.equals(methodParamTypes, innerMethod.getParameterTypes())) {
-                    if (!Modifier.isStatic(innerMethod.getModifiers())) {
-                        return true;
-                    }
-                    throw new NoSuchMethodRuntimeException(String.format("method [%s] is not found at [%s]", methodName, target.getClass()));
-                }
-                return false;
-            });
+            method = getMethodMetaAnyway(target.getClass(), filterForFindFirst);
         } catch (NoSuchMethodException e) {
-            throw new NoSuchMethodException(String.format("%s, methodName : %s, methodParamTypes : %s", e.getMessage(), methodName, methodParamTypes));
+            throw new NoSuchMethodException(String.format("%s, methodName : %s, methodParamTypes : %s", e.getMessage(), filterForFindFirst, methodParamTypes));
         }
-        boolean savedAccessible = method.isAccessible();
-        method.setAccessible(true);
-        Object result = method.invoke(target, argsForInvoke);
-        method.setAccessible(savedAccessible);
+
+        Object result;
+        synchronized (method) {
+            boolean savedAccessible = method.isAccessible();
+            method.setAccessible(true);
+            result = method.invoke(target, argsForInvoke);
+            method.setAccessible(savedAccessible);
+        }
         return result;
     }
 
@@ -179,9 +219,9 @@ public class ReflectionUtil {
     }
 
     /**
-     * weakness to multithread programming.
+     * weakness to capsulization, multithread programming.
      * so, jdk 1.9 deprecated about setAccessible(boolean).
-     * but, this method exists for Test logics.
+     *
      * @param target
      * @param methodName
      * @return
@@ -189,14 +229,14 @@ public class ReflectionUtil {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public static synchronized Object invokeStaticMethodAnyway(Class<?> target, String methodName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static Object invokeStaticMethodAnyway(Class<?> target, String methodName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         return invokeStaticMethodAnyway(target, methodName, new Class[0], new Object[0]);
     }
 
     /**
-     * weakness to multithread programming.
+     * weakness to capsulization, multithread programming.
      * so, jdk 1.9 deprecated about setAccessible(boolean).
-     * but, this method exists for Test logics.
+     *
      * @param target
      * @param methodName
      * @param methodParamTypes
@@ -206,25 +246,46 @@ public class ReflectionUtil {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public static synchronized Object invokeStaticMethodAnyway(Class<?> target, String methodName, Class<?>[] methodParamTypes, Object... argsForInvoke) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static Object invokeStaticMethodAnyway(Class<?> target, String methodName, Class<?>[] methodParamTypes, Object... argsForInvoke) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        return invokeStaticMethodAnyway(target, (innerMethod) -> {
+            if (innerMethod.getName().equals(methodName) && Arrays.equals(methodParamTypes, innerMethod.getParameterTypes())) {
+                if (Modifier.isStatic(innerMethod.getModifiers())) {
+                    return true;
+                }
+                throw new NoSuchMethodRuntimeException(String.format("static method : [%s] is not found at target : [%s].", methodName, target));
+            }
+            return false;
+        }, methodParamTypes, argsForInvoke);
+    }
+
+    /**
+     * weakness to capsulization, multithread programming.
+     * so, jdk 1.9 deprecated about setAccessible(boolean).
+     *
+     * @param target
+     * @param filterForFindFirst
+     * @param methodParamTypes
+     * @param argsForInvoke
+     * @return
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     */
+    public static Object invokeStaticMethodAnyway(Class<?> target, Predicate<Method> filterForFindFirst, Class<?>[] methodParamTypes, Object... argsForInvoke) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Method method;
         try {
-            method = getMethodMetaAnyway(target, (innerMethod) -> {
-                if (innerMethod.getName().equals(methodName) && Arrays.equals(methodParamTypes, innerMethod.getParameterTypes())) {
-                    if (Modifier.isStatic(innerMethod.getModifiers())) {
-                        return true;
-                    }
-                    throw new NoSuchMethodRuntimeException(String.format("static method [%s] is not found at [%s]", methodName, target));
-                }
-                return false;
-            });
+            method = getMethodMetaAnyway(target, filterForFindFirst);
         } catch (NoSuchMethodException e) {
-            throw new NoSuchMethodException(String.format("%s, methodName : %s, methodParamTypes : %s", e.getMessage(), methodName, methodParamTypes));
+            throw new NoSuchMethodException(String.format("%s, methodName : %s, methodParamTypes : %s", e.getMessage(), filterForFindFirst, methodParamTypes));
         }
-        boolean savedAccessible = method.isAccessible();
-        method.setAccessible(true);
-        Object result = method.invoke(null, argsForInvoke);
-        method.setAccessible(savedAccessible);
+
+        Object result;
+        synchronized (method) {
+            boolean savedAccessible = method.isAccessible();
+            method.setAccessible(true);
+            result = method.invoke(null, argsForInvoke);
+            method.setAccessible(savedAccessible);
+        }
         return result;
     }
 
@@ -268,23 +329,23 @@ public class ReflectionUtil {
     }
 
     /**
-     * weakness to multithread programming.
+     * weakness to capsulization, multithread programming.
      * so, jdk 1.9 deprecated about setAccessible(boolean).
-     * but, this method exists for Test logics.
+     *
      * @param target
      * @return
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public static synchronized Object newInstanceAnyway(Class<?> target) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+    public static Object newInstanceAnyway(Class<?> target) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
         return newInstanceAnyway(target, new Class[0], new Object[0]);
     }
 
     /**
-     * weakness to multithread programming.
+     * weakness to capsulization, multithread programming.
      * so, jdk 1.9 deprecated about setAccessible(boolean).
-     * but, this method exists for Test logics.
+     *
      * @param target
      * @param constructorParamTypes
      * @param argsForInvoke
@@ -293,7 +354,7 @@ public class ReflectionUtil {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public static synchronized Object newInstanceAnyway(Class<?> target, Class<?>[] constructorParamTypes, Object... argsForInvoke) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+    public static Object newInstanceAnyway(Class<?> target, Class<?>[] constructorParamTypes, Object... argsForInvoke) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
         Constructor ctor;
         try {
             ctor = getConstructorMetaAnyway(target, (innerConstructor) -> {
@@ -305,10 +366,14 @@ public class ReflectionUtil {
         } catch (NoSuchMethodException e) {
             throw new NoSuchMethodException(String.format("%s, constructorParamTypes : %s", e.getMessage(), constructorParamTypes));
         }
-        boolean savedAccessible = ctor.isAccessible();
-        ctor.setAccessible(true);
-        Object result = ctor.newInstance(argsForInvoke);
-        ctor.setAccessible(savedAccessible);
+
+        Object result;
+        synchronized (ctor) {
+            boolean savedAccessible = ctor.isAccessible();
+            ctor.setAccessible(true);
+            result = ctor.newInstance(argsForInvoke);
+            ctor.setAccessible(savedAccessible);
+        }
         return result;
     }
 
