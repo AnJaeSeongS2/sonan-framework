@@ -67,4 +67,5 @@
 | 58 |[java-util] reflection invokeMethod, getField, setField 관련 유틸 추가. 및 XXXXAnyway 버전의 method 들은 테스트에서만 사용하는 reflection임을 명시.<br />reflection util의 기능 분리. 및 autoWired기능에 쓸 것을 염두해두고 reflection기능 자체별로 별도 클래스에 제대로 구현할 것.<br />[reopen] constructor util 추가. Predicate기반 filter사용가능하게끔 추가. ReflectionUtil class로 다시 통합. | DONE | 100% | 04-05 | 04-05 | 5h |
 | 59 |[context] cloud 지원시, container가 warming-up 시간이 존재하는 것은 좋지 않다. singleton bean 들은 pre-initialize하자.<br />bean initialize to ApplicationContext -> bean's inner Injection 진행 -> injection을 위해 getBean이 진행됨 -> 필요에 따라 bean initialize가 연쇄될 수 있음. |  |  |  |  |  |
 | 60 |Model을 통해 Repository에 등록하는 매커니즘을 ID기반으로 진행되게끔 구현.<br />Model에게서 Id를 추출할 유틸 생성 | DONE | 100% | 04-05 | 04-05 | 1h |
+| 61 |**(!! 중요 )** 최종 jar파일의 경량화를 위해 Spring-core dependency 를 가진 woowahan-di-support를 사용하지 않는다.<br /><br />woowahan-di-support가 org.springframework:spring-core:5.1.9.RELEASE 를 dependency로 가지고있어서 Reflection처리를 support하려고 하고있으나, 이런 dependency를 가져서 jar가 무거워진다.<br />리플렉션 처리는 java-util module로 알아서 구현한다. | DONE | 100% | 04-05 | 04-05 | 다른 task에서 계산됨. |
 
