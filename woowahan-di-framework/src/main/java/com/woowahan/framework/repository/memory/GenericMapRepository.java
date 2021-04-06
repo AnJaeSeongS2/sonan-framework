@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GenericMapRepository<ElementClazz> {
     private Map<Object, ElementClazz> dataMap;
 
-    GenericMapRepository() {
+    public GenericMapRepository() {
         dataMap = new ConcurrentHashMap();
     }
 

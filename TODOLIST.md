@@ -47,8 +47,7 @@
 | 38 |DispatcherServlet구현시, HandlerMapping기반으로 dispatch되게끔 작성. | | | | | |
 | 39 |Bean이 Context에 저장되게끔 진행.<br />BeanDefinition, BeanDefinition 기반으로 getBean이 처리되는 것을 원함.<br />Singleton, prototype만 지원. (이 과제는 session엔 관심이 없다.) | DONE    |   100% |       03-30 | 04-01 | 2h |
 | 40 |bean Singleton 내부에 prototype일 경우, 항상 새 field값을 사용하게끔 옵션 제공.<br />singleton은 web-application-context상의 map으로 관리. prototype인 경우 그냥 생성해서 제공. 따로 관리안함. | | | | | |
-|      |                                                              | | | | | |
-| 42 |**(!오버스펙)** **context Hierarchy**<br />servlet-context에서 root-web-applicatoin-context, dispatcher's web-application-context를 구분하려면 아래를 참고.<br />https://codediver.tistory.com/147<br />https://jaehun2841.github.io/2018/10/21/2018-10-21-spring-context/#webxml-%EC%9D%B4%EB%9E%80<br />https://live-everyday.tistory.com/164 | WORKING | 100% | 03-30 | 04-01 | 3h |
+| 42 |**(!오버스펙)** **context Hierarchy**<br />servlet-context에서 root-web-applicatoin-context, dispatcher's web-application-context를 구분하려면 아래를 참고.<br />https://codediver.tistory.com/147<br />https://jaehun2841.github.io/2018/10/21/2018-10-21-spring-context/#webxml-%EC%9D%B4%EB%9E%80<br />https://live-everyday.tistory.com/164 | WORKING | 30% | 03-30 |  | 3h |
 | 43 |woowahan-java-util 추가. <br />NotNull, Nullable 가독성, 등을 위해 추가. | DONE | 100% | 03-31 | 03-31 | 30m |
 | 44 |Mockito 는 외부종속성이지만, test에만 사용하므로 요구사항 구현 제한에서 빠질 수 있다. 이를 활용해 ServletContext같은 것의 mocking처리를 한다. | WORKING | 60% | 03-31 | ~ | 30m |
 | 45 |1. BeanIdentifier : ClassName:BeanName<br />2. BeanDefinition : ClassName:BeanName:Scope<br />3. BeanDefinitionRegistry 구현체 추가. (ex: GenericApplicationContext)<br />bean에 대한 정보를 GenericApplicationContext에서 관리. | DONE | 100% | 03-31 | 04-01 | 3h |
@@ -68,4 +67,9 @@
 | 59 |[context] cloud 지원시, container가 warming-up 시간이 존재하는 것은 좋지 않다. singleton bean 들은 pre-initialize하자.<br />bean initialize to ApplicationContext -> bean's inner Injection 진행 -> injection을 위해 getBean이 진행됨 -> 필요에 따라 bean initialize가 연쇄될 수 있음. |  |  |  |  |  |
 | 60 |Model을 통해 Repository에 등록하는 매커니즘을 ID기반으로 진행되게끔 구현.<br />Model에게서 Id를 추출할 유틸 생성 | DONE | 100% | 04-05 | 04-05 | 1h |
 | 61 |**(!! 중요 )** 최종 jar파일의 경량화를 위해 Spring-core dependency 를 가진 woowahan-di-support를 사용하지 않는다.<br /><br />woowahan-di-support가 org.springframework:spring-core:5.1.9.RELEASE 를 dependency로 가지고있어서 Reflection처리를 support하려고 하고있으나, 이런 dependency를 가져서 jar가 무거워진다.<br />리플렉션 처리는 java-util module로 알아서 구현한다. | DONE | 100% | 04-05 | 04-05 | 다른 task에서 계산됨. |
+| 62 |framework를 사용하는 고객이 App을 작성할 때, Test코드를 적게 작성하도록 고려한 개발을 한다. <br /> 각종 기본 구현체, 각종 Annotation기반 구현을 지원한다. | WORKING | 50% | 04-04 |  |  |
+| 63 |Type 과 내부 method에 달려있는 @RequestMapping 의 value (path)에 대한 parsing util을 추가한다. |  |  |  |  |  |
+| 64 |Model <-> Jackson json을 이 가능하게끔 유틸화 | DONE | 100% | 04-06 | 04-06 | 다른 task에서 계산됨. |
+| 65 |**(부가기능)**framework 사용 고객 입장에서 jackson을 app코드에서 직접 사용해야하는 부분이 별로인 것 같다. jackson을 framework단에서만 들고있고 util method로 뺴주자.<br />json-support 라는 별도 모듈이 생겨야 하며, <br />TODO: json-support 모듈을 별도로 생성하고, 타 vendor 구현체를 사용하는 방식은 spi를 따른다. <br />TODO: default spi 구현체는 JacksonUtil일 것. <br />TODO: 고객은 app 작성시 vendor 상관없이 framework가 제공하는 annotation, util api만 call하게끔 할 것. | WORKING | 50% | 04-05 |  | 30m |
+| 66 |framework 사용 고객이, logging을 직접 app코드에 추가하고 싶지 않을 것이다. framework차원에서 알아서 비지니스 로직에서 logging 되게끔 작업한다. |  |  |  |  |  |
 
