@@ -36,7 +36,7 @@
 | 26 |**!(부차기능)**<br />transaction 처리 가 가능하게끔 확장 고려(Transaction - AOP - Bean) (bean입장에서는 transaction 처리가 될 것을 고려한 개발할 필요가 없다. 관심사가 나뉘어있음. Transaction moudle 측이 알아서 bean이 변화될 때 <<<< 처리를 추가로 하) | | | | | |
 | 27 |**!(부차기능)**<br />기본적인 aop 모듈은 필요할 듯. 공통 호출로직, 공통 비지니스 로직 상황별 로깅 관련 지원.<br />spring은 proxy기반 aop이므로, 기존 비지니스로직(target)은 proxy화 되고, proxy에서 상황별 advice로직과 본래 target 로직이 수행될 것이다. | | | | | |
 | 29 |**di module**<br />@Service, @Controller, @Configuration with @Bean, @Autowired, @Qulifier 필수 제공<br />미지원: @Lazy - MSA에서는 Lazy는 좋지 못하다. Readiness로 진입했을 때 최적의 성능을 보여주길 바람. | | | | | |
-| 30 |**!(부차기능)**<br />**repo module**<br />@Repository에 대응될 부분. 기본 vendor는 file or json형태에 대응쉬운 mongodb예정. | | | | | |
+| 30 |@Repository 에 대응될 web 측의 repository 기본 구현체가 필요하다.<br />지금 app 은 repository로 memory를 쓴다고 가정하고 진행한다.<br />memory vendor의 기본 구현체를 만든다. | DONE | 100% | 04-05 | 04-05 | 1h |
 | 31 |**mvc module**<br />Controller내에서 **@RequestMapping** 으로 class, method에 처리. **@RequestBody** 로 json input을 java Object로 자동전환.<br />**@ResponseBody**로 java Object output을 json output으로 자동전환 (Jackson이 사용됨)<br />**@PathVariable**로  @RequestMapping에서 전달된 url내의 variable을 로직에서 제공받음.<br />Controller에 대해:<br />이 제품은, api호출시, data만 반환하면 되므로 RestController같은 annotation만 지원하면 된다. 차후 확장기능으로 view resolver가 추가되면, Controller기능도 추가지원할 수 있을 것... | | | | | |
 | 32 |**!(부차기능)**<br />validation module**<br />유효성 검사 (di 책임은 아닌듯.) **@Valid, @InitBinder**<br />외부 origin에서의 접근 허용부분 처리**@CrossOrigin** | | | | | |
 | 33 |**!(부차기능)**<br />mvc (동기)건 webflux (비동기) 상관없이 component재사용을 고려해 개발. | | | | | |
@@ -66,4 +66,5 @@
 | 57 |[container-bootstrapper] ServletBootstrapperDefault가 booting하면서 servletContext를 이용해 제대로 BeanDefinition을 등록하게끔 구현 및 검증. | DONE | 100% | 04-05 | 04-05 | 2h |
 | 58 |[java-util] reflection invokeMethod, getField, setField 관련 유틸 추가. 및 XXXXAnyway 버전의 method 들은 테스트에서만 사용하는 reflection임을 명시.<br />reflection util의 기능 분리. 및 autoWired기능에 쓸 것을 염두해두고 reflection기능 자체별로 별도 클래스에 제대로 구현할 것.<br />[reopen] constructor util 추가. Predicate기반 filter사용가능하게끔 추가. ReflectionUtil class로 다시 통합. | DONE | 100% | 04-05 | 04-05 | 5h |
 | 59 |[context] cloud 지원시, container가 warming-up 시간이 존재하는 것은 좋지 않다. singleton bean 들은 pre-initialize하자.<br />bean initialize to ApplicationContext -> bean's inner Injection 진행 -> injection을 위해 getBean이 진행됨 -> 필요에 따라 bean initialize가 연쇄될 수 있음. |  |  |  |  |  |
+| 60 |Model을 통해 Repository에 등록하는 매커니즘을 ID기반으로 진행되게끔 구현.<br />Model에게서 Id를 추출할 유틸 생성 | DONE | 100% | 04-05 | 04-05 | 1h |
 

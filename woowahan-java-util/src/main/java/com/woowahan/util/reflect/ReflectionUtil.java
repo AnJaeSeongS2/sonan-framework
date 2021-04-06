@@ -102,14 +102,14 @@ public class ReflectionUtil {
      * @throws NoSuchFieldException
      */
     public static Field getFieldMetaAnyway(Class<?> target, Predicate<Field> filterForFindFirst) throws NoSuchFieldException {
-        if (target == null) {
-            throw new NoSuchFieldException("target : " + target);
-        }
         try {
             for (Field declaredField : target.getDeclaredFields()) {
                 if (filterForFindFirst.test(declaredField)) {
                     return declaredField;
                 }
+            }
+            if (target.getSuperclass() == null) {
+                throw new NoSuchFieldException("target : " + target);
             }
             return getFieldMetaAnyway(target.getSuperclass(), filterForFindFirst);
         } catch (ReflectiveOperationRuntimeException e) {
@@ -297,14 +297,14 @@ public class ReflectionUtil {
      * @throws NoSuchFieldException
      */
     public static Method getMethodMetaAnyway(Class<?> target, Predicate<Method> filterForFindFirst) throws NoSuchMethodException {
-        if (target == null) {
-            throw new NoSuchMethodException("target : " + target);
-        }
         try {
             for (Method declaredMethod : target.getDeclaredMethods()) {
                 if (filterForFindFirst.test(declaredMethod)) {
                     return declaredMethod;
                 }
+            }
+            if (target.getSuperclass() == null) {
+                throw new NoSuchMethodException("target : " + target);
             }
             return getMethodMetaAnyway(target.getSuperclass(), filterForFindFirst);
         } catch (ReflectiveOperationRuntimeException e) {
@@ -385,9 +385,6 @@ public class ReflectionUtil {
      * @throws NoSuchFieldException
      */
     public static Constructor getConstructorMetaAnyway(Class<?> target, Predicate<Constructor> filterForFindFirst) throws NoSuchMethodException {
-        if (target == null) {
-            throw new NoSuchMethodException("target : " + target);
-        }
         try {
             for (Constructor declared : target.getDeclaredConstructors()) {
                 if (filterForFindFirst.test(declared)) {
