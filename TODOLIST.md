@@ -64,5 +64,6 @@
 | 55 |Component scan 이 쉽게끔, Component 취급되는 bean들은 enum BeanRegistrable으로 관리하고 있는다. | DONE | 100% | 04-04 | 04-04 | 30m |
 | 56 |@Bean 만 ElementType.METHOD 인 관계로 차후 확장할 부분으로 넘겨둔다. 현재로서는 자체 생산하는 Class에 대해서만 Bean으로서 관리되게끔 진행.<br />차후 추가기능으로 @Bean을 지원할 예정. |  |  |  |  |  |
 | 57 |[container-bootstrapper] ServletBootstrapperDefault가 booting하면서 servletContext를 이용해 제대로 BeanDefinition을 등록하게끔 구현 및 검증. | DONE | 100% | 04-05 | 04-05 | 2h |
-| 58 |[java-util] reflection invokeMethod, getField, setField 관련 유틸 추가. 및 XXXXAnyway 버전의 method 들은 테스트에서만 사용하는 reflection임을 명시. | DONE | 100% | 04-05 | 04-05 | 1h |
+| 58 |[java-util] reflection invokeMethod, getField, setField 관련 유틸 추가. 및 XXXXAnyway 버전의 method 들은 테스트에서만 사용하는 reflection임을 명시.<br />reflection util의 기능 분리. 및 autoWired기능에 쓸 것을 염두해두고 reflection기능 자체별로 별도 클래스에 제대로 구현할 것. | WORKING | 70% | 04-05 |  | 2h |
+| 59 |[context] cloud 지원시, container가 warming-up 시간이 존재하는 것은 좋지 않다. singleton bean 들은 pre-initialize하자.<br />bean initialize to ApplicationContext -> bean's inner Injection 진행 -> injection을 위해 getBean이 진행됨 -> 필요에 따라 bean initialize가 연쇄될 수 있음. |  |  |  |  |  |
 

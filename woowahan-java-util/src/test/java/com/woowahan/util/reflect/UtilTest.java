@@ -126,6 +126,18 @@ class UtilTest {
         assertEquals("dd", Util.getFieldAnyway(child, "d"));
         assertEquals("bb", Util.getFieldAnyway(child, "b"));
     }
+
+    @Test
+    void findFieldAnyway() throws NoSuchFieldException {
+        assertEquals(Child.class, Util.findFieldAnyway(Child.class, (field) -> field.getName().equals("d")).getDeclaringClass());
+        assertEquals(Parent.class, Util.findFieldAnyway(Child.class, (field) -> field.getName().equals("b")).getDeclaringClass());
+    }
+
+    @Test
+    void findMethodAnyway() throws NoSuchMethodException {
+        assertEquals("getD", Util.findMethodAnyway(Child.class, (method) -> method.getName().equals("getD")).getName());
+        assertEquals("genB", Util.findMethodAnyway(Child.class, (method) -> method.getName().equals("genB")).getName());
+    }
 }
 
 class Parent {

@@ -4,6 +4,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.function.Predicate;
 
 /**
  * Created by Jaeseong on 2021/04/02
@@ -196,5 +198,44 @@ public class Util {
                 throw e;
             return findFieldWithUnAccessible(target.getSuperclass(), fieldName);
         }
+    }
+
+    /**
+     * target에서 matcher에 매칭되는 field가 존재하면 반환. superclass도 search한다.
+     * @param target
+     * @param filter
+     * @return
+     * @throws NoSuchFieldException
+     */
+    public static Field findFieldAnyway(Class<?> target, Predicate<Field> filter) throws NoSuchFieldException {
+        if (target == null) {
+            throw new NoSuchFieldException("target : " + target);
+        }
+        for (Field declaredField : target.getDeclaredFields()) {
+            if (filter.test(declaredField)) {
+                return declaredField;
+            }
+        }
+        return findFieldAnyway(target.getSuperclass(), filter);
+    }
+
+
+    /**
+     * target에서 matcher에 매칭되는 method가 존재하면 반환. superclass도 search한다.
+     * @param target
+     * @param filter
+     * @return
+     * @throws NoSuchFieldException
+     */
+    public static Method findMethodAnyway(Class<?> target, Predicate<Method> filter) throws NoSuchMethodException {
+        if (target == null) {
+            throw new NoSuchMethodException("target : " + target);
+        }
+        for (Method declaredMethod : target.getDeclaredMethods()) {
+            if (filter.test(declaredMethod)) {
+                return declaredMethod;
+            }
+        }
+        return findMethodAnyway(target.getSuperclass(), filter);
     }
 }
