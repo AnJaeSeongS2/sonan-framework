@@ -2,6 +2,8 @@ package com.woowahan.framework.web.view;
 
 import com.woowahan.framework.json.throwable.FailedConvertJsonException;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * Created by Jaeseong on 2021/04/08
  * Git Hub : https://github.com/AnJaeSeongS2
@@ -12,7 +14,7 @@ public abstract class ViewResolver implements Comparable<ViewResolver> {
         this.priority = priority;
     }
 
-    public abstract String getView(Object beforeResolve) throws FailedViewResolveException, FailedConvertJsonException;
+    public abstract String getView(Object beforeResolve, HttpServletResponse resp) throws FailedViewResolveException, FailedConvertJsonException;
 
     @Override
     public int compareTo(ViewResolver o) {

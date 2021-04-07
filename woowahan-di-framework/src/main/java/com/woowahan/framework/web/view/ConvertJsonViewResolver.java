@@ -3,6 +3,8 @@ package com.woowahan.framework.web.view;
 import com.woowahan.framework.json.JacksonUtil;
 import com.woowahan.framework.json.throwable.FailedConvertJsonException;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * Created by Jaeseong on 2021/04/08
  * Git Hub : https://github.com/AnJaeSeongS2
@@ -14,7 +16,7 @@ public class ConvertJsonViewResolver extends ViewResolver {
     }
 
     @Override
-    public String getView(Object beforeResolve) throws FailedViewResolveException {
+    public String getView(Object beforeResolve, HttpServletResponse resp) throws FailedViewResolveException {
         try {
             return JacksonUtil.toJson(beforeResolve);
         } catch (FailedConvertJsonException e) {
