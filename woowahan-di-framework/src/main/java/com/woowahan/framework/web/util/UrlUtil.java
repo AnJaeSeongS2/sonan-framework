@@ -17,8 +17,8 @@ import java.util.regex.Pattern;
  */
 public class UrlUtil {
     public static final String URL_CHAR_SET = "UTF-8";
+    public static final String PATH_SEPARATOR = "/";
     private static final Logger logger = LoggerFactory.getLogger(UrlUtil.class);
-    private static final String PATH_SEPARATOR = "/";
     private static final Pattern PATH_SEPARATOR_PATTERN = Pattern.compile("/");
     private static final String PATH_VARIABLE_PREFIX = "#";
     private static final String PATH_VARIABLE_BIND_TEMP = "#{}";

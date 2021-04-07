@@ -220,6 +220,7 @@ class ReflectionUtilTest {
 
         assertTrue(ReflectionUtil.getAnnotation(new TestClass2(), TestClassAnnotation.class) instanceof TestClassAnnotation);
         assertTrue(ReflectionUtil.getAnnotation(ReflectionUtil.getMethodMetaAnyway(TestClass2.class, (method) -> method.getName().equals("testMethod")), Nullable.class) instanceof Nullable);
+        assertTrue(TestClass2.class.getMethods()[1].getParameterAnnotations()[0][0] instanceof TestParamAnnotation);
     }
 }
 
@@ -228,11 +229,23 @@ class ReflectionUtilTest {
 @interface TestClassAnnotation {
 }
 
+
+@Target({ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@interface TestParamAnnotation {
+    String value();
+}
+
 @TestClassAnnotation
 class TestClass2 {
 
     @Nullable
     public void testMethod() {
+
+    }
+
+    @Nullable
+    public void testMethod(@TestParamAnnotation("test1234") String test1234, @TestParamAnnotation("test1234") String test4444, String test12345, @TestParamAnnotation("test1234") String test44446) {
 
     }
 }

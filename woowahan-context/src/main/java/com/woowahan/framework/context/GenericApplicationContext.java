@@ -1,5 +1,7 @@
 package com.woowahan.framework.context;
 
+import com.woowahan.framework.context.annotation.Autowired;
+import com.woowahan.framework.context.annotation.BeanVariable;
 import com.woowahan.framework.context.annotation.Controller;
 import com.woowahan.framework.context.annotation.Service;
 import com.woowahan.framework.context.bean.BeanDefinition;
@@ -14,10 +16,10 @@ import com.woowahan.util.reflect.ReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
@@ -133,10 +135,62 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         return this.getterRootApplicationContext.apply(this.contextHolder);
     }
 
-    private Object createBean(BeanDefinition definition) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    private Object createBean(BeanDefinition definition) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
         if (logger.isTraceEnabled())
             logger.trace(Markers.LIFE_CYCLE.get(), "try createBean...");
-        Object bean = this.beanClassLoader.loadClass(definition.getBeanClassCanonicalName()).newInstance();
+
+        Class<?> beanClazz = this.beanClassLoader.loadClass(definition.getBeanClassCanonicalName());
+
+        // if has Constructor @Autowired annotation -> param has annotation BeanVariable -> check it -> getBean() all BeanVariable and injection that param.
+        List<Object> boundObjects = new ArrayList<>();
+
+        Constructor ctorFound = null;
+        try {
+            ctorFound = ReflectionUtil.getConstructorMetaAnyway(beanClazz, (ctor) -> {
+                for (Annotation annotation : ctor.getAnnotations()) {
+                    if (annotation instanceof Autowired) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+        } catch (NoSuchMethodException e) {
+            if (logger.isDebugEnabled())
+                logger.debug(Markers.MESSAGE.get(), e.getMessage());
+        }
+
+        Object bean = null;
+        if (ctorFound == null) {
+            bean = beanClazz.newInstance();
+        } else {
+            Class<?>[] paramClasses = ctorFound.getParameterTypes();
+            Annotation[][] paramAnnos =  ctorFound.getParameterAnnotations();
+            for (int i = 0; i < paramClasses.length; i++) {
+                String beanName = null;
+                for (Annotation paramAnnotation : paramAnnos[i]) {
+                    if (paramAnnotation instanceof BeanVariable) {
+                        beanName = ((BeanVariable) paramAnnotation).value();
+                        break;
+                    }
+                }
+                if (beanName == null) {
+                    // BeanVariable이 아닌 케이스의 param.
+                    // constructor이므로 null을 제공.
+                    boundObjects.add(null);
+                } else {
+                    try {
+                        boundObjects.add(getBean(new BeanIdentifier(paramClasses[i].getCanonicalName(), beanName)));
+                    } catch (BeanNotFoundException e) {
+                        if (logger.isInfoEnabled())
+                            logger.info(Markers.LIFE_CYCLE.get(), e.getMessage());
+                        boundObjects.add(null);
+                    }
+                }
+            }
+
+            bean = ctorFound.newInstance(boundObjects.toArray());
+        }
+
         if (definition.isSingleton() && bean instanceof ControllerLifecycleInvocation) {
             singletonBeansControllerLifecycleInvocations.add(bean);
         }
@@ -193,13 +247,13 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         this.singletonBeansControllerLifecycleInvocations = new CopyOnWriteArrayList<>();
 
         for (BeanDefinition beanDef : beanDefs) {
-            if (beanDef.isSingleton() && Service.class.getCanonicalName().equals(beanDef.getBeanClassCanonicalName())) {
+            if (beanDef.isSingleton() && Service.class.getCanonicalName().equals(beanDef.getBeanRegistableAnnotationCanonicalName())) {
                 getBean(beanDef);
             }
         }
 
         for (BeanDefinition beanDef : beanDefs) {
-            if (beanDef.isSingleton() && !Service.class.getCanonicalName().equals(beanDef.getBeanClassCanonicalName())) {
+            if (beanDef.isSingleton() && !Service.class.getCanonicalName().equals(beanDef.getBeanRegistableAnnotationCanonicalName())) {
                 getBean(beanDef);
             }
         }

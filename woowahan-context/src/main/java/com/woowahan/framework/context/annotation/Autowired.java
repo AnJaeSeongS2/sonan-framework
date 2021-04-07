@@ -7,17 +7,13 @@ import java.lang.annotation.*;
  *
  * ElementType.CONSTRUCTOR ->
  *
- * value() 는 beanName 들을 의미한다.
+ * @see BeanVariable 과 같이 써야한다.
  * Created by Jaeseong on 2021/04/04
  * Git Hub : https://github.com/AnJaeSeongS2
  */
-// original target
-//@Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
-
 // 우선 적용 target
 @Target({ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Autowired {
-    String[] value() default "";
 }

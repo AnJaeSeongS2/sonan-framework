@@ -22,6 +22,10 @@ public class BeanDefinition {
     @Nullable // beanKind
     private String beanRegistableAnnotationCanonicalName;
 
+    public BeanDefinition(BeanIdentifier id) {
+        this(id, null, null);
+    }
+
 
     public BeanDefinition(BeanIdentifier id, @Nullable Scope scope) {
         this(id, scope, null);
@@ -38,6 +42,10 @@ public class BeanDefinition {
         if (beanRegistableAnnotationCanonicalName != null) {
             this.beanRegistableAnnotationCanonicalName = beanRegistableAnnotationCanonicalName;
         }
+    }
+
+    public BeanDefinition(String beanClassCannonicalName) {
+        this(new BeanIdentifier(beanClassCannonicalName, null));
     }
 
     public BeanDefinition(String beanClassCannonicalName, @Nullable String beanName, @Nullable Scope scope) {
@@ -86,11 +94,15 @@ public class BeanDefinition {
 
     @Override
     public String toString() {
-        return String.format("BeanKind : %s, BeanId : %s, BeanScope : %s", beanRegistableAnnotationCanonicalName != null ? beanRegistableAnnotationCanonicalName.substring(beanRegistableAnnotationCanonicalName.lastIndexOf(".")) : beanRegistableAnnotationCanonicalName, id.toString(), scope.name());
+        return String.format("BeanKind : %s, BeanId : %s, BeanScope : %s", beanRegistableAnnotationCanonicalName != null ? beanRegistableAnnotationCanonicalName.substring(beanRegistableAnnotationCanonicalName.lastIndexOf(".") + 1) : beanRegistableAnnotationCanonicalName, id.toString(), scope.name());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, scope, beanRegistableAnnotationCanonicalName);
+    }
+
+    public String getBeanRegistableAnnotationCanonicalName() {
+        return beanRegistableAnnotationCanonicalName;
     }
 }

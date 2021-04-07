@@ -9,40 +9,39 @@
 | 색인 | 작업                                                         | 상태 | 달성률 | 예상 완료일 | 완료일 | 작업 소요시간 |
 | ----|-------------------------------------------------------- | ---- | -----: | ----------: | -----: | ------------- |
 | 1|junit5 추가                                                | DONE | 100% | 04-04 | 04-04 | 1h |
-| 2|CRUD api 추가 (추가 요건 들어올 것을 대비한 설계, 확장가능한 설계) |      |        |             |        |               |
-| 3|**!(부차기능)**Test기반으로 RestDoc 추가                                  |  |        |             |        |               |
+| 2|CRUD api 추가 (추가 요건 들어올 것을 대비한 설계, 확장가능한 설계) |  |        |             |        |               |
+| 3|**!(부차기능)**Test기반으로 RestDoc 추가                                  | REJECT | 0% | x | x | x |
 | 4|logback 기반으로 의미있는 로그 추가                            | WORKING | 50% | 04-04 |        | 30m |
 | 5|/ path진입시 resources/static 경로의 index.html 출력.      |      |        |             |        |               |
 | 6|di                                                         | WORKING | 50% | 04-04 |        |               |
 | 7|DispatcherServlet 구현 (di , mvc 분리해야할 듯.)           |      |        |             |        |               |
 | 8|IoC container 구현 -> DI 제공 (reflection 사용.)           | WORKING | 50% | 04-04 |        |               |
 | 9|정적 resource와 json응답처리 가능해야함. Fasterxml Jackson, resources/static 하위경로의 리소스를 내려줄 수 있어야함( view resolver기능) |      |        |             |        |               |
-| 10|**!(부차기능)**LifeCycle 관련 기능 추가 바람. (요구조건에는 없음. 그러나, app자체의 start가 완료됐을 때, log도 찍고 etc.. 해줘야 할 듯. 공통로직 관련되어...) |      |        |             |        |               |
+| 10|**!(부차기능)**LifeCycle 관련 기능 추가 바람. (요구조건에는 없음. 그러나, app자체의 start가 완료됐을 때, log도 찍고 etc.. 해줘야 할 듯. 공통로직 관련되어...)<br />ControllerLifecylceInvocation은 추가됐다. | DONE | 100% | 04-07 | 04-07 | 1h |
 | 11|Tomcat기반으로 부팅되는 개념인 듯. (별도 모듈화가 좋을 듯. ex: was-bootstraper) | WORKING | 20% | 03-27 |  | 1h |
-| 13|@Service, @Repository 클래스 스캔  빈 주입시 Service가 다른 Service를 주입하는 경우 고려 @Inject가 없는 경우 기본생성자를 이용하여 빈으로 등록 그 외 경우는 initializeInjectedBeans로 빈 등록 @Inject에 필요한 객체를 찾아서 주입 / 생성 기존의 @Controller를 스캔하는 ControllerScanner 클래스를 확장된 BeanScanner와 통합 |      |        |             |        |               |
-| 13.5 |Component 등록과정에서 고려할 점. <br />inner class, anonymous class |  | | | | |
-| 14|@Configuration 어노테이션으로 빈 설정                     |      |        |             |        |               |
-| 15|di , mvc 분리해야할 듯.                                   |      |        |             |        |               |
-| 16|DI xml은 제외할 것.                                       |      |        |             |        |               |
-| 17|TomcatWebServer -> WebApplicationServer 로 변경, Tomcat 은 구현체중 하나로 간다. WebApplicationServer변경시 어떻게 대응할 것인지 고려함. SPI로 기본적으로는 Tomcat으로 구동되게 한다. |      |        |             |        |               |
-| 18|Gradle 개념 습득                                          |      |        |             |        |               |
+| 13|@Service, @Repository 클래스 스캔  빈 주입시 Service가 다른 Service를 주입하는 경우 고려 @Inject가 없는 경우 기본생성자를 이용하여 빈으로 등록 그 외 경우는 initializeInjectedBeans로 빈 등록 @Inject에 필요한 객체를 찾아서 주입 / 생성 기존의 @Controller를 스캔하는 ControllerScanner 클래스를 확장된 BeanScanner와 통합 | DONE | 100% | 04-07 | 04-07 | 다른 task에서 계산됨. |
+| 13.5 |Component 등록과정에서 고려할 점. <br />inner class, anonymous class | REJECT | 0% | x | x | x |
+| 14|@Configuration 어노테이션으로 빈 설정                     | REJECT | 0% | x | x | x |
+| 15|di , mvc 분리해야할 듯.<br />woowahan-context가 di용 context, bean을 담당하고,<br />woowahan-di-framework가 mvc기능을 하게 분화됨 <br />                                   | DONE | 100% | x | x | 1h |
+| 17|TomcatWebServer -> WebApplicationServer 로 변경, Tomcat 은 구현체중 하나로 간다. WebApplicationServer변경시 어떻게 대응할 것인지 고려함. SPI로 기본적으로는 Tomcat으로 구동되게 한다. | REJECT | 30% | 04-07 | 04-07 | 1h |
+| 18|Gradle 개념 습득                                          | DONE | 완벽할 수 없다. | x | x | 2h |
 | 19|logback 사용법 습득 및 적용                               | DONE | 100% | 03-26 | 03-26 | 1h |
-| 20|**!(부차기능)**<br />servlet 3.0 NIO Servlet으로 구현할 까..? Transaction 필요도 없잖아. |      |        |             |        |               |
-| 21|**!(부차기능)**<br />HandlersTypes interface for reducing class scanning time<br />https://opennote46.tistory.com/168 |      |        |             |        |               |
-| 22|WebAppBackendFramework이므로, servlet 개념을 몰라도 작성가능하게 개발돼야한다. |      |        |             |        |               |
-| 23 |gradlew 개념 습득 | | | | | |
+| 20|**!(부차기능)**<br />servlet 3.0 NIO Servlet으로 구현할 까..? Transaction 필요도 없잖아. | REJECT | 0% | x | x | x |
+| 21|**!(부차기능)**<br />HandlersTypes interface for reducing class scanning time<br />https://opennote46.tistory.com/168 | REJECT | 0% | x | x | x |
+| 22|WebAppBackendFramework이므로, servlet 개념을 몰라도 작성가능하게 개발돼야한다. | WORKING |        |             |        |               |
+| 23 |gradlew 개념 습득<br />과제 이후 알아서 공부할 것. | REJECT | 0% | x | x | x |
 | 24 |spring-bean 에서 존재하는 bean managing 부분 이전, WebApplicationContext에 bean을 관리 + scope존재  + 이 context는 ServletContext를 통해 저장됨. (FrameworkServlet 참고) Spring-context module에서 Bean관리 annot포함됨. Bean scope관련 로직도 포함됨 + FW에 대응되는 context관련됨.<br />ctx.registerBean(O) 처럼 webApplicationContext에 bean이 자동 등록될 것. | | | | | |
-| 25 |bean 처리에 대한 기본 기능 스펙정리<br />multi same type bean 에 대한 충돌 처리<br />bean id 처리<br />bean scope처리<br /> | DONE | 100% | 03-30 | 04-01 | (곂침) |
-| 26 |**!(부차기능)**<br />transaction 처리 가 가능하게끔 확장 고려(Transaction - AOP - Bean) (bean입장에서는 transaction 처리가 될 것을 고려한 개발할 필요가 없다. 관심사가 나뉘어있음. Transaction moudle 측이 알아서 bean이 변화될 때 <<<< 처리를 추가로 하) | | | | | |
-| 27 |**!(부차기능)**<br />기본적인 aop 모듈은 필요할 듯. 공통 호출로직, 공통 비지니스 로직 상황별 로깅 관련 지원.<br />spring은 proxy기반 aop이므로, 기존 비지니스로직(target)은 proxy화 되고, proxy에서 상황별 advice로직과 본래 target 로직이 수행될 것이다. | | | | | |
-| 29 |**di module**<br />@Service, @Controller, @Configuration with @Bean, @Autowired, @Qulifier 필수 제공<br />미지원: @Lazy - MSA에서는 Lazy는 좋지 못하다. Readiness로 진입했을 때 최적의 성능을 보여주길 바람. | | | | | |
+| 25 |bean 처리에 대한 기본 기능 스펙정리<br />multi same type bean 에 대한 충돌 처리<br />bean id 처리<br />bean scope처리<br /> | DONE | 100% | 03-30 | 04-01 | 다른 task에서 계산됨. |
+| 26 |**!(부차기능)**<br />transaction 처리 가 가능하게끔 확장 고려(Transaction - AOP - Bean) (bean입장에서는 transaction 처리가 될 것을 고려한 개발할 필요가 없다. 관심사가 나뉘어있음. Transaction moudle 측이 알아서 bean이 변화될 때 <<<< 처리를 추가로 하) | REJECT | 0% | x | x | x |
+| 27 |**!(부차기능)**<br />기본적인 aop 모듈은 필요할 듯. 공통 호출로직, 공통 비지니스 로직 상황별 로깅 관련 지원.<br />spring은 proxy기반 aop이므로, 기존 비지니스로직(target)은 proxy화 되고, proxy에서 상황별 advice로직과 본래 target 로직이 수행될 것이다. | REJECT | 0% | x | x | x |
+| 29 |**di module**<br />@Service, @Controller, @Configuration with ~~@Bean~~, @Autowired, ~~@Qulifier 필수 제공~~<br />미지원: @Lazy - MSA에서는 Lazy는 좋지 못하다. Readiness로 진입했을 때 최적의 성능을 보여주길 바람. | DONE | 100% | 04-07 | 04-07 | 다른 task에서 계산됨. |
 | 30 |@Repository 에 대응될 web 측의 repository 기본 구현체가 필요하다.<br />지금 app 은 repository로 memory를 쓴다고 가정하고 진행한다.<br />memory vendor의 기본 구현체를 만든다. | DONE | 100% | 04-05 | 04-05 | 1h |
-| 31 |**mvc module**<br />Controller내에서 **@RequestMapping** 으로 class, method에 처리. **@RequestBody** 로 json input을 java Object로 자동전환.<br />**@ResponseBody**로 java Object output을 json output으로 자동전환 (Jackson이 사용됨)<br />**@PathVariable**로  @RequestMapping에서 전달된 url내의 variable을 로직에서 제공받음.<br />Controller에 대해:<br />이 제품은, api호출시, data만 반환하면 되므로 RestController같은 annotation만 지원하면 된다. 차후 확장기능으로 view resolver가 추가되면, Controller기능도 추가지원할 수 있을 것... | | | | | |
-| 32 |**!(부차기능)**<br />validation module**<br />유효성 검사 (di 책임은 아닌듯.) **@Valid, @InitBinder**<br />외부 origin에서의 접근 허용부분 처리**@CrossOrigin** | | | | | |
-| 33 |**!(부차기능)**<br />mvc (동기)건 webflux (비동기) 상관없이 component재사용을 고려해 개발. | | | | | |
-| 34 |**!(부차기능)**context @scope 관련 기능으로 singleton, prototype분만 아니라, request, session등도 구분가능하게 변경. | | | | | |
-| 35 |war로 패키징될 때, web.xml에 servlet지정 및 적용 테스트. | | | | | |
-| 36 |WebFlux를 밴치마킹하려면, RouteFunctions, RouteFunction 참고바람. | | | | | |
+| 31 |**mvc module**<br />Controller내에서 **@RequestMapping** 으로 class, method에 처리. **@RequestBody** 로 json input을 java Object로 자동전환.<br />**@ResponseBody**로 java Object output을 json output으로 자동전환 (Jackson이 사용됨)<br />**@PathVariable**로  @RequestMapping에서 전달된 url내의 variable을 로직에서 제공받음.<br />Controller에 대해:<br />이 제품은, api호출시, data만 반환하면 되므로 RestController같은 annotation만 지원하면 된다. 차후 확장기능으로 view resolver가 추가되면, Controller기능도 추가지원할 수 있을 것... | WORKING | | | | |
+| 32 |**!(부차기능)**<br />validation module**<br />유효성 검사 (di 책임은 아닌듯.) **@Valid, @InitBinder**<br />외부 origin에서의 접근 허용부분 처리**@CrossOrigin** | REJECT | 0% | x | x | x |
+| 33 |**!(부차기능)**<br />mvc (동기)건 webflux (비동기) 상관없이 component재사용을 고려해 개발. | REJECT | 0% | x | x | x |
+| 34 |**!(부차기능)**context @scope 관련 기능으로 singleton, prototype분만 아니라, request, session등도 구분가능하게 변경. | REJECT | 0% | x | x | x |
+| 35 |war로 패키징될 때, web.xml에 servlet지정 및 적용 테스트. | REJECT | 0% | x | x | x |
+| 36 |WebFlux를 밴치마킹하려면, RouteFunctions, RouteFunction 참고바람. | REJECT | 0% | x | x | x |
 | 37 |**#woowahan-context** module 새로 추가. container-bootstrapper <-> context <-> di-framework  로 진행하고,  di-framework입장에서는, context가 servlet's context인 지, 다른 container 의 context를 통해서인 지 모르게 끔. | DONE | 100% | 03-30 | 04-01 | 30m |
 | 38 |DispatcherServlet구현시, HandlerMapping기반으로 dispatch되게끔 작성. | | | | | |
 | 39 |Bean이 Context에 저장되게끔 진행.<br />BeanDefinition, BeanDefinition 기반으로 getBean이 처리되는 것을 원함.<br />Singleton, prototype만 지원. (이 과제는 session엔 관심이 없다.) | DONE    |   100% |       03-30 | 04-01 | 2h |
@@ -64,18 +63,20 @@
 | 56 |@Bean 만 ElementType.METHOD 인 관계로 차후 확장할 부분으로 넘겨둔다. 현재로서는 자체 생산하는 Class에 대해서만 Bean으로서 관리되게끔 진행.<br />차후 추가기능으로 @Bean을 지원할 예정. |  |  |  |  |  |
 | 57 |[container-bootstrapper] ServletBootstrapperDefault가 booting하면서 servletContext를 이용해 제대로 BeanDefinition을 등록하게끔 구현 및 검증. | DONE | 100% | 04-05 | 04-05 | 2h |
 | 58 |[java-util] reflection invokeMethod, getField, setField 관련 유틸 추가. 및 XXXXAnyway 버전의 method 들은 테스트에서만 사용하는 reflection임을 명시.<br />reflection util의 기능 분리. 및 autoWired기능에 쓸 것을 염두해두고 reflection기능 자체별로 별도 클래스에 제대로 구현할 것.<br />[reopen] constructor util 추가. Predicate기반 filter사용가능하게끔 추가. ReflectionUtil class로 다시 통합. | DONE | 100% | 04-05 | 04-05 | 5h |
-| 59 |[context] cloud 지원시, container가 warming-up 시간이 존재하는 것은 좋지 않다. singleton bean 들은 pre-initialize하자.<br />bean initialize to ApplicationContext -> bean's inner Injection 진행 -> injection을 위해 getBean이 진행됨 -> 필요에 따라 bean initialize가 연쇄될 수 있음. |  |  |  |  |  |
+| 59 |[context] cloud 지원시, container가 warming-up 시간이 존재하는 것은 좋지 않다. singleton bean 들은 pre-initialize하자.<br />bean initialize to ApplicationContext -> bean's inner Injection 진행 -> injection을 위해 getBean이 진행됨 -> 필요에 따라 bean initialize가 연쇄될 수 있음. | DONE | 100% | 04-07 | 04-07 | 1h |
 | 60 |Model을 통해 Repository에 등록하는 매커니즘을 ID기반으로 진행되게끔 구현.<br />Model에게서 Id를 추출할 유틸 생성 | DONE | 100% | 04-05 | 04-05 | 1h |
 | 61 |**(!! 중요 )** 최종 jar파일의 경량화를 위해 Spring-core dependency 를 가진 woowahan-di-support를 사용하지 않는다.<br /><br />woowahan-di-support가 org.springframework:spring-core:5.1.9.RELEASE 를 dependency로 가지고있어서 Reflection처리를 support하려고 하고있으나, 이런 dependency를 가져서 jar가 무거워진다.<br />리플렉션 처리는 java-util module로 알아서 구현한다. | DONE | 100% | 04-05 | 04-05 | 다른 task에서 계산됨. |
 | 62 |framework를 사용하는 고객이 App을 작성할 때, Test코드를 적게 작성하도록 고려한 개발을 한다. <br /> 각종 기본 구현체, 각종 Annotation기반 구현을 지원한다. | WORKING | 50% | 04-04 |  |  |
-| 63 |Type 과 내부 method에 달려있는 @RequestMapping 의 value (path)에 대한 parsing util을 추가한다. |  |  |  |  |  |
+| 63 |Type 과 내부 method에 달려있는 @RequestMapping 의 value (path)에 대한 parsing util을 추가한다. | WORKING |                 |             |        |                       |
 | 64 |Model <-> Jackson json을 이 가능하게끔 유틸화 | DONE | 100% | 04-06 | 04-06 | 다른 task에서 계산됨. |
 | 65 |**(부가기능)**framework 사용 고객 입장에서 jackson을 app코드에서 직접 사용해야하는 부분이 별로인 것 같다. jackson을 framework단에서만 들고있고 util method로 뺴주자.<br />json-support 라는 별도 모듈이 생겨야 하며, <br />TODO: json-support 모듈을 별도로 생성하고, 타 vendor 구현체를 사용하는 방식은 spi를 따른다. <br />TODO: default spi 구현체는 JacksonUtil일 것. <br />TODO: 고객은 app 작성시 vendor 상관없이 framework가 제공하는 annotation, util api만 call하게끔 할 것. | WORKING | 50% | 04-05 |  | 30m |
-| 66 |framework 사용 고객이, logging을 직접 app코드에 추가하고 싶지 않을 것이다. framework차원에서 알아서 비지니스 로직에서 logging 되게끔 작업한다. |  |  |  |  |  |
-| 67 |**(부가기능)** Repository구현체의 경우, 고객이 직접 vendor를 선택하게끔 돼 버렸는데, app코드에서는 vendor무관히 코딩가능하게 개선할 것. |  | | | | |
-| 68 |method reflection 수행에 대해. <br /><br />@RequestMapping method인 경우, value에 variable {aaa} 로 추가가능하다.<br />해당 method 내의 param중에 variable과 getName이 같은 param Parameter에 String to XXXX convert를 진행해 주입해준다.<br /><br /><br />@Autowired Constructor 인 경우, value[]에 값이 있으면 해당 beanName기반으로 해당 method내의 param들 순서대로 beanName으로서 getBean을 처리해준다. <br />getBean된 내용을 param Parameter에 주입해준다. |  | | | | |
+| 66 |framework 사용 고객이, logging을 직접 app코드에 추가하고 싶지 않을 것이다. framework차원에서 알아서 비지니스 로직에서 logging 되게끔 작업한다. | WORKING |  |  |  |  |
+| 67 |**(부가기능)** Repository구현체의 경우, 고객이 직접 vendor를 선택하게끔 돼 버렸는데, app코드에서는 vendor무관히 코딩가능하게 개선할 것. | REJECT | 0% | x | x | x |
+| 68 |method reflection 수행에 대해. <br /><br />@RequestMapping method인 경우, value에 variable {aaa} 로 추가가능하다.<br />해당 method 내의 param중에 variable과 getName이 같은 param Parameter에 String to XXXX convert를 진행해 주입해준다.<br /><br /><br />@Autowired Constructor 인 경우, value[]에 값이 있으면 해당 beanName기반으로 해당 method내의 param들 순서대로 beanName으로서 getBean을 처리해준다. <br />getBean된 내용을 param Parameter에 주입해준다. | DONE | 100% | 04-07 | 04-07 | 3h |
 | 69 |DispatcherServlet 입장에서 route 처리 시나리오 정리.<br /><br />Map<String, Set<RequestMethod<br />url : /shops/aaa/bbb/ccc -> shops 검색 -> x |  | | | | |
 | 70 |Url <-> Path \| PathVariableName \| PathVariable , encoding, decoding 지원 UrlUtil추가. | WORKING | 100% | 04-07 | 04-07 | 4h |
 | 71 |servletContainer 기동 타이밍에 bean pre-initialize 기본 지원.<br />차후 lazy-initialize 지원 할 것. | DONE | 100% | 04-07 | 04-07 | 1h |
 | 72 |BeanDefinition에 BeanRegistrable annotation 에 대한 정보도 추가. 이 또한 cannonicalName으로 취득한다. (for MetaClassLoader <-> AppClassLoader) | DONE | 100% | 04-07 | 04-07 | 30m |
+| 73 |annotation 관련  ReflectionUtil추가. | DONE | 100% | 04-07 | 04-07 | 30m |
+| 74 |Controller Bean LifecyleInvocaion 추가.<br />Route 에서 이 invocation기능을 이용해 Controller의 route정보를 취득한다. | DONE | 100% | 04-07 | 04-07 | 3h |
 
