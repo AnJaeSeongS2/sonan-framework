@@ -11,6 +11,7 @@ import com.woowahan.framework.context.ApplicationContext;
 import com.woowahan.framework.context.GenericApplicationContext;
 import com.woowahan.framework.context.bean.BeanDefinition;
 import com.woowahan.framework.context.bean.BeanDefinitionHolder;
+import com.woowahan.framework.context.bean.throwable.BeanCreationFailedException;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotGeneratedException;
 import com.woowahan.logback.support.Markers;
 import com.woowahan.util.annotation.Nullable;
@@ -94,14 +95,26 @@ public class ServletBootstrapperDefault implements ContainerBootstrapper {
 
         // TODO: 지금은 rootAppCtx만 사용하고 있지만, framework 상 공통 로직 @Service 같은 것은 root에, 개별 Servlet용 @Controller 등은 root > child 측에 저장하게끔 한다. (scope분리)
         try {
+            // bean definition 등록.
             for (BeanDefinition definition : beanDefinitionHolder.get()) {
                 rootAppCtx.register(definition);
             }
+
+            // TODO: lazy-initialize 옵션은 향후 지원.
+            // bean pre-initialize
+            refreshAllBeans();
         } catch (Exception e) {
             if (logger.isErrorEnabled())
                 logger.error(Markers.LIFE_CYCLE.get(), "servletContextInit failed", e);
             throw new ServletException(e.getMessage(), e);
         }
-
     }
+
+    /**
+     * 관리중인 모든 빈(ex: singleton bean)을 모두 재 할당한다.
+     */
+    public void refreshAllBeans() throws BeanCreationFailedException {
+        rootAppCtx.refreshInstances();
+    }
+
 }

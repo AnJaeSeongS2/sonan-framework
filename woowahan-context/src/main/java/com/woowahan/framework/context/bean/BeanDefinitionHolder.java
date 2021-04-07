@@ -2,6 +2,7 @@ package com.woowahan.framework.context.bean;
 
 import com.woowahan.framework.context.annotation.BeanRegistrable;
 import com.woowahan.framework.context.annotation.Configuration;
+import com.woowahan.framework.context.annotation.Controller;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotGeneratedException;
 import com.woowahan.logback.support.Markers;
 import com.woowahan.util.annotation.Nullable;
@@ -17,9 +18,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Spring의 ResourceLoader를 통한 class loading없이 bean meata를 취득하여 BeanDefinition을 applicationContext에 관리시키는 것을 돕는 매커니즘을 별도 classLoader를 통해 쉬운 구현으로 간다.
+ * Spring의 ResourceLoader를 통한 class loading없이 bean meta를 취득하여 BeanDefinition을 applicationContext에 관리시키는 것을 돕는 매커니즘을 별도 classLoader를 통해 쉬운 구현으로 간다.
  * 별도 ClassLoader는 basePackage 하위 모든 class를 읽고 해당 class들 중, Bean으로 등록될 member만 BeanDefinition으로 제공한다.
  *
+ * TODO: BeanDefinitionHolder 와 BeanDefinitionRegistry 가 역할이 곂치는 것으로 보이는데, 원래의도는 BeanDefinitionHolder 는 초기 부틷도중에 로딩한 meta 관리, BeanDefinitionRegistry는 runtime에 definition을 추가가능하게끔 분리하려 했었던 의도가 있다.
+ * TODO: 그러나 runtime 에 definition을 추가하는 것은 framework 안정성을 오히려 떨구는 것으로 생각해 Registry개념을 제거하고 Holder만 유지할 예정.
  * Created by Jaeseong on 2021/04/04
  * Git Hub : https://github.com/AnJaeSeongS2
  */
@@ -86,16 +89,18 @@ public class BeanDefinitionHolder {
         try {
             Scope beanScope = null;
             String beanName = null;
+            String beanKind = null;
             for (Annotation anno: beanClass.getDeclaredAnnotations()) {
                 if (BeanRegistrable.contains(anno)) {
                     beanName = BeanRegistrable.getBeanName(anno);
+                    beanKind = anno.annotationType().getCanonicalName();
                 }
 
                 if (anno.annotationType() == com.woowahan.framework.context.annotation.Scope.class) {
                     beanScope = ((com.woowahan.framework.context.annotation.Scope) anno).value();
                 }
             }
-            return new BeanDefinition(beanClass.getCanonicalName(), beanName, beanScope);
+            return new BeanDefinition(beanClass.getCanonicalName(), beanName, beanScope, beanKind);
         } catch (Exception e) {
             throw new BeanDefinitionNotGeneratedException(e);
         }

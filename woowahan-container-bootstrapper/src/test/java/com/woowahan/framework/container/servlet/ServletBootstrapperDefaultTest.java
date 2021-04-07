@@ -7,7 +7,6 @@ import com.woowahan.framework.context.bean.BeanIdentifier;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotGeneratedException;
 import com.woowahan.framework.context.bean.throwable.BeanNotFoundException;
 import com.woowahan.util.reflect.ReflectionUtil;
-import com.woowahan.util.reflect.ReflectionUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,9 +14,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.*;
-
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLClassLoader;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -68,7 +67,15 @@ class ServletBootstrapperDefaultTest {
         // test target
         ReflectionUtil.invokeMethodAnyway(bootstrapper, "selfInitialize", new Class<?>[]{ServletContext.class}, servletContext);
         GenericApplicationContext<ServletContext> rootAppCtx = (GenericApplicationContext<ServletContext>) ReflectionUtil.getFieldAnyway(bootstrapper, "rootAppCtx");
+
+        // test pre-initialized bean;
+        Map<BeanIdentifier, Object> singletonBeans = (Map<BeanIdentifier, Object>) ReflectionUtil.getFieldAnyway(rootAppCtx, "singletonBeans");
+        assertNotEquals(0, singletonBeans.size());
+
+
+        // out of basePackage Test
         assertDoesNotThrow(() -> rootAppCtx.getBean(new BeanIdentifier("com.woowahan.framework.container.servlet.beanInOfBasePackage.ControllerInOfBasePackageTest", null)));
         assertThrows(BeanNotFoundException.class,() -> rootAppCtx.getBean(new BeanIdentifier("com.woowahan.framework.container.servlet.beanOutOfBasePackage.ControllerOutOfBasePackageTest", null)));
+
     }
 }

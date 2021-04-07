@@ -2,6 +2,7 @@ package com.woowahan.framework.context;
 
 import com.woowahan.framework.context.bean.BeanDefinitionRegistry;
 import com.woowahan.framework.context.bean.BeanGenerator;
+import com.woowahan.framework.context.bean.throwable.BeanCreationFailedException;
 import com.woowahan.util.annotation.Nullable;
 
 /**
@@ -41,4 +42,9 @@ public abstract class ApplicationContext implements BeanGenerator, BeanDefinitio
             return getParent().toString() + " > " + current;
         }
     }
+
+    /**
+     * context내의 관리중인 instance를 초기화 한다.
+     */
+    public abstract void refreshInstances() throws BeanCreationFailedException;
 }

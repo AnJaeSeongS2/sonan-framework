@@ -76,4 +76,6 @@
 | 68 |method reflection 수행에 대해. <br /><br />@RequestMapping method인 경우, value에 variable {aaa} 로 추가가능하다.<br />해당 method 내의 param중에 variable과 getName이 같은 param Parameter에 String to XXXX convert를 진행해 주입해준다.<br /><br /><br />@Autowired Constructor 인 경우, value[]에 값이 있으면 해당 beanName기반으로 해당 method내의 param들 순서대로 beanName으로서 getBean을 처리해준다. <br />getBean된 내용을 param Parameter에 주입해준다. |  | | | | |
 | 69 |DispatcherServlet 입장에서 route 처리 시나리오 정리.<br /><br />Map<String, Set<RequestMethod<br />url : /shops/aaa/bbb/ccc -> shops 검색 -> x |  | | | | |
 | 70 |Url <-> Path \| PathVariableName \| PathVariable , encoding, decoding 지원 UrlUtil추가. | WORKING | 100% | 04-07 | 04-07 | 4h |
+| 71 |servletContainer 기동 타이밍에 bean pre-initialize 기본 지원.<br />차후 lazy-initialize 지원 할 것. | DONE | 100% | 04-07 | 04-07 | 1h |
+| 72 |BeanDefinition에 BeanRegistrable annotation 에 대한 정보도 추가. 이 또한 cannonicalName으로 취득한다. (for MetaClassLoader <-> AppClassLoader) | DONE | 100% | 04-07 | 04-07 | 30m |
 

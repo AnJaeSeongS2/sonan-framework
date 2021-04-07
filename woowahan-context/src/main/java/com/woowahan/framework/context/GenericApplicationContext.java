@@ -30,10 +30,13 @@ public class GenericApplicationContext<T> extends ApplicationContext {
     private static final Logger logger = LoggerFactory.getLogger(GenericApplicationContext.class);
     @Nullable
     private final ApplicationContext parent;
-    private final Map<BeanIdentifier, Object> singletonBeans;
-    private final Map<BeanIdentifier, BeanDefinition> beanIdToDef;
     private final Set<BeanDefinition> beanDefs;
+    private final Map<BeanIdentifier, BeanDefinition> beanIdToDef;
     private final ClassLoader beanClassLoader;
+
+    // refresh 대상 ////////////
+    private Map<BeanIdentifier, Object> singletonBeans;
+    ///////////////////////////
 
     /**
      * ApplicationContext를 저장하는 vendor별 contextHolder
@@ -151,6 +154,22 @@ public class GenericApplicationContext<T> extends ApplicationContext {
             return bean;
         } catch (Exception e) {
             throw new BeanCreationFailedException("The ApplicationContext is can't create Bean with this BeanDefinition. current ApplicationContext: " + toString() + ", current BeanIdentifier: " + definition.getId().toString(), e);
+        }
+    }
+
+
+    /**
+     * 현재 context에서 보관 중인 혹은 새로 보관할 bean들을 definition기반으로 재 할당한다.
+     * 기본 사용처는 application 초기 기동시 사용된다.
+     * @see com.woowahan.framework.context.annotation.Scope Singleton: 새로 생김.
+     */
+    public void refreshInstances() throws BeanCreationFailedException {
+        this.singletonBeans = new ConcurrentHashMap<BeanIdentifier, Object>();
+
+        for (BeanDefinition beanDef : beanDefs) {
+            if (beanDef.isSingleton()) {
+                getBean(beanDef);
+            }
         }
     }
 }

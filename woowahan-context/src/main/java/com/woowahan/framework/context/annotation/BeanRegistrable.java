@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
  * Bean으로 등록될 수 있는 Annotation들에게 붙여야 한다.
  * 등록된 annotation들은 String을 반환하는 value() method를 구현해야하며, 반환값으로 beanName을 의미하는 값을 제공해야한다.
  *
+ * Component 는 너무 범용성 Annotation이라 제거함.
  * @see {@link Bean}
  * @see {@link Configuration}
  * @see {@link Controller}
@@ -25,6 +26,7 @@ public enum BeanRegistrable {
 //    BEAN(Bean.class),
     CONFIGURATION(Configuration.class),
     CONTROLLER(Controller.class),
+    REPOSITORY(Repository.class),
     SERVICE(Service.class);
 
     private static Set<Class<? extends Annotation>> annotationTypeSetCache;
