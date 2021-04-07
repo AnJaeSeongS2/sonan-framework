@@ -6,6 +6,7 @@ import com.woowahan.util.reflect.ReflectionUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +21,7 @@ class GenericMapRepositoryTest {
 
     @BeforeEach
     void initRepo() {
-        repo = new GenericMapRepository();
+        repo = new GenericMapRepository<>();
     }
 
     @Test
@@ -73,6 +74,22 @@ class GenericMapRepositoryTest {
 
         // no exists element about 2.
         assertThrows(FailedGetException.class, () -> repo.get(2));
+    }
+
+    @Test
+    void getAll() throws FailedRestException {
+        TestModel originalModel = new TestModel(1, "name");
+        TestModel originalModel2 = new TestModel(2, "name");
+        repo.post(originalModel);
+        repo.post(originalModel2);
+
+        TestModel noAddedModel = new TestModel(3,"noAdded");
+
+        List<TestModel> datas = repo.getAll();
+        assertEquals(2, datas.size());
+        assertTrue(datas.contains(originalModel));
+        assertTrue(datas.contains(originalModel2));
+        assertFalse(datas.contains(noAddedModel));
     }
 }
 

@@ -8,8 +8,10 @@ import com.woowahan.framework.web.annotation.model.Id;
 import com.woowahan.util.reflect.ReflectionUtil;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * TODO: com.woowahan.framework.context.repository를 module화 할 것.
@@ -113,5 +115,13 @@ public class GenericMapRepository<ElementClazz> {
         }
 
         return dataMap.get(elementId);
+    }
+
+    /**
+     * TODO: GenericMapRepository입장에서 전체 element를 보여주는 기능은 Map을 List로 재 가공하므로 퍼포먼스 문제가 있다. GenericListRepository 추가 생성 요망.
+     * @return
+     */
+    public List<ElementClazz> getAll() throws FailedGetException {
+        return dataMap.values().stream().collect(Collectors.toList());
     }
 }

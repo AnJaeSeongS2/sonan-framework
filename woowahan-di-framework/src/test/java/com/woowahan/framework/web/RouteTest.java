@@ -1,8 +1,6 @@
 package com.woowahan.framework.web;
 
-import com.woowahan.framework.context.annotation.Autowired;
-import com.woowahan.framework.context.annotation.Controller;
-import com.woowahan.framework.json.JacksonUtil;
+ import com.woowahan.framework.context.annotation.Controller;
 import com.woowahan.framework.json.throwable.FailedConvertJsonException;
 import com.woowahan.framework.throwable.FailedDeleteException;
 import com.woowahan.framework.throwable.FailedGetException;
@@ -11,10 +9,13 @@ import com.woowahan.framework.throwable.FailedPutException;
 import com.woowahan.framework.web.annotation.PathVariable;
 import com.woowahan.framework.web.annotation.RequestMapping;
 import com.woowahan.framework.web.annotation.RequestMethod;
+import com.woowahan.framework.web.throwable.FailedRouteException;
 import com.woowahan.util.reflect.ReflectionUtil;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,17 +26,44 @@ import static org.junit.jupiter.api.Assertions.*;
 class RouteTest {
 
     @Test
-    void invokeAfterControllerCreation() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    void register() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
+        Route route = (Route) ReflectionUtil.newInstanceAnyway(Route.class);
+        TestController controller = new TestController();
+        Method method = ReflectionUtil.getMethodMetaAnyway(TestController.class, (methodOfController) -> methodOfController.getName().equals("delete"));
+        route.register("/a/#{id1}#{id2}/c/d/#{id3}", new RequestMethod[]{RequestMethod.GET, RequestMethod.DELETE}, method, controller);
+        Map<Method, Object> methodToControllerObject = (Map<Method, Object>) ReflectionUtil.getFieldAnyway(route, "methodToControllerObject");
+        assertEquals(controller, methodToControllerObject.get(method));
+    }
+
+    @Test
+    void testInvokeAfterControllerCreation() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
         Route route = (Route) ReflectionUtil.newInstanceAnyway(Route.class);
         TestController controller = new TestController();
         route.invokeAfterControllerCreation(controller);
 
-        controller.getClass().getAnnotation(RequestMapping.class) : nullable
-        // controller.getClass().getAnnotation(RequestMapping.class).value() : /shops
-        // controller.getClass().getAnnotation(RequestMapping.class).method() : [] n개
+        Method method = ReflectionUtil.getMethodMetaAnyway(TestController.class, (methodOfController) -> methodOfController.getName().equals("delete"));
+        Map<Method, Object> methodToControllerObject = (Map<Method, Object>) ReflectionUtil.getFieldAnyway(route, "methodToControllerObject");
+        assertEquals(controller, methodToControllerObject.get(method));
 
-        //
-        // controller.getClass().getMethods()[3].getAnnotation(RequestMapping.class) : nullable
+        Map<String, Map<RequestMethod, Map.Entry<Method, Map<Integer, PathVariableModel>>>> routePathToMethod = (Map<String, Map<RequestMethod, Map.Entry<Method, Map<Integer, PathVariableModel>>>>) ReflectionUtil.getFieldAnyway(route, "routePathToMethod");
+        assertNotNull(routePathToMethod.get("/shops"));
+        assertNotNull(routePathToMethod.get("/shops").get(RequestMethod.GET));
+        assertNotNull(routePathToMethod.get("/shops/#{}").get(RequestMethod.GET));
+        assertEquals(2, routePathToMethod.get("/shops").size());
+        assertEquals(3, routePathToMethod.get("/shops/#{}").size());
+    }
+
+    @Test
+    void route() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, FailedRouteException {
+        Route route = (Route) ReflectionUtil.newInstanceAnyway(Route.class);
+        TestController controller = new TestController();
+        route.invokeAfterControllerCreation(controller);
+
+        assertEquals("getAll", route.route("/shops", RequestMethod.GET));
+        assertNull(route.route("/shops", RequestMethod.POST));
+        assertNull(route.route("/shops/#123", RequestMethod.PUT));
+        assertEquals("deleteDone3null", route.route("/shops/#3", RequestMethod.DELETE));
+        assertEquals("getDone5null", route.route("/shops/#5", RequestMethod.GET));
     }
 }
 
@@ -48,24 +76,24 @@ class TestController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getAll() throws FailedGetException, FailedConvertJsonException {
-        return "";
+        return "getAll";
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public void post() throws FailedPostException {
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public void put(@PathVariable Integer id) throws FailedPutException {
+    @RequestMapping(value = "/#{id}", method = RequestMethod.PUT)
+    public void put(@PathVariable("id") Integer id) throws FailedPutException {
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public String delete(@PathVariable Integer id) throws FailedDeleteException {
-        return "";
+    @RequestMapping(value = "/#{id}", method = RequestMethod.DELETE)
+    public String delete(@PathVariable("id") Integer id, String noBound) throws FailedDeleteException {
+        return "deleteDone" + id + noBound;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String get(@PathVariable Integer id) throws FailedGetException, FailedConvertJsonException {
-        return "";
+    @RequestMapping(value = "/#{id}", method = RequestMethod.GET)
+    public String get(@PathVariable("id") Integer id, String noBound) throws FailedGetException, FailedConvertJsonException {
+        return "getDone" + id + noBound;
     }
 }

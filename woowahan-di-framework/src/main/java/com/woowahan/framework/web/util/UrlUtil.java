@@ -19,9 +19,14 @@ public class UrlUtil {
     public static final String URL_CHAR_SET = "UTF-8";
     public static final String PATH_SEPARATOR = "/";
     private static final Logger logger = LoggerFactory.getLogger(UrlUtil.class);
-    private static final Pattern PATH_SEPARATOR_PATTERN = Pattern.compile("/");
     private static final String PATH_VARIABLE_PREFIX = "#";
     private static final String PATH_VARIABLE_BIND_TEMP = "#{}";
+
+    // ex: #{id1}#{id2}
+    // match1 : #{id1}
+    // match2 : #{id2}
+    private static final Pattern PATH_ELEMENT_PATH_VARIABLE_ON_REQUEST_MAPPING = Pattern.compile("(#\\{)([\\w]+)}");
+    private static final Pattern PATH_SEPARATOR_PATTERN = Pattern.compile("/");
 
     /**
      * routePath를 반환한다.
@@ -47,66 +52,65 @@ public class UrlUtil {
         while (urlMatcher.find()) {
             if (urlMatcherBeforeEnd != 0) {
                 String pathMaybeEncoded = url.substring(urlMatcherBeforeEnd, urlMatcher.start());
-                result.add(genCurrentPath(pathMaybeEncoded, pathVariables));
+                Map.Entry<String, List<String>> currentPathElementAndPathVariables = genCurrentPathElementByMaybeUrlEncoded(pathMaybeEncoded);
+                result.add(currentPathElementAndPathVariables.getKey());
+                pathVariables.addAll(currentPathElementAndPathVariables.getValue());
             }
             urlMatcherBeforeEnd = urlMatcher.end();
         }
         if (urlMatcherBeforeEnd != 0) {
             String pathMaybeEncoded = url.substring(urlMatcherBeforeEnd);
-            result.add(genCurrentPath(pathMaybeEncoded, pathVariables));
+            Map.Entry<String, List<String>> currentPathElementAndPathVariables = genCurrentPathElementByMaybeUrlEncoded(pathMaybeEncoded);
+            result.add(currentPathElementAndPathVariables.getKey());
+            pathVariables.addAll(currentPathElementAndPathVariables.getValue());
         }
 
         return new AbstractMap.SimpleEntry<>(result.toString(), pathVariables.toArray(new String[0]));
     }
 
     /**
-     * encoding된 값이라면 decode해서 반환, pathVariable이라면 appendablePathVariables에도 추가해둔다.
+     * encoding된 값이라면, List에 decode해서 넣고, currentPath로는 #{}으로 반환한다.
      *
-     * @TODO REFACTORING: param으로 넘겨준 자료구조를 CUD하는 행위는 좋은 코딩습관이 아니다. 그러나, 지금은 private method로 확실히 동작을 안 상태로 사용할 것.
-     * @param pathMaybeEncoded
-     * @param appendablePathVariables param으로 넘겨준 값을 변조하는 행위는 좋지않으나, private method로 확실히 동작을 안 상태로 사용할 것.
-     * @return
+     * @param pathElemMaybeEncoded
+     * @return ex: #{} or #{}#{} or pathElemMaybeEncoded
      */
-    private static String genCurrentPath(String pathMaybeEncoded, List<String> appendablePathVariables) {
-        if (pathMaybeEncoded.indexOf(PATH_VARIABLE_PREFIX) == 0) {
-            // no need thread-safe
+    private static Map.Entry<String, List<String>> genCurrentPathElementByMaybeUrlEncoded(String pathElemMaybeEncoded) {
+        List<String> pathVariables = new ArrayList<>();
+        if (pathElemMaybeEncoded.indexOf(PATH_VARIABLE_PREFIX) == 0) {
+            // not need thread-safe
             StringBuilder currentBindTemp = new StringBuilder();
-            for (String pathVariableEncoded : pathMaybeEncoded.split(PATH_VARIABLE_PREFIX)) {
+            for (String pathVariableEncoded : pathElemMaybeEncoded.split(PATH_VARIABLE_PREFIX)) {
                 if (pathVariableEncoded.length() == 0)
                     continue;
-                appendablePathVariables.add(UrlUtil.decode(pathVariableEncoded));
+                pathVariables.add(UrlUtil.decode(pathVariableEncoded));
                 currentBindTemp.append(PATH_VARIABLE_BIND_TEMP);
             }
-            return currentBindTemp.toString();
+            return new AbstractMap.SimpleEntry<>(currentBindTemp.toString(), pathVariables);
         } else {
-            // path static case, pathMaybeEncoded is normal path.
-            return pathMaybeEncoded;
+            // path static case, pathElemMaybeEncoded is normal path element.
+            return new AbstractMap.SimpleEntry<>(pathElemMaybeEncoded, pathVariables);
         }
     }
 
     /**
-     * pathVariable이라면 appendablePathVariables에도 추가해둔다.
+     * variableName 이 있다면, list에 그것을 넣고 currentPath로는 #{}으로 반환한다.
      *
-     *
-     * @TODO REFACTORING: param으로 넘겨준 자료구조를 CUD하는 행위는 좋은 코딩습관이 아니다. 그러나, 지금은 private method로 확실히 동작을 안 상태로 사용할 것.
-     * @param pathMaybeVariableName
-     * @param appendablePathVariables param으로 넘겨준 값을 변조하는 행위는 좋지않으나, private method로 확실히 동작을 안 상태로 사용할 것.
-     * @return
+     * @param pathElemMaybeVariableName ex: #{id1} or #{id1}#{id2} or shops
+     * @return ex: #{} or #{}#{} or pathElemMaybeVariableName
      */
-    private static String genCurrentPathMaybeVariableName(String pathMaybeVariableName, List<String> appendablePathVariables) {
-        if (pathMaybeVariableName.indexOf(PATH_VARIABLE_PREFIX) == 0) {
-            // no need thread-safe
-            StringBuilder currentBindTemp = new StringBuilder();
-            for (String elementMaybePathVariableName : pathMaybeVariableName.split(PATH_VARIABLE_PREFIX)) {
-                if (elementMaybePathVariableName.length() == 0)
-                    continue;
-                appendablePathVariables.add(elementMaybePathVariableName.substring(1, elementMaybePathVariableName.length() - 1));
-                currentBindTemp.append(PATH_VARIABLE_BIND_TEMP);
-            }
-            return currentBindTemp.toString();
+    public static Map.Entry<String, List<String>> genCurrentPathElementAndPathVariableNames(String pathElemMaybeVariableName) {
+        List<String> pathVariableNames = new ArrayList<>();
+        Matcher matcher = PATH_ELEMENT_PATH_VARIABLE_ON_REQUEST_MAPPING.matcher(pathElemMaybeVariableName);
+        StringBuilder currentBindTemp = new StringBuilder();
+        while (matcher.find()) {
+            pathVariableNames.add(matcher.group(2));
+            currentBindTemp.append(PATH_VARIABLE_BIND_TEMP);
+        }
+        if (currentBindTemp.length() > 0) {
+            return new AbstractMap.SimpleEntry<>(currentBindTemp.toString(), pathVariableNames);
         } else {
-            // path static case, pathMaybeVariable is normal path.
-            return pathMaybeVariableName;
+            // path static case, pathElemMaybeRequestMapping is normal path element.
+            return new AbstractMap.SimpleEntry<>(pathElemMaybeVariableName, pathVariableNames);
         }
     }
 
@@ -133,14 +137,18 @@ public class UrlUtil {
         int urlMatcherBeforeEnd = 0;
         while (urlMatcher.find()) {
             if (urlMatcherBeforeEnd != 0) {
-                String pathMaybeVariableName = urlOnRequestMapping.substring(urlMatcherBeforeEnd, urlMatcher.start());
-                result.add(genCurrentPathMaybeVariableName(pathMaybeVariableName, pathVariables));
+                String pathElementMaybeVariableName = urlOnRequestMapping.substring(urlMatcherBeforeEnd, urlMatcher.start());
+                Map.Entry<String, List<String>> currentPathElementAndPathVariableNames = genCurrentPathElementAndPathVariableNames(pathElementMaybeVariableName);
+                result.add(currentPathElementAndPathVariableNames.getKey());
+                pathVariables.addAll(currentPathElementAndPathVariableNames.getValue());
             }
             urlMatcherBeforeEnd = urlMatcher.end();
         }
         if (urlMatcherBeforeEnd != 0) {
-            String pathMaybeVariableName = urlOnRequestMapping.substring(urlMatcherBeforeEnd);
-            result.add(genCurrentPathMaybeVariableName(pathMaybeVariableName, pathVariables));
+            String pathElementMaybeVariableName = urlOnRequestMapping.substring(urlMatcherBeforeEnd);
+            Map.Entry<String, List<String>> currentPathElementAndPathVariableNames = genCurrentPathElementAndPathVariableNames(pathElementMaybeVariableName);
+            result.add(currentPathElementAndPathVariableNames.getKey());
+            pathVariables.addAll(currentPathElementAndPathVariableNames.getValue());
         }
 
         return new AbstractMap.SimpleEntry<>(result.toString(), pathVariables.toArray(new String[0]));
