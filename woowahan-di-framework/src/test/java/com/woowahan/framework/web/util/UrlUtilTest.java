@@ -16,7 +16,7 @@ class UrlUtilTest {
 
     @Test
     void encode() throws UnsupportedEncodingException {
-        assertEquals("id1LNa%2F.q%2F%5D%60pj3p#%23%23%23%2F%2F%2F%2F...", UrlUtil.encode("id1LNa/.q/]`pj3p####////..."));
+        assertEquals("id1LNa%2F.q%2F%5D%60pj3p", UrlUtil.encode("id1LNa/.q/]`pj3p"));
     }
 
     @Test
@@ -45,6 +45,13 @@ class UrlUtilTest {
 
     @Test
     void genRoutePathAndPathVariableNamesFromUrlOnRequestMapping() {
+
+        /**
+         * @param urlOnRequestMapping example: /a/#{id1}#{id2}/c/d/#{id3}
+         * @return example: /a/#{}#{}/c/d/#{} , [id1, id2, id3]
+         */
+        assertEquals("/a/#{}#{}/c/d/#{}", UrlUtil.genRoutePathAndPathVariableNamesFromUrlOnRequestMapping("/a/#{id1}#{id2}/c/d/#{id3}").getKey());
+        assertArrayEquals(new String[]{"id1", "id2", "id3"}, UrlUtil.genRoutePathAndPathVariableNamesFromUrlOnRequestMapping("/a/#{id1}#{id2}/c/d/#{id3}").getValue());
     }
 
     @Test

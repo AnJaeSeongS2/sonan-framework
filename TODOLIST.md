@@ -75,5 +75,5 @@
 | 67 |**(부가기능)** Repository구현체의 경우, 고객이 직접 vendor를 선택하게끔 돼 버렸는데, app코드에서는 vendor무관히 코딩가능하게 개선할 것. |  | | | | |
 | 68 |method reflection 수행에 대해. <br /><br />@RequestMapping method인 경우, value에 variable {aaa} 로 추가가능하다.<br />해당 method 내의 param중에 variable과 getName이 같은 param Parameter에 String to XXXX convert를 진행해 주입해준다.<br /><br /><br />@Autowired Constructor 인 경우, value[]에 값이 있으면 해당 beanName기반으로 해당 method내의 param들 순서대로 beanName으로서 getBean을 처리해준다. <br />getBean된 내용을 param Parameter에 주입해준다. |  | | | | |
 | 69 |DispatcherServlet 입장에서 route 처리 시나리오 정리.<br /><br />Map<String, Set<RequestMethod<br />url : /shops/aaa/bbb/ccc -> shops 검색 -> x |  | | | | |
-| 70 |Url <-> Path \| PathVariableName \| PathVariable , encoding, decoding 지원 UrlUtil추가. | WORKING | 70% | 04-07 | 04-07 | 3h |
+| 70 |Url <-> Path \| PathVariableName \| PathVariable , encoding, decoding 지원 UrlUtil추가. | WORKING | 100% | 04-07 | 04-07 | 4h |
 
