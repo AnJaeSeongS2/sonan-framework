@@ -1,19 +1,25 @@
 package com.woowahan.framework.context;
 
+import com.woowahan.framework.context.annotation.Controller;
+import com.woowahan.framework.context.annotation.Service;
 import com.woowahan.framework.context.bean.BeanDefinition;
 import com.woowahan.framework.context.bean.BeanIdentifier;
+import com.woowahan.framework.context.bean.lifecycle.ControllerLifecycleInvocation;
 import com.woowahan.framework.context.bean.throwable.BeanCreationFailedException;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotRegisteredException;
 import com.woowahan.framework.context.bean.throwable.BeanNotFoundException;
 import com.woowahan.logback.support.Markers;
 import com.woowahan.util.annotation.Nullable;
+import com.woowahan.util.reflect.ReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
 /**
@@ -36,6 +42,7 @@ public class GenericApplicationContext<T> extends ApplicationContext {
 
     // refresh 대상 ////////////
     private Map<BeanIdentifier, Object> singletonBeans;
+    private List<Object> singletonBeansControllerLifecycleInvocations;
     ///////////////////////////
 
     /**
@@ -60,9 +67,10 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         this.contextHolder = contextHolder;
         this.getterRootApplicationContext = getterRootApplicationContext;
 
-        this.beanDefs = Collections.newSetFromMap(new ConcurrentHashMap<BeanDefinition, Boolean>());
-        this.beanIdToDef = new ConcurrentHashMap<BeanIdentifier, BeanDefinition>();
-        this.singletonBeans = new ConcurrentHashMap<BeanIdentifier, Object>();
+        this.beanDefs = Collections.newSetFromMap(new ConcurrentHashMap<>());
+        this.beanIdToDef = new ConcurrentHashMap<>();
+        this.singletonBeans = new ConcurrentHashMap<>();
+        this.singletonBeansControllerLifecycleInvocations = new CopyOnWriteArrayList<>();
 
         this.beanClassLoader = Thread.currentThread().getContextClassLoader();
         if (logger.isDebugEnabled())
@@ -129,8 +137,22 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         if (logger.isTraceEnabled())
             logger.trace(Markers.LIFE_CYCLE.get(), "try createBean...");
         Object bean = this.beanClassLoader.loadClass(definition.getBeanClassCanonicalName()).newInstance();
+        if (definition.isSingleton() && bean instanceof ControllerLifecycleInvocation) {
+            singletonBeansControllerLifecycleInvocations.add(bean);
+        }
         if (logger.isTraceEnabled())
             logger.trace(Markers.LIFE_CYCLE.get(), "success createBean as " + bean);
+        if (definition.isSingleton() && Controller.class.getCanonicalName().equals(definition.getBeanClassCanonicalName())) {
+            for (Object beanWantToInvocation: singletonBeansControllerLifecycleInvocations) {
+                try {
+                    ReflectionUtil.invokeMethod(beanWantToInvocation, "invokeAfterControllerCreation", new Class[]{Object.class}, new Object[]{bean});
+                } catch (Exception e) {
+                    if (logger.isDebugEnabled())
+                        logger.error(Markers.LIFE_CYCLE.get(), String.format("ControllerLifecycleInvocation failed. beanWantToInvocation : %s, beanCurrentCreation : %s", beanWantToInvocation, bean), e);
+                }
+            }
+        }
+
         return bean;
     }
 
@@ -161,13 +183,23 @@ public class GenericApplicationContext<T> extends ApplicationContext {
     /**
      * 현재 context에서 보관 중인 혹은 새로 보관할 bean들을 definition기반으로 재 할당한다.
      * 기본 사용처는 application 초기 기동시 사용된다.
+     *
+     * pre-initialize 순서 BeanKind: Service -> Etc ...
+     *
      * @see com.woowahan.framework.context.annotation.Scope Singleton: 새로 생김.
      */
     public void refreshInstances() throws BeanCreationFailedException {
-        this.singletonBeans = new ConcurrentHashMap<BeanIdentifier, Object>();
+        this.singletonBeans = new ConcurrentHashMap<>();
+        this.singletonBeansControllerLifecycleInvocations = new CopyOnWriteArrayList<>();
 
         for (BeanDefinition beanDef : beanDefs) {
-            if (beanDef.isSingleton()) {
+            if (beanDef.isSingleton() && Service.class.getCanonicalName().equals(beanDef.getBeanClassCanonicalName())) {
+                getBean(beanDef);
+            }
+        }
+
+        for (BeanDefinition beanDef : beanDefs) {
+            if (beanDef.isSingleton() && !Service.class.getCanonicalName().equals(beanDef.getBeanClassCanonicalName())) {
                 getBean(beanDef);
             }
         }

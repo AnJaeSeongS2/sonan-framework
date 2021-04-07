@@ -398,4 +398,12 @@ public class ReflectionUtil {
         }
         throw new NoSuchMethodException("target : " + target);
     }
+
+    public static <A extends Annotation> A getAnnotation(Method target, Class<A> annotationClass) {
+        return target.getAnnotation(annotationClass);
+    }
+
+    public static <A extends Annotation> A getAnnotation(Object target, Class<A> annotationClass) {
+        return target.getClass().getAnnotation(annotationClass);
+    }
 }

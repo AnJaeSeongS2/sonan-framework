@@ -1,5 +1,6 @@
 package com.woowahan.util.reflect;
 
+import com.woowahan.util.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.*;
@@ -213,7 +214,29 @@ class ReflectionUtilTest {
         assertEquals("childBean4", ((TestChildClassHasPrivateConstructorWithAnnotation) ReflectionUtil.newInstanceAnyway(TestChildClassHasPrivateConstructorWithAnnotation.class, new Class[]{String.class}, new Object[]{"testInput"})).bean4);
         assertThrows(NoSuchMethodException.class, () -> ReflectionUtil.newInstanceAnyway(TestChildClassHasPrivateConstructorWithAnnotation.class, new Class[]{String.class, Object.class}, new Object[]{"testInput", "second"}));
     }
+
+    @Test
+    void getAnnotation() throws NoSuchMethodException {
+
+        assertTrue(ReflectionUtil.getAnnotation(new TestClass2(), TestClassAnnotation.class) instanceof TestClassAnnotation);
+        assertTrue(ReflectionUtil.getAnnotation(ReflectionUtil.getMethodMetaAnyway(TestClass2.class, (method) -> method.getName().equals("testMethod")), Nullable.class) instanceof Nullable);
+    }
 }
+
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@interface TestClassAnnotation {
+}
+
+@TestClassAnnotation
+class TestClass2 {
+
+    @Nullable
+    public void testMethod() {
+
+    }
+}
+
 
 @Target({ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.RUNTIME)
