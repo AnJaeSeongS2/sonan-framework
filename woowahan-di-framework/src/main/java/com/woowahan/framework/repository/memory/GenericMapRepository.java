@@ -83,6 +83,10 @@ public class GenericMapRepository<ElementClazz> {
             throw new FailedPutException("this element's element id is null.");
         }
 
+        if (!dataMap.containsKey(id)) {
+            throw new FailedPutException(String.format("this element id is not exists on Repository. element id : %s",id));
+        }
+
         dataMap.put(id, element);
     }
 
@@ -92,7 +96,7 @@ public class GenericMapRepository<ElementClazz> {
             throw new FailedDeleteException("cannot delete element by null element id.");
         }
 
-        if (dataMap.containsKey(elementId)) {
+        if (!dataMap.containsKey(elementId)) {
             throw new FailedDeleteException(String.format("not exists element about this element id : %s", elementId));
         }
 
@@ -104,7 +108,7 @@ public class GenericMapRepository<ElementClazz> {
             throw new FailedGetException("cannot get element by null element id.");
         }
 
-        if (dataMap.containsKey(elementId)) {
+        if (!dataMap.containsKey(elementId)) {
             throw new FailedGetException(String.format("not exists element about this element id : %s", elementId));
         }
 

@@ -1,9 +1,6 @@
 package com.woowahan.framework.repository.memory;
 
-import com.woowahan.framework.throwable.FailedDeleteException;
-import com.woowahan.framework.throwable.FailedPostException;
-import com.woowahan.framework.throwable.FailedPutException;
-import com.woowahan.framework.throwable.FailedRestException;
+import com.woowahan.framework.throwable.*;
 import com.woowahan.framework.web.annotation.model.Id;
 import com.woowahan.util.reflect.ReflectionUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,14 +24,14 @@ class GenericMapRepositoryTest {
     }
 
     @Test
-    void post() throws FailedPostException, NoSuchFieldException, IllegalAccessException {
+    void post() throws FailedRestException, NoSuchFieldException, IllegalAccessException {
         assertThrows(FailedPostException.class, () -> repo.post(new TestModel(null, "name")));
         repo.post(new TestModel(1, "name1"));
         assertThrows(FailedPostException.class, () -> repo.post(new TestModel(1, "name")));
         repo.post(new TestModel(2, "name2"));
         Map<Object, TestModel> dataMap = (Map) ReflectionUtil.getFieldAnyway(repo,"dataMap");
-        assertEquals("name1", dataMap.get(1));
-        assertEquals("name2", dataMap.get(2));
+        assertEquals("name1", dataMap.get(1).name);
+        assertEquals("name2", dataMap.get(2).name);
     }
 
     @Test
@@ -46,7 +43,7 @@ class GenericMapRepositoryTest {
         Map<Object, TestModel> dataMap = (Map) ReflectionUtil.getFieldAnyway(repo,"dataMap");
 
         // success updated.
-        assertEquals("nameUpdated", dataMap.get(1));
+        assertEquals("nameUpdated", dataMap.get(1).name);
     }
 
     @Test
@@ -66,7 +63,7 @@ class GenericMapRepositoryTest {
     }
 
     @Test
-    void get() throws FailedPostException, NoSuchFieldException, IllegalAccessException {
+    void get() throws FailedRestException, NoSuchFieldException, IllegalAccessException {
         TestModel originalModel = new TestModel(1, "name");
         repo.post(originalModel);
 
@@ -75,7 +72,7 @@ class GenericMapRepositoryTest {
         assertEquals(originalModel, dataMap.get(1));
 
         // no exists element about 2.
-        assertThrows(FailedDeleteException.class, () -> repo.get(2));
+        assertThrows(FailedGetException.class, () -> repo.get(2));
     }
 }
 
