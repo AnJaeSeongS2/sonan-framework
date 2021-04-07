@@ -72,4 +72,8 @@
 | 64 |Model <-> Jackson json을 이 가능하게끔 유틸화 | DONE | 100% | 04-06 | 04-06 | 다른 task에서 계산됨. |
 | 65 |**(부가기능)**framework 사용 고객 입장에서 jackson을 app코드에서 직접 사용해야하는 부분이 별로인 것 같다. jackson을 framework단에서만 들고있고 util method로 뺴주자.<br />json-support 라는 별도 모듈이 생겨야 하며, <br />TODO: json-support 모듈을 별도로 생성하고, 타 vendor 구현체를 사용하는 방식은 spi를 따른다. <br />TODO: default spi 구현체는 JacksonUtil일 것. <br />TODO: 고객은 app 작성시 vendor 상관없이 framework가 제공하는 annotation, util api만 call하게끔 할 것. | WORKING | 50% | 04-05 |  | 30m |
 | 66 |framework 사용 고객이, logging을 직접 app코드에 추가하고 싶지 않을 것이다. framework차원에서 알아서 비지니스 로직에서 logging 되게끔 작업한다. |  |  |  |  |  |
+| 67 |**(부가기능)** Repository구현체의 경우, 고객이 직접 vendor를 선택하게끔 돼 버렸는데, app코드에서는 vendor무관히 코딩가능하게 개선할 것. |  | | | | |
+| 68 |method reflection 수행에 대해. <br /><br />@RequestMapping method인 경우, value에 variable {aaa} 로 추가가능하다.<br />해당 method 내의 param중에 variable과 getName이 같은 param Parameter에 String to XXXX convert를 진행해 주입해준다.<br /><br /><br />@Autowired Constructor 인 경우, value[]에 값이 있으면 해당 beanName기반으로 해당 method내의 param들 순서대로 beanName으로서 getBean을 처리해준다. <br />getBean된 내용을 param Parameter에 주입해준다. |  | | | | |
+| 69 |DispatcherServlet 입장에서 route 처리 시나리오 정리.<br /><br />Map<String, Set<RequestMethod<br />url : /shops/aaa/bbb/ccc -> shops 검색 -> x |  | | | | |
+| 70 |Url <-> Path \| PathVariableName \| PathVariable , encoding, decoding 지원 UrlUtil추가. | WORKING | 70% | 04-07 | 04-07 | 3h |
 
