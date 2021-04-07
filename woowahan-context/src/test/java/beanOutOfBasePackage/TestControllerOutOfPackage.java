@@ -1,4 +1,4 @@
-package com.woowahan.framework.context.beanInOfBasePackage;
+package beanOutOfBasePackage;
 
 import com.woowahan.framework.context.annotation.Controller;
 
@@ -7,5 +7,5 @@ import com.woowahan.framework.context.annotation.Controller;
  * Git Hub : https://github.com/AnJaeSeongS2
  */
 @Controller
-public class ControllerInOfBasePackageTest {
+public class TestControllerOutOfPackage {
 }

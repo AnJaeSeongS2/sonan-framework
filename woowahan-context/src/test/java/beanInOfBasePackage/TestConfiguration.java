@@ -1,4 +1,4 @@
-package com.woowahan.framework.context.beanInOfBasePackage;
+package beanInOfBasePackage;
 
 import com.woowahan.framework.context.annotation.Bean;
 import com.woowahan.framework.context.annotation.Configuration;
@@ -8,7 +8,7 @@ import com.woowahan.framework.context.annotation.Configuration;
  * Git Hub : https://github.com/AnJaeSeongS2
  */
 @Configuration
-public class ConfigurationTest {
+public class TestConfiguration {
 
     @Bean
     public String genBean() {

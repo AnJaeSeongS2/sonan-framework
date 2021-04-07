@@ -79,4 +79,5 @@
 | 72 |BeanDefinition에 BeanRegistrable annotation 에 대한 정보도 추가. 이 또한 cannonicalName으로 취득한다. (for MetaClassLoader <-> AppClassLoader) | DONE | 100% | 04-07 | 04-07 | 30m |
 | 73 |annotation 관련  ReflectionUtil추가. | DONE | 100% | 04-07 | 04-07 | 30m |
 | 74 |Controller Bean LifecyleInvocaion 추가.<br />Route 에서 이 invocation기능을 이용해 Controller의 route정보를 취득한다. | DONE | 100% | 04-07 | 04-07 | 3h |
+| 75 |framework system용 bean들을 관리할 수 있게, beanMetaFinderForSystem 도입 및 기존 beanMetaFinder와 동시사용 최적화 지원. | DONE | 100% | 04-08 | 04-07 | 30m |
 

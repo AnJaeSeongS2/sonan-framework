@@ -28,13 +28,19 @@ import java.util.Set;
  */
 public class BeanDefinitionHolder {
     private static final Logger logger = LoggerFactory.getLogger(BeanDefinitionHolder.class);
+    private static final String SYSTEM_BASE_PACKAGE = "com.woowahan.framework";
 
     /**
      * parent > beanMetaClassLoader 관계.
      */
     private final URLClassLoader parentCL;
     private final FirstChildOnBasePackageClassLoader beanMetaClassLoader;
+
+    // system측에서 등록해 사용하는 beanMetaFinder. basePackage가 com.woowahan.framework 이다.
+    private final Reflections beanMetaFinderForSystem;
     private final Reflections beanMetaFinder;
+    private boolean useBeanMetaFinderForSystem = true;
+    private boolean useBeanMetaFinder = true;
     private final String basePackage;
 
     private final Set<BeanDefinition> beanDefinitionSet;
@@ -54,21 +60,37 @@ public class BeanDefinitionHolder {
             this.parentCL = parentCL;
         }
         this.beanMetaClassLoader = new FirstChildOnBasePackageClassLoader(parentCL.getURLs(), parentCL, this.basePackage);
+
+        if (this.basePackage.contains(SYSTEM_BASE_PACKAGE)) {
+            // SYSTEM_BASE_PACKAGE parent case
+            useBeanMetaFinder = false;
+        } else if (SYSTEM_BASE_PACKAGE.contains(this.basePackage)) {
+            // this.basePackage parent case
+            useBeanMetaFinderForSystem = false;
+        }
+        if (logger.isInfoEnabled())
+            logger.info(Markers.MESSAGE.get(), String.format("SYSTEM_BASE_PACKAGE : %s, User's basePackage : %s", SYSTEM_BASE_PACKAGE, this.basePackage));
+        if (logger.isDebugEnabled())
+            logger.debug(Markers.MESSAGE.get(), String.format("useBeanMetaFinderForSystem : %s, useBeanMetaFinder : %s", useBeanMetaFinderForSystem, useBeanMetaFinder));
         this.beanMetaFinder = new Reflections(this.basePackage, this.beanMetaClassLoader);
+        this.beanMetaFinderForSystem = new Reflections(SYSTEM_BASE_PACKAGE, this.beanMetaClassLoader);
 
         try {
             beanDefinitionSet = new HashSet<>();
             Set<Class<?>> beanRegistrableClasses = new HashSet<>();
             for (Class<? extends Annotation> annotationType : BeanRegistrable.getBeanRegistrableAnnotationTypeSet(ElementType.TYPE)) {
-                Set<Class<?>> beanClasses = beanMetaFinder.getTypesAnnotatedWith((Class<? extends Annotation>) beanMetaClassLoader.loadClass(annotationType.getCanonicalName()));
-                if (Configuration.class.getCanonicalName().equals(annotationType.getCanonicalName())) {
-                    // TODO: Bean annotation부분 등록.
-                    // check @Bean annotation on custom Method in Class Type.
+                if (useBeanMetaFinderForSystem) {
+                    Set<Class<?>> beanClasses = beanMetaFinderForSystem.getTypesAnnotatedWith((Class<? extends Annotation>) beanMetaClassLoader.loadClass(annotationType.getCanonicalName()));
+                    beanRegistrableClasses.addAll(beanClasses);
                 }
-                beanRegistrableClasses.addAll(beanClasses);
+
+                if (useBeanMetaFinder) {
+                    Set<Class<?>> beanClasses = beanMetaFinder.getTypesAnnotatedWith((Class<? extends Annotation>) beanMetaClassLoader.loadClass(annotationType.getCanonicalName()));
+                    beanRegistrableClasses.addAll(beanClasses);
+                }
             }
 
-            for (Class<?> clazz: beanRegistrableClasses) {
+            for (Class<?> clazz : beanRegistrableClasses) {
                 BeanDefinition definition = genBeanDefinition(clazz);
                 beanDefinitionSet.add(definition);
                 if (logger.isDebugEnabled())
@@ -90,7 +112,7 @@ public class BeanDefinitionHolder {
             Scope beanScope = null;
             String beanName = null;
             String beanKind = null;
-            for (Annotation anno: beanClass.getDeclaredAnnotations()) {
+            for (Annotation anno : beanClass.getDeclaredAnnotations()) {
                 if (BeanRegistrable.contains(anno)) {
                     beanName = BeanRegistrable.getBeanName(anno);
                     beanKind = anno.annotationType().getCanonicalName();
@@ -105,20 +127,4 @@ public class BeanDefinitionHolder {
             throw new BeanDefinitionNotGeneratedException(e);
         }
     }
-
-//    private void setBeanClassesAboutBeanAnnotationOnConfiguration(Set<Class<?>> configurations, Class<? extends Annotation> configurationAnnotationType) {
-//        if (Configuration.class.getCanonicalName().equals(configurationAnnotationType.getCanonicalName())) {
-//            // check @Bean annotation on custom Method in Class Type.
-//            configurations.forEach((clazz) -> {
-//                for (Method declaredMethod : clazz.getDeclaredMethods()) {
-//                    for (Annotation declaredAnnotation : declaredMethod.getDeclaredAnnotations()) {
-//                        if (Bean.class.getCanonicalName().equals(declaredAnnotation.annotationType().getCanonicalName())) {
-//
-//                            // TODO @Bean으로 등록될 Method도 Bean으로써 등록되게 기능 구현.
-//                        }
-//                    }
-//                }
-//            });
-//        }
-//    }
 }

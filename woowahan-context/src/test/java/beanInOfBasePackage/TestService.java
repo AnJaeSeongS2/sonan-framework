@@ -1,4 +1,4 @@
-package com.woowahan.framework.context.beanInOfBasePackage;
+package beanInOfBasePackage;
 
 import com.woowahan.framework.context.annotation.Service;
 
@@ -7,5 +7,5 @@ import com.woowahan.framework.context.annotation.Service;
  * Git Hub : https://github.com/AnJaeSeongS2
  */
 @Service
-public class ServiceTest {
+public class TestService {
 }
