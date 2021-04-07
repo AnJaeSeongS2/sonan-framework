@@ -1,4 +1,4 @@
 dependencies {
-    implementation project(":woowahan-di-framework")
+    implementation project(":woowahan-container-bootstrapper")
     testImplementation("org.apache.httpcomponents:httpclient:4.5.9")
 }

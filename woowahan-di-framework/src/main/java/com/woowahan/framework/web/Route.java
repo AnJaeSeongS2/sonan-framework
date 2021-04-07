@@ -45,10 +45,7 @@ public class Route implements ControllerLifecycleInvocation {
     private Map<String, Map<RequestMethod, Map.Entry<Method, Map<Integer, PathVariableModel>>>> routePathToMethod;
     private Map<Method, Object> methodToControllerObject;
 
-    /**
-     * 이 클래스는 외부에서 직접 생성할 수 없다.
-     */
-    protected Route() {
+    public Route() {
         routePathToMethod = new ConcurrentHashMap<>();
         methodToControllerObject = new ConcurrentHashMap<>();
     }

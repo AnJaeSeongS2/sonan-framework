@@ -40,7 +40,7 @@ class UrlUtilTest {
          * @param url example: /a/#id1_URL_ENCODED#id2_URL_ENCODED/c/d/#id3_URL_ENCODED
          * @return example: /a/#{}#{}/c/d/#{}
          */
-        assertEquals("/a/#{}#{}/c/d/#{}", UrlUtil.genRoutePathFromUrlOnRequestMapping("/a/#id1LNa%2F.q%2F%5D%60pj3p#%23%23%23%2F%2F%2F%2F.../c/d/#%23%23%23%2F%2F%2F%2F..."));
+        assertEquals("/a/#{}#{}/c/d/#{}", UrlUtil.genRoutePathFromUrl("/a/#id1LNa%2F.q%2F%5D%60pj3p#%23%23%23%2F%2F%2F%2F.../c/d/#%23%23%23%2F%2F%2F%2F..."));
     }
 
     @Test
