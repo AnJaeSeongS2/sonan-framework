@@ -6,6 +6,7 @@
 * 이미 작성된 Annotation을 재사용할 것.
 * 요구사항을 매번 작업시작전에 재확인할 것.
 * mvc framework 구현이지만, viewResolver는 없다. data만 restapi로 제공한다.
+* 구체적 업무관리는 TODOLIST.md를 확인 바람.
 
 
 

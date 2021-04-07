@@ -1,7 +1,7 @@
 package com.woowahan.framework.context;
 
 import com.woowahan.framework.context.bean.BeanDefinitionRegistry;
-import com.woowahan.framework.context.bean.BeanGenerator;
+import com.woowahan.framework.context.bean.BeanHolder;
 import com.woowahan.framework.context.bean.throwable.BeanCreationFailedException;
 import com.woowahan.util.annotation.Nullable;
 
@@ -11,7 +11,7 @@ import com.woowahan.util.annotation.Nullable;
  * Created by Jaeseong on 2021/03/31
  * Git Hub : https://github.com/AnJaeSeongS2
  */
-public abstract class ApplicationContext implements BeanGenerator, BeanDefinitionRegistry {
+public abstract class ApplicationContext implements BeanHolder, BeanDefinitionRegistry {
 
     /**
      * vendor context에 저장될 때 사용되는 key

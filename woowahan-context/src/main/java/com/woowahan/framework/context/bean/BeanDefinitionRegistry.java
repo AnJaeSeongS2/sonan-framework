@@ -1,5 +1,6 @@
 package com.woowahan.framework.context.bean;
 
+import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotRegisteredException;
 import com.woowahan.framework.context.bean.throwable.BeanException;
 
 /**
@@ -19,5 +20,5 @@ public interface BeanDefinitionRegistry {
      * @param definition
      * @throws BeanException
      */
-    void register(BeanDefinition definition) throws BeanException;
+    void register(BeanDefinition definition) throws BeanDefinitionNotRegisteredException;
 }

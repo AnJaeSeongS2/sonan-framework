@@ -5,6 +5,7 @@ import com.woowahan.framework.context.annotation.BeanVariable;
 import com.woowahan.framework.context.annotation.Service;
 import com.woowahan.framework.context.bean.BeanDefinition;
 import com.woowahan.framework.context.bean.BeanIdentifier;
+import com.woowahan.framework.context.bean.BeanManager;
 import com.woowahan.framework.context.bean.Scope;
 import com.woowahan.framework.context.bean.throwable.BeanCreationFailedException;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotRegisteredException;
@@ -150,6 +151,19 @@ class GenericApplicationContextTest {
             Object singleton3 = childApplicationContext.getBean(id);
             assertTrue(singleton1 == singleton3);
         });
+    }
+
+    @Test
+    void BeanManagerGetBean() {
+        assertDoesNotThrow(() -> {
+            BeanIdentifier id = new BeanIdentifier(ClassWithoutBeanRegistrableAnnotation.class.getCanonicalName(), null);
+            BeanDefinition definition = new BeanDefinition(id, Scope.SINGLETON);
+            assertDoesNotThrow(() -> rootApplicationContext.register(definition));
+            Object singleton1 = BeanManager.getInstance().getBean(id);
+            Object singleton2 = BeanManager.getInstance().getBean(id);
+            assertTrue(singleton1 == singleton2);
+        });
+
     }
 }
 

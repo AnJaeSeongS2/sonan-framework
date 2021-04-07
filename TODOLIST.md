@@ -79,4 +79,9 @@
 | 73 |annotation 관련  ReflectionUtil추가. | DONE | 100% | 04-07 | 04-07 | 30m |
 | 74 |Controller Bean LifecyleInvocaion 추가.<br />Route 에서 이 invocation기능을 이용해 Controller의 route정보를 취득한다. | DONE | 100% | 04-07 | 04-07 | 3h |
 | 75 |framework system용 bean들을 관리할 수 있게, beanMetaFinderForSystem 도입 및 기존 beanMetaFinder와 동시사용 최적화 지원. | DONE | 100% | 04-08 | 04-08 | 30m |
+| 76 |사용자 app은 testcode를 적게 생성해도 되게끔 개발하기 편리하도록 의도해야한다. |  |  |  |  |  |
+| 77 |고객이 직접 json화 하는 것은 좋지 않다. 고객은 객체를 반환할 뿐이고, framework가 객체를 json string화 하여 response로 주도록 한다. |  |  |  |  |  |
+| 78 |ViewResolver 가 @Service로 등록돼야한다. ResourceViewResolver, JsonStringViewResolver 2가지가 필요하다.<br />ResourceViewResolver 는 String반환일때 동작하며, prefix `resources/static` suffix`.html` 이렇게 붙여 사용 가능하다.<br />JsonStringViewResolver 는 그외에 Object -> JsonStr 변환을 시도해 응답한다.<br />이마저도 실패하면, 원본 Object로 응답하려 시도한다. | WORKING |  |  |  |  |
+| 79 |Dispatcher SErvlet에서 Request기반으로 적절히 Route 처리한다. |  |  |  |  |  |
+| 80 |Bean을 외부에서도 활용할 수 있게 BeanManager를 추가. BeanManager 는 GenericApplicationContext를 사용할 시, RootApplicationContext를 활용하게끔 초기화된다. | DONE | 100% | 04-08 | 04-08 | 1h |
 

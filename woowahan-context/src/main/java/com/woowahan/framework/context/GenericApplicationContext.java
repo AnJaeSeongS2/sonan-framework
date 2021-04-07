@@ -6,6 +6,7 @@ import com.woowahan.framework.context.annotation.Controller;
 import com.woowahan.framework.context.annotation.Service;
 import com.woowahan.framework.context.bean.BeanDefinition;
 import com.woowahan.framework.context.bean.BeanIdentifier;
+import com.woowahan.framework.context.bean.BeanManager;
 import com.woowahan.framework.context.bean.lifecycle.ControllerLifecycleInvocation;
 import com.woowahan.framework.context.bean.throwable.BeanCreationFailedException;
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotRegisteredException;
@@ -75,6 +76,11 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         this.singletonBeansControllerLifecycleInvocations = new CopyOnWriteArrayList<>();
 
         this.beanClassLoader = Thread.currentThread().getContextClassLoader();
+        if (this.parent == null) {
+            // rootApplicationContext
+            BeanManager.getInstance().initBeanHolder(this);
+            BeanManager.getInstance().initBeanDefinitionRegistry(this);
+        }
         if (logger.isDebugEnabled())
             logger.debug(Markers.LIFE_CYCLE.get(), "success init GenericApplicationContext as " + this);
     }
