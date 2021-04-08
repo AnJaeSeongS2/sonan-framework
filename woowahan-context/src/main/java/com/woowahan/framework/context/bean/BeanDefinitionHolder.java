@@ -46,7 +46,7 @@ public class BeanDefinitionHolder {
     private final Set<BeanDefinition> beanDefinitionSet;
 
     public BeanDefinitionHolder(@Nullable URLClassLoader parentCL, @Nullable String basePackage) throws BeanDefinitionNotGeneratedException {
-        if (logger.isDebugEnabled())
+        if (logger.isDebugEnabled(Markers.LIFE_CYCLE.get()))
             logger.debug(Markers.LIFE_CYCLE.get(), "Start create BeanDefinitionHolder");
         if (basePackage == null) {
             this.basePackage = "";
@@ -68,9 +68,9 @@ public class BeanDefinitionHolder {
             // this.basePackage parent case
             useBeanMetaFinderForSystem = false;
         }
-        if (logger.isInfoEnabled())
+        if (logger.isInfoEnabled(Markers.MESSAGE.get()))
             logger.info(Markers.MESSAGE.get(), String.format("SYSTEM_BASE_PACKAGE : %s, User's basePackage : %s", SYSTEM_BASE_PACKAGE, this.basePackage));
-        if (logger.isDebugEnabled())
+        if (logger.isDebugEnabled(Markers.MESSAGE.get()))
             logger.debug(Markers.MESSAGE.get(), String.format("useBeanMetaFinderForSystem : %s, useBeanMetaFinder : %s", useBeanMetaFinderForSystem, useBeanMetaFinder));
         this.beanMetaFinder = new Reflections(this.basePackage, this.beanMetaClassLoader);
         this.beanMetaFinderForSystem = new Reflections(SYSTEM_BASE_PACKAGE, this.beanMetaClassLoader);
@@ -93,13 +93,13 @@ public class BeanDefinitionHolder {
             for (Class<?> clazz : beanRegistrableClasses) {
                 BeanDefinition definition = genBeanDefinition(clazz);
                 beanDefinitionSet.add(definition);
-                if (logger.isDebugEnabled())
+                if (logger.isDebugEnabled(Markers.LIFE_CYCLE.get()))
                     logger.debug(Markers.LIFE_CYCLE.get(), "Created BeanDefinition " + definition.toString());
             }
         } catch (Exception e) {
             throw new BeanDefinitionNotGeneratedException(e);
         }
-        if (logger.isDebugEnabled())
+        if (logger.isDebugEnabled(Markers.LIFE_CYCLE.get()))
             logger.debug(Markers.LIFE_CYCLE.get(), "Created BeanDefinitionHolder.");
     }
 

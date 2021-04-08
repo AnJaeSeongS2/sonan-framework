@@ -158,7 +158,7 @@ public class UrlUtil {
         try {
             return URLEncoder.encode(src, URL_CHAR_SET);
         } catch (UnsupportedEncodingException e) {
-            if (logger.isDebugEnabled())
+            if (logger.isDebugEnabled(Markers.MESSAGE.get()))
                 logger.debug(Markers.MESSAGE.get(), String.format("url cannot be encoded. so, return original url value. this url : ", src));
             return src;
         }
@@ -168,7 +168,7 @@ public class UrlUtil {
         try {
             return URLDecoder.decode(src, URL_CHAR_SET);
         } catch (UnsupportedEncodingException e) {
-            if (logger.isDebugEnabled())
+            if (logger.isDebugEnabled(Markers.MESSAGE.get()))
                 logger.debug(Markers.MESSAGE.get(), String.format("url cannot be decoded. so, return original url value. this url(encoded) : ", src));
             return src;
         }

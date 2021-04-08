@@ -33,20 +33,20 @@ public class ServletBootstrapperDefault implements ContainerBootstrapper {
     private BeanDefinitionHolder beanDefinitionHolder;
 
     public void boot(@Nullable String basePackageForComponentScan) throws BootingFailException {
-        if (logger.isDebugEnabled())
+        if (logger.isDebugEnabled(Markers.LIFE_CYCLE.get()))
             logger.debug(Markers.LIFE_CYCLE.get(), "try booting ServletBootstrapperDefault");
         try {
             initBeanDefinitionHolder((URLClassLoader) Thread.currentThread().getContextClassLoader(), basePackageForComponentScan);
             createWebServer();
             registerShutdownHandler();
             start();
-            if (logger.isDebugEnabled())
+            if (logger.isDebugEnabled(Markers.LIFE_CYCLE.get()))
                 logger.debug(Markers.LIFE_CYCLE.get(), "send AFTER_START_EVENT on booting ServletBootstrapperDefault");
             StaticLifeCycleEventBus.send(SimpleLifeCycle.AFTER_START_EVENT);
-            if (logger.isDebugEnabled())
+            if (logger.isDebugEnabled(Markers.LIFE_CYCLE.get()))
                 logger.debug(Markers.LIFE_CYCLE.get(), "success booting ServletBootstrapperDefault");
         } catch (Exception e) {
-            if (logger.isErrorEnabled())
+            if (logger.isErrorEnabled(Markers.LIFE_CYCLE.get()))
                 logger.error(Markers.LIFE_CYCLE.get(), "fail booting ServletBootstrapperDefault", e);
             throw new BootingFailException(e.getMessage(), e);
         }
@@ -104,7 +104,7 @@ public class ServletBootstrapperDefault implements ContainerBootstrapper {
             // bean pre-initialize
             refreshAllBeans();
         } catch (Exception e) {
-            if (logger.isErrorEnabled())
+            if (logger.isErrorEnabled(Markers.LIFE_CYCLE.get()))
                 logger.error(Markers.LIFE_CYCLE.get(), "servletContextInit failed", e);
             throw new ServletException(e.getMessage(), e);
         }

@@ -46,7 +46,7 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            if (logger.isTraceEnabled())
+            if (logger.isTraceEnabled(Markers.MESSAGE.get()))
                 logger.trace(Markers.MESSAGE.get(), String.format("Trying DispatcherServlet's service."));
             try {
                 String uri = req.getRequestURI();
@@ -63,10 +63,10 @@ public class DispatcherServlet extends HttpServlet {
 
                 Route route = (Route) BeanManager.getInstance().getBean(Route.class, null);
 
-                if (logger.isTraceEnabled())
+                if (logger.isTraceEnabled(Markers.MESSAGE.get()))
                     logger.trace(Markers.MESSAGE.get(), String.format("Trying invoke Routed Method"));
                 Object result = route.route(uri, requestMethod);
-                if (logger.isTraceEnabled())
+                if (logger.isTraceEnabled(Markers.MESSAGE.get()))
                     logger.trace(Markers.MESSAGE.get(), String.format("Success invoke Routed Method"));
 
                 Object resultAfterViewResolve = result;
@@ -83,14 +83,14 @@ public class DispatcherServlet extends HttpServlet {
                 resp.getWriter().print(resultAfterViewResolve);
 
             } catch (Exception e) {
-                if (logger.isErrorEnabled())
+                if (logger.isErrorEnabled(Markers.MESSAGE.get()))
                     logger.error(Markers.MESSAGE.get(), String.format("Failed DispatcherServlet's service. %s"), e.toString());
-                if (logger.isTraceEnabled())
+                if (logger.isTraceEnabled(Markers.MESSAGE.get()))
                     logger.trace(Markers.MESSAGE.get(), "Show DispatcherServlet's service Stacktrace", e);
                 throw new ServletException(e.getMessage(), e);
             }
         } finally {
-            if (logger.isTraceEnabled())
+            if (logger.isTraceEnabled(Markers.MESSAGE.get()))
                 logger.trace(Markers.MESSAGE.get(), String.format("Success DispatcherServlet's service."));
         }
     }

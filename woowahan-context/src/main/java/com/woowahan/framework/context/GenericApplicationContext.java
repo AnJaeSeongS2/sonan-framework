@@ -64,7 +64,7 @@ public class GenericApplicationContext<T> extends ApplicationContext {
      * @param getterRootApplicationContext contextHolder로부터 ApplicationContext를 추출하는 Function
      */
     public GenericApplicationContext(@Nullable ApplicationContext parent, T contextHolder, Function<T, ApplicationContext> getterRootApplicationContext) {
-        if (logger.isTraceEnabled())
+        if (logger.isTraceEnabled(Markers.LIFE_CYCLE.get()))
             logger.trace(Markers.LIFE_CYCLE.get(), "try init GenericApplicationContext...");
         this.parent = parent;
         this.contextHolder = contextHolder;
@@ -81,13 +81,13 @@ public class GenericApplicationContext<T> extends ApplicationContext {
             BeanManager.getInstance().initBeanHolder(this);
             BeanManager.getInstance().initBeanDefinitionRegistry(this);
         }
-        if (logger.isDebugEnabled())
+        if (logger.isDebugEnabled(Markers.LIFE_CYCLE.get()))
             logger.debug(Markers.LIFE_CYCLE.get(), "success init GenericApplicationContext as " + this);
     }
 
     @Override
     public Object getBean(BeanIdentifier id) throws BeanNotFoundException {
-        if (logger.isTraceEnabled())
+        if (logger.isTraceEnabled(Markers.LIFE_CYCLE.get()))
             logger.trace(Markers.LIFE_CYCLE.get(), "try getBean...");
         Object bean;
         if (beanIdToDef.containsKey(id)) {
@@ -104,7 +104,7 @@ public class GenericApplicationContext<T> extends ApplicationContext {
             }
             bean = getParent().getBean(id);
         }
-        if (logger.isTraceEnabled())
+        if (logger.isTraceEnabled(Markers.LIFE_CYCLE.get()))
             logger.trace(Markers.LIFE_CYCLE.get(), "success getBean as " + bean);
         return bean;
     }
@@ -117,7 +117,7 @@ public class GenericApplicationContext<T> extends ApplicationContext {
 
         beanDefs.add(definition);
         beanIdToDef.put(definition.getId(), definition);
-        if (logger.isTraceEnabled())
+        if (logger.isTraceEnabled(Markers.LIFE_CYCLE.get()))
             logger.trace(Markers.LIFE_CYCLE.get(), "finish register BeanDefinition as " + definition);
     }
 
@@ -142,7 +142,7 @@ public class GenericApplicationContext<T> extends ApplicationContext {
     }
 
     private Object createBean(BeanDefinition definition) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException {
-        if (logger.isTraceEnabled())
+        if (logger.isTraceEnabled(Markers.LIFE_CYCLE.get()))
             logger.trace(Markers.LIFE_CYCLE.get(), "try createBean...");
 
         Class<?> beanClazz = this.beanClassLoader.loadClass(definition.getBeanClassCanonicalName());
@@ -161,7 +161,7 @@ public class GenericApplicationContext<T> extends ApplicationContext {
                 return false;
             });
         } catch (NoSuchMethodException e) {
-            if (logger.isDebugEnabled())
+            if (logger.isDebugEnabled(Markers.MESSAGE.get()))
                 logger.debug(Markers.MESSAGE.get(), e.getMessage());
         }
 
@@ -187,7 +187,7 @@ public class GenericApplicationContext<T> extends ApplicationContext {
                     try {
                         boundObjects.add(getBean(new BeanIdentifier(paramClasses[i].getCanonicalName(), beanName)));
                     } catch (BeanNotFoundException e) {
-                        if (logger.isInfoEnabled())
+                        if (logger.isInfoEnabled(Markers.LIFE_CYCLE.get()))
                             logger.info(Markers.LIFE_CYCLE.get(), e.getMessage());
                         boundObjects.add(null);
                     }
@@ -200,14 +200,14 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         if (definition.isSingleton() && bean instanceof ControllerLifecycleInvocation) {
             singletonBeansControllerLifecycleInvocations.add(bean);
         }
-        if (logger.isTraceEnabled())
+        if (logger.isTraceEnabled(Markers.LIFE_CYCLE.get()))
             logger.trace(Markers.LIFE_CYCLE.get(), "success createBean as " + bean);
         if (definition.isSingleton() && Controller.class.getCanonicalName().equals(definition.getBeanClassCanonicalName())) {
             for (Object beanWantToInvocation: singletonBeansControllerLifecycleInvocations) {
                 try {
                     ReflectionUtil.invokeMethod(beanWantToInvocation, "invokeAfterControllerCreation", new Class[]{Object.class}, new Object[]{bean});
                 } catch (Exception e) {
-                    if (logger.isDebugEnabled())
+                    if (logger.isDebugEnabled(Markers.LIFE_CYCLE.get()))
                         logger.error(Markers.LIFE_CYCLE.get(), String.format("ControllerLifecycleInvocation failed. beanWantToInvocation : %s, beanCurrentCreation : %s", beanWantToInvocation, bean), e);
                 }
             }

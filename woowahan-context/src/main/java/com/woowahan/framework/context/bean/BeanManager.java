@@ -33,13 +33,13 @@ public class BeanManager {
 
     public void initBeanHolder(BeanHolder beanHolder) {
         this.beanHolder = beanHolder;
-        if (logger.isInfoEnabled())
+        if (logger.isInfoEnabled(Markers.LIFE_CYCLE.get()))
             logger.info(Markers.LIFE_CYCLE.get(), String.format("Initalized BeanManager. beanHolder : %s", beanHolder));
     }
 
     public void initBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) {
         this.beanDefinitionRegistry = beanDefinitionRegistry;
-        if (logger.isInfoEnabled())
+        if (logger.isInfoEnabled(Markers.LIFE_CYCLE.get()))
             logger.info(Markers.LIFE_CYCLE.get(), String.format("Initalized BeanManager. beanDefinitionRegistry : %s", beanDefinitionRegistry));
     }
 

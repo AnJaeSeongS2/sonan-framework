@@ -82,7 +82,7 @@ public class Route implements ControllerLifecycleInvocation {
                 try {
                     convertedObject = ReflectionUtil.invokeStaticMethod(paramClasses[i], "valueOf", new Class[]{String.class}, convertedObject);
                 } catch (Exception e) {
-                    if (logger.isDebugEnabled())
+                    if (logger.isDebugEnabled(Markers.MESSAGE.get()))
                         logger.debug(Markers.MESSAGE.get(), String.format("cannot convert PathVariable String to %s. original Value : %s", paramClasses[i], convertedObject)); // 아직 convertedObject 는 original이다.
                 }
                 paramBound.add(convertedObject);
@@ -119,7 +119,7 @@ public class Route implements ControllerLifecycleInvocation {
         for (RequestMethod requestMethod : requestMethods) {
             Object prev = requestMethodMap.put(requestMethod, new AbstractMap.SimpleEntry<>(method, pathVariableModelMap));
             if (prev != null) {
-                if (logger.isTraceEnabled())
+                if (logger.isTraceEnabled(Markers.MESSAGE.get()))
                     logger.trace(Markers.MESSAGE.get(), String.format("route mapping method is changed. reqeustMethod : %s, routePath : %s", requestMethod.name(), routePathAndPathVariableNames.getKey()));
             }
         }
@@ -146,7 +146,7 @@ public class Route implements ControllerLifecycleInvocation {
         String url = UrlUtil.PATH_SEPARATOR;
         RequestMapping clazzMapping = ReflectionUtil.getAnnotation(createdController, RequestMapping.class);
         if (clazzMapping == null) {
-            if (logger.isTraceEnabled())
+            if (logger.isTraceEnabled(Markers.LIFE_CYCLE.get()))
                 logger.trace(Markers.LIFE_CYCLE.get(), String.format("class's RequestMapping is no exists. class : %s", createdController.getClass()));
         } else {
             url += (genPathWithoutSeparator(clazzMapping.value()));
@@ -155,7 +155,7 @@ public class Route implements ControllerLifecycleInvocation {
         for (Method method : createdController.getClass().getMethods()) {
             RequestMapping methodMapping = ReflectionUtil.getAnnotation(method, RequestMapping.class);
             if (methodMapping == null) {
-                if (logger.isTraceEnabled())
+                if (logger.isTraceEnabled(Markers.LIFE_CYCLE.get()))
                     logger.trace(Markers.LIFE_CYCLE.get(), String.format("method's RequestMapping is no exists. method : %s", method));
                 continue;
             }

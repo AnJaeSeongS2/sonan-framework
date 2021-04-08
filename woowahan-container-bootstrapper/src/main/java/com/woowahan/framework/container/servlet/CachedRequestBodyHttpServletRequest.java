@@ -39,7 +39,7 @@ public class CachedRequestBodyHttpServletRequest extends HttpServletRequestWrapp
                 }
             }
         } catch (IOException e) {
-            if (logger.isErrorEnabled())
+            if (logger.isErrorEnabled(Markers.MESSAGE.get()))
                 logger.error(Markers.MESSAGE.get(), "Failed gen Cached RequestBody", e);
         }
         this.requestBody = sb.toString();

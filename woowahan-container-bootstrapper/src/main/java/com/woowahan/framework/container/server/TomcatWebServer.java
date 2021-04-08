@@ -1,15 +1,18 @@
 package com.woowahan.framework.container.server;
 
+import com.woowahan.logback.support.Markers;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * WebApplicationServer 인터페이스화 할 것. SPI염두할 것.
  */
 public class TomcatWebServer {
-    private static final Log logger = LogFactory.getLog(TomcatWebServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(TomcatWebServer.class);
 
     private final Tomcat tomcat;
 
@@ -36,14 +39,14 @@ public class TomcatWebServer {
     }
 
     public void start() {
-        if (logger.isInfoEnabled())
-            logger.info("Tomcat started on port(s): " + tomcat.getConnector().getPort());
+        if (logger.isInfoEnabled(Markers.LIFE_CYCLE.get()))
+            logger.info(Markers.LIFE_CYCLE.get(),"Tomcat started on port(s): " + tomcat.getConnector().getPort());
     }
 
     public void stop()  {
         try {
-            if (logger.isInfoEnabled())
-                logger.info("Tomcat stopped on port(s): " + tomcat.getConnector().getPort());
+            if (logger.isInfoEnabled(Markers.LIFE_CYCLE.get()))
+                logger.info(Markers.LIFE_CYCLE.get(), "Tomcat stopped on port(s): " + tomcat.getConnector().getPort());
             this.tomcat.stop();
             this.tomcat.destroy();
         } catch (LifecycleException ex) {

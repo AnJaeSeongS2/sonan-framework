@@ -20,10 +20,10 @@ public class TomcatStarter implements ServletContainerInitializer {
 
     @Override
     public void onStartup(Set<Class<?>> c, ServletContext ctx) throws ServletException {
-        if (logger.isDebugEnabled())
+        if (logger.isDebugEnabled(Markers.LIFE_CYCLE.get()))
             logger.debug(Markers.LIFE_CYCLE.get(), "try Tomcat's ServletContainerInitializer onStartup method.");
         initializer.onStartup(ctx);
-        if (logger.isDebugEnabled())
+        if (logger.isDebugEnabled(Markers.LIFE_CYCLE.get()))
             logger.debug(Markers.LIFE_CYCLE.get(), "success Tomcat's ServletContainerInitializer onStartup method.");
     }
 }

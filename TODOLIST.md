@@ -90,4 +90,5 @@
 | 80 |Bean을 외부에서도 활용할 수 있게 BeanManager를 추가. BeanManager 는 GenericApplicationContext를 사용할 시, RootApplicationContext를 활용하게끔 초기화된다. | DONE | 100% | 04-08 | 04-08 | 1h |
 | 81 |Route 처리 규칙 변경 안내<br />로직 속도 개선을 위해 /shops/{id} 가 아닌 /shops/#{id} 처럼 #을 encodedvariable앞에 붙이도록 정책화. | DONE(문서화) | 100% | - | - | - |
 | 82 |APP 개발 (미완) | TIMEOUT | 60% | - | - | - |
+| 83 |logback Marker 조건문에도 추가. | DONE | 100% | 04-08 | 04-08 | 10m |
 
