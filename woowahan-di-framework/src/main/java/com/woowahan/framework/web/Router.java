@@ -3,10 +3,7 @@ package com.woowahan.framework.web;
 import com.woowahan.framework.context.annotation.Service;
 import com.woowahan.framework.context.bean.lifecycle.ControllerLifecycleInvocation;
 import com.woowahan.framework.json.JacksonUtil;
-import com.woowahan.framework.web.annotation.PathVariable;
-import com.woowahan.framework.web.annotation.RequestBody;
-import com.woowahan.framework.web.annotation.RequestMapping;
-import com.woowahan.framework.web.annotation.RequestMethod;
+import com.woowahan.framework.web.annotation.*;
 import com.woowahan.framework.web.throwable.FailedRouteException;
 import com.woowahan.framework.web.util.UrlUtil;
 import com.woowahan.logback.support.Markers;
@@ -67,18 +64,18 @@ public class Router implements ControllerLifecycleInvocation {
         Map.Entry<String, String[]> routePathAndPathVariables = UrlUtil.genRoutePathAndPathVariablesFromUrl(url);
         Map<RequestMethod, Map.Entry<Method, Map<Integer, PathVariableModel>>> methodMap = routePathToMethod.get(routePathAndPathVariables.getKey());
         if (methodMap == null) {
-            throw new FailedRouteException(String.format("cannot found route about this url : %s, this requestMethod : %s", url, requestMethod.name()));
+            throw new FailedRouteException(String.format("cannot found route about this url. url : %s, requestMethod : %s", url, requestMethod.name()));
         }
 
         Map.Entry<Method, Map<Integer, PathVariableModel>> methodAndPathVariableModelMap = methodMap.get(requestMethod);
         if (methodAndPathVariableModelMap == null) {
-            throw new FailedRouteException(String.format("cannot found route about this url : %s, this requestMethod : %s", url, requestMethod.name()));
+            throw new FailedRouteException(String.format("cannot found route about this url. url : %s, requestMethod : %s", url, requestMethod.name()));
         }
 
+        // start Binding param values.
         Method routedMethod = methodAndPathVariableModelMap.getKey();
         Parameter[] params = routedMethod.getParameters();
         List<Object> paramBound = new ArrayList<>();
-
         for (int i = 0; i < params.length; i++) {
             if (methodAndPathVariableModelMap.getValue().containsKey(i)) {
                 int indexOnUrl = methodAndPathVariableModelMap.getValue().get(i).getVariableIndexOnUrl();
@@ -94,7 +91,9 @@ public class Router implements ControllerLifecycleInvocation {
                 paramBound.add(genObjectIfRequestBodyMapping(params[i], requestBody));
             }
         }
-        return routedMethod.invoke(methodToControllerObject.get(routedMethod), paramBound.toArray());
+
+        Object resultInvoked = routedMethod.invoke(methodToControllerObject.get(routedMethod), paramBound.toArray());
+        return genConvertedObjectIfHasResponseBodyAnnotation(resultInvoked, routedMethod);
     }
 
     private Object genObjectIfRequestBodyMapping(Parameter param, @Nullable String requestBody) {
@@ -108,6 +107,20 @@ public class Router implements ControllerLifecycleInvocation {
                 logger.warn(String.format("cannot convert requestBody String to Object with Jackson. so, return null. objectType: %s", param.getType()), e);
         }
         return null;
+    }
+
+    private Object genConvertedObjectIfHasResponseBodyAnnotation(Object resultInvoked, Method routedMethod) {
+        try {
+            if (routedMethod.getAnnotation(ResponseBody.class) != null) {
+                // @ResponseBody 이므로, Return value를 JsonUtil로 jsonString화 해준다.
+                return JacksonUtil.getInstance().toJson(resultInvoked);
+            }
+            return resultInvoked;
+        } catch (Exception e) {
+            if (logger.isWarnEnabled())
+                logger.warn(String.format("Failed convert result to JsonString (by @ResponseBody). so, return original result. Class: %s, Method: %s", methodToControllerObject.get(routedMethod), routedMethod));
+            return resultInvoked;
+        }
     }
 
     /**

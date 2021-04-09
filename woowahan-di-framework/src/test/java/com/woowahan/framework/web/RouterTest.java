@@ -1,16 +1,14 @@
 package com.woowahan.framework.web;
 
  import com.woowahan.framework.context.annotation.Controller;
-import com.woowahan.framework.json.throwable.FailedConvertJsonException;
+ import com.woowahan.framework.json.JacksonUtil;
+ import com.woowahan.framework.json.throwable.FailedConvertJsonException;
 import com.woowahan.framework.throwable.FailedDeleteException;
 import com.woowahan.framework.throwable.FailedGetException;
 import com.woowahan.framework.throwable.FailedPostException;
 import com.woowahan.framework.throwable.FailedPutException;
-import com.woowahan.framework.web.annotation.PathVariable;
- import com.woowahan.framework.web.annotation.RequestBody;
- import com.woowahan.framework.web.annotation.RequestMapping;
-import com.woowahan.framework.web.annotation.RequestMethod;
-import com.woowahan.framework.web.throwable.FailedRouteException;
+ import com.woowahan.framework.web.annotation.*;
+ import com.woowahan.framework.web.throwable.FailedRouteException;
 import com.woowahan.util.reflect.ReflectionUtil;
 import org.junit.jupiter.api.Test;
 
@@ -58,21 +56,27 @@ class RouterTest {
     }
 
     @Test
-    void route() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, FailedRouteException {
+    void route() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, FailedRouteException, FailedConvertJsonException {
         Router router = (Router) ReflectionUtil.newInstanceAnyway(Router.class);
         TestController controller = new TestController();
         router.invokeAfterControllerCreation(controller);
 
         // dummy api routing test
         assertEquals("deleteDone3null", router.route("/models/#3", RequestMethod.DELETE, null));
-        assertEquals("getDone5null", router.route("/models/#5", RequestMethod.GET, null));
         assertEquals("getAll", router.route("/models", RequestMethod.GET, null));
 
         // real work api test.
+        assertThrows(InvocationTargetException.class, () -> router.route("/models", RequestMethod.POST, "{\"id\": null, \"name\": \"aaaa\"}"));
         assertNull(router.route("/models", RequestMethod.POST, "{\"id\": 1, \"name\": \"aaaa\"}"));
         assertNull(router.route("/models/#1", RequestMethod.PUT, "{\"name\": \"bbbb\"}"));
         assertEquals("bbbb", controller.models.get(1).name);
-        assertThrows(FailedPutException.class, () -> router.route("/models/#3", RequestMethod.PUT, "{\"name\": \"cccc\"}"));
+        assertThrows(InvocationTargetException.class, () -> router.route("/models/#3", RequestMethod.PUT, "{\"name\": \"cccc\"}"));
+        assertEquals("bbbb", controller.models.get(1).name);
+
+        // @ResponseBody
+        assertEquals("null", router.route("/models/#5", RequestMethod.GET, null));
+        String expectedResponseBody = JacksonUtil.getInstance().toJson(controller.models.get(1));
+        assertEquals(expectedResponseBody, router.route("/models/#1", RequestMethod.GET, null));
 
     }
 }
@@ -89,15 +93,24 @@ class TestController {
 
     @RequestMapping(method = RequestMethod.POST)
     public void post(@RequestBody Model model) throws FailedPostException {
+        if (model.getId() == null || models.containsKey(model.getId())) {
+            throw new FailedPostException("");
+        }
         models.put(model.getId(), model);
     }
 
     @RequestMapping(value = "/#{id}", method = RequestMethod.PUT)
     public void put(@PathVariable("id") Integer id, @RequestBody Model model) throws FailedPutException {
-        if (models.containsKey(models.get(id))) {
+        if (id == null || !models.containsKey(id)) {
             throw new FailedPutException("");
         }
+        model.id = id;
         models.put(id, model);
+    }
+
+    @RequestMapping(value = "/#{id}", method = RequestMethod.GET)
+    public @ResponseBody Model get(@PathVariable("id") Integer id, String noBound) throws FailedGetException, FailedConvertJsonException {
+        return models.get(id);
     }
 
     // getAll : dummy api for routing test
@@ -110,12 +123,6 @@ class TestController {
     @RequestMapping(value = "/#{id}", method = RequestMethod.DELETE)
     public String delete(@PathVariable("id") Integer id, String noBound) throws FailedDeleteException {
         return "deleteDone" + id + noBound;
-    }
-
-    // get : dummy api for routing test
-    @RequestMapping(value = "/#{id}", method = RequestMethod.GET)
-    public String get(@PathVariable("id") Integer id, String noBound) throws FailedGetException, FailedConvertJsonException {
-        return "getDone" + id + noBound;
     }
 }
 

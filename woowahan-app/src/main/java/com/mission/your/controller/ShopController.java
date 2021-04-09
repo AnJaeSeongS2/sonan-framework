@@ -5,16 +5,14 @@ import com.mission.your.repo.ShopMemoryMapRepository;
 import com.woowahan.framework.context.annotation.Autowired;
 import com.woowahan.framework.context.annotation.BeanVariable;
 import com.woowahan.framework.context.annotation.Controller;
-import com.woowahan.framework.json.JacksonUtil;
 import com.woowahan.framework.json.throwable.FailedConvertJsonException;
 import com.woowahan.framework.throwable.FailedDeleteException;
 import com.woowahan.framework.throwable.FailedGetException;
 import com.woowahan.framework.throwable.FailedPostException;
 import com.woowahan.framework.throwable.FailedPutException;
-import com.woowahan.framework.web.annotation.PathVariable;
-import com.woowahan.framework.web.annotation.RequestBody;
-import com.woowahan.framework.web.annotation.RequestMapping;
-import com.woowahan.framework.web.annotation.RequestMethod;
+import com.woowahan.framework.web.annotation.*;
+
+import java.util.List;
 
 /**
  * Shop Controller다.
@@ -37,8 +35,8 @@ public class ShopController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getAll() throws FailedGetException, FailedConvertJsonException {
-        return JacksonUtil.getInstance().toJson(shopRepo.getAll());
+    public @ResponseBody List<Shop> getAll() throws FailedGetException, FailedConvertJsonException {
+        return shopRepo.getAll();
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -52,12 +50,12 @@ public class ShopController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public String delete(@PathVariable("id") Integer id) throws FailedDeleteException, FailedConvertJsonException {
-        return JacksonUtil.getInstance().toJson(shopRepo.delete(id));
+    public @ResponseBody Shop delete(@PathVariable("id") Integer id) throws FailedDeleteException, FailedConvertJsonException {
+        return shopRepo.delete(id);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String get(@PathVariable("id") Integer id) throws FailedGetException, FailedConvertJsonException {
-        return JacksonUtil.getInstance().toJson(shopRepo.get(id));
+    public @ResponseBody Shop get(@PathVariable("id") Integer id) throws FailedGetException, FailedConvertJsonException {
+        return shopRepo.get(id);
     }
 }
