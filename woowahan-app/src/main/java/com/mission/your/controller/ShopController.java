@@ -1,5 +1,6 @@
 package com.mission.your.controller;
 
+import com.mission.your.model.Shop;
 import com.mission.your.repo.ShopMemoryMapRepository;
 import com.woowahan.framework.context.annotation.Autowired;
 import com.woowahan.framework.context.annotation.BeanVariable;
@@ -11,6 +12,7 @@ import com.woowahan.framework.throwable.FailedGetException;
 import com.woowahan.framework.throwable.FailedPostException;
 import com.woowahan.framework.throwable.FailedPutException;
 import com.woowahan.framework.web.annotation.PathVariable;
+import com.woowahan.framework.web.annotation.RequestBody;
 import com.woowahan.framework.web.annotation.RequestMapping;
 import com.woowahan.framework.web.annotation.RequestMethod;
 
@@ -40,15 +42,13 @@ public class ShopController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public void post() throws FailedPostException {
-        // TODO
-        throw new FailedPostException("no method code");
+    public void post(@RequestBody Shop shop) throws FailedPostException {
+        shopRepo.post(shop);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public void put(@PathVariable("id") Integer id) throws FailedPutException {
-        // TODO
-        throw new FailedPutException("no method code");
+    public void put(@PathVariable("id") Integer id, @RequestBody Shop shop) throws FailedPutException {
+        shopRepo.put(shop);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

@@ -2,12 +2,15 @@ package com.woowahan.framework.web;
 
 import com.woowahan.framework.context.annotation.Service;
 import com.woowahan.framework.context.bean.lifecycle.ControllerLifecycleInvocation;
+import com.woowahan.framework.json.JacksonUtil;
 import com.woowahan.framework.web.annotation.PathVariable;
+import com.woowahan.framework.web.annotation.RequestBody;
 import com.woowahan.framework.web.annotation.RequestMapping;
 import com.woowahan.framework.web.annotation.RequestMethod;
 import com.woowahan.framework.web.throwable.FailedRouteException;
 import com.woowahan.framework.web.util.UrlUtil;
 import com.woowahan.logback.support.Markers;
+import com.woowahan.util.annotation.Nullable;
 import com.woowahan.util.reflect.ReflectionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,15 +41,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 @Service
-public class Route implements ControllerLifecycleInvocation {
-    private static final Logger logger = LoggerFactory.getLogger(Route.class);
+public class Router implements ControllerLifecycleInvocation {
+    private static final Logger logger = LoggerFactory.getLogger(Router.class);
 
     // @Controller가 bean 생성될 때, 자동으로 routePathToMethod에 자동 등록된다. ! 따라서 Controller 기반 빈 생성이 완료돼야 Route처리가 정상 진행 가능하다.
     // routePathToMethod same as Map<routePath, Map<RequestMethod, Map.Entry<RoutedMethod, Map<paramIndex, PathVariableModel>>>>
     private Map<String, Map<RequestMethod, Map.Entry<Method, Map<Integer, PathVariableModel>>>> routePathToMethod;
     private Map<Method, Object> methodToControllerObject;
 
-    public Route() {
+    public Router() {
         routePathToMethod = new ConcurrentHashMap<>();
         methodToControllerObject = new ConcurrentHashMap<>();
     }
@@ -59,7 +63,7 @@ public class Route implements ControllerLifecycleInvocation {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public Object route(String url, RequestMethod requestMethod) throws FailedRouteException, InvocationTargetException, IllegalAccessException {
+    public Object route(String url, RequestMethod requestMethod, @Nullable String requestBody) throws FailedRouteException, InvocationTargetException, IllegalAccessException {
         Map.Entry<String, String[]> routePathAndPathVariables = UrlUtil.genRoutePathAndPathVariablesFromUrl(url);
         Map<RequestMethod, Map.Entry<Method, Map<Integer, PathVariableModel>>> methodMap = routePathToMethod.get(routePathAndPathVariables.getKey());
         if (methodMap == null) {
@@ -72,27 +76,39 @@ public class Route implements ControllerLifecycleInvocation {
         }
 
         Method routedMethod = methodAndPathVariableModelMap.getKey();
-        Class<?>[] paramClasses = routedMethod.getParameterTypes();
+        Parameter[] params = routedMethod.getParameters();
         List<Object> paramBound = new ArrayList<>();
 
-        for (int i = 0; i < paramClasses.length; i++) {
+        for (int i = 0; i < params.length; i++) {
             if (methodAndPathVariableModelMap.getValue().containsKey(i)) {
                 int indexOnUrl = methodAndPathVariableModelMap.getValue().get(i).getVariableIndexOnUrl();
                 Object convertedObject = routePathAndPathVariables.getValue()[indexOnUrl];
                 try {
-                    convertedObject = ReflectionUtil.invokeStaticMethod(paramClasses[i], "valueOf", new Class[]{String.class}, convertedObject);
+                    convertedObject = ReflectionUtil.invokeStaticMethod(params[i].getType(), "valueOf", new Class[]{String.class}, convertedObject);
                 } catch (Exception e) {
                     if (logger.isDebugEnabled(Markers.MESSAGE.get()))
-                        logger.debug(Markers.MESSAGE.get(), String.format("cannot convert PathVariable String to %s. original Value : %s", paramClasses[i], convertedObject)); // 아직 convertedObject 는 original이다.
+                        logger.debug(Markers.MESSAGE.get(), String.format("cannot convert PathVariable String to %s. original Value : %s", params[i].getType(), convertedObject)); // 아직 convertedObject 는 original이다.
                 }
                 paramBound.add(convertedObject);
             } else {
-                paramBound.add(null);
+                paramBound.add(genObjectIfRequestBodyMapping(params[i], requestBody));
             }
         }
         return routedMethod.invoke(methodToControllerObject.get(routedMethod), paramBound.toArray());
     }
 
+    private Object genObjectIfRequestBodyMapping(Parameter param, @Nullable String requestBody) {
+        if (param.getAnnotation(RequestBody.class) == null)
+            return null;
+        try {
+            return JacksonUtil.fromJson(requestBody, param.getType());
+        } catch (Exception e) {
+            // 회원정보일 수 있으므로 requestBody 자체를 찍으면 안된다.
+            if (logger.isWarnEnabled())
+                logger.warn(String.format("cannot convert requestBody String to Object with Jackson. so, return null. objectType: %s", param.getType()), e);
+        }
+        return null;
+    }
 
     /**
      * Route에 RequestMapping method가 등록된다.
@@ -135,7 +151,6 @@ public class Route implements ControllerLifecycleInvocation {
         }
         return -1;
     }
-
 
     /**
      * Controller Bean들이 생성될 때 이 method가 호출된다.
