@@ -1,5 +1,7 @@
-package com.woowahan.framework.web.annotation.model;
+package com.woowahan.framework.web.model.id;
 
+import com.woowahan.framework.web.annotation.model.IdAutoChangeableIfExists;
+import com.woowahan.framework.web.annotation.model.Id;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +31,31 @@ class IdExtractorTest {
     void getIdClass() {
         assertEquals(String.class, IdExtractor.getIdClass(TestModel.class));
         assertEquals(Integer.class, IdExtractor.getIdClass(TestModelNoId.class));
+    }
+
+    @Test
+    void getIdField() throws NoSuchFieldException {
+        TestModel2 model2 = new TestModel2(1, "2");
+        assertEquals(IdAutoChangeableIfExists.class, IdExtractor.getIdField(model2).getAnnotation(IdAutoChangeableIfExists.class).annotationType());
+    }
+
+    @Test
+    void getIdAndField() throws NoSuchFieldException, IllegalAccessException {
+        TestModel2 model2 = new TestModel2(1, "2");
+        assertEquals(1, IdExtractor.getIdAndField(model2).getKey());
+        assertEquals(IdAutoChangeableIfExists.class, IdExtractor.getIdAndField(model2).getValue().getAnnotation(IdAutoChangeableIfExists.class).annotationType());
+    }
+}
+
+class TestModel2 {
+
+    @IdAutoChangeableIfExists
+    private Integer id;
+    public String name;
+
+    public TestModel2(Integer id, String name) {
+        this.id = id;
+        this.name = name;
     }
 }
 

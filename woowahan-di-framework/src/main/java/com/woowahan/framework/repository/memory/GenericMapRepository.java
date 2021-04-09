@@ -5,9 +5,14 @@ import com.woowahan.framework.throwable.FailedGetException;
 import com.woowahan.framework.throwable.FailedPostException;
 import com.woowahan.framework.throwable.FailedPutException;
 import com.woowahan.framework.web.annotation.model.Id;
-import com.woowahan.util.reflect.ReflectionUtil;
+import com.woowahan.framework.web.annotation.model.IdAutoChangeableIfExists;
+import com.woowahan.framework.web.model.id.IdAutoChanger;
+import com.woowahan.framework.web.model.id.IdExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,34 +30,61 @@ import java.util.stream.Collectors;
  * Created by Jaeseong on 2021/04/06
  * Git Hub : https://github.com/AnJGenericMapRepositoryaeSeongS2
  */
+@SuppressWarnings("unchecked")
 public class GenericMapRepository<ElementClazz> {
+    private static final Logger logger = LoggerFactory.getLogger(GenericMapRepository.class);
+
     private Map<Object, ElementClazz> dataMap;
+    private Integer autoId = 0;
 
     public GenericMapRepository() {
         dataMap = new ConcurrentHashMap();
     }
 
+    /**
+     * id에 해당하는 data가 이미 repo에 있을 경우, 실패한다.
+     * 만약 element 의 id가 IdAutoChanger annotation을 단 field였다면, 이미 id에 해당하는 data가 있더라도 id관련된 change로직을 돌려 재 시도 한다.
+     *
+     * @param element
+     * @throws FailedPostException
+     */
     public void post(ElementClazz element) throws FailedPostException {
         if (element == null) {
             throw new FailedPostException("cannot post null element.");
         }
-
-        Object id;
+        Object id = null;
         try {
-            id = ReflectionUtil.getFieldAnyway(element, (field) -> {
-                for (Annotation declaredAnnotation : field.getDeclaredAnnotations()) {
-                    if (declaredAnnotation instanceof Id) {
-                        return true;
+            Map.Entry<Object, Field> idAndField = IdExtractor.getIdAndField(element);
+            id = idAndField.getKey();
+
+            for (Annotation annotation : idAndField.getValue().getAnnotations()) {
+                if (annotation instanceof IdAutoChangeableIfExists) {
+                    while (id == null || contains(id)) {
+                        // id값이 없거나, 이미 id에 매칭되는 data가 존재하는 경우, id를 바꿔 다시 post요청을 시도한다.
+                        if (logger.isWarnEnabled())
+                            logger.warn(String.format("this Model's id is null or id already contains on repo, so try to change id automatically. id : %s", id));
+                        if (element instanceof IdAutoChanger) {
+                            id = ((IdAutoChanger) element).changeIdAuto();
+                        } else {
+                            if (logger.isWarnEnabled())
+                                logger.warn(String.format("this Model is not inherit idAutoChanger. so, id is not changed. element's class : %s", element.getClass()));
+                            break;
+                        }
                     }
+                    break;
                 }
-                return false;
-            });
+                if (annotation instanceof Id) {
+                    id = idAndField.getKey();
+                    break;
+                }
+            }
         } catch (NoSuchFieldException e) {
-            // Id annotation으로 지정된 field가 없는 케이스. hashCode를 id로 사용하게된다.
+            // Id | IdAutoChangeableIfExists annotation으로 지정된 field가 없는 케이스. hashCode를 id로 사용하게된다.
             id = element.hashCode();
         } catch (Throwable e) {
             throw new FailedPostException("element id is not exists on this element.", e);
         }
+
         if (id == null) {
             throw new FailedPostException("this element's element id is null.");
         }
@@ -70,14 +102,7 @@ public class GenericMapRepository<ElementClazz> {
 
         Object id;
         try {
-            id = ReflectionUtil.getFieldAnyway(element, (field) -> {
-                for (Annotation declaredAnnotation : field.getDeclaredAnnotations()) {
-                    if (declaredAnnotation instanceof Id) {
-                        return true;
-                    }
-                }
-                return false;
-            });
+            id = IdExtractor.getId(element);
         } catch (Throwable e) {
             throw new FailedPutException("element id is not exists on this element.", e);
         }
@@ -115,6 +140,10 @@ public class GenericMapRepository<ElementClazz> {
         }
 
         return dataMap.get(elementId);
+    }
+
+    private boolean contains(Object elementId) {
+        return dataMap.containsKey(elementId);
     }
 
     /**

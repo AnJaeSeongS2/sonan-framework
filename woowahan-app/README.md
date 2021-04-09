@@ -18,7 +18,7 @@
             ```
         - 가게 추가
             ```
-            curl localhost:8080/shops -X POST -H 'Content-Type: application/json' -d "reso"
+            curl localhost:8080/shops -X POST -H 'Content-Type: application/json' -d "{\"name\": \"우아한 가게\", \"address\": \"배민시 배민동 123-1\"}"
             ```
         - 가게 수정
             ```
@@ -43,4 +43,4 @@
 
 ## 안내
 - 요구사항을 구현함에 있어 충분한 의존성이 제공되고 있습니다. 현재 정의된 의존성 외 외부 의존성은 추가할 수 없습니다.
-- 사전 작성된 코드는 자유롭게 변형, 분리, 리펙토링 되어도 무방합니다.
+- # 사전 작성된 코드는 자유롭게 변형, 분리, 리펙토링 되어도 무방합니다.

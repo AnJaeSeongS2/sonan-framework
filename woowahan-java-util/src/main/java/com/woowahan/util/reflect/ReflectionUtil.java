@@ -12,6 +12,7 @@ import java.util.function.Predicate;
  * Created by Jaeseong on 2021/04/02
  * Git Hub : https://github.com/AnJaeSeongS2
  */
+@SuppressWarnings("unchecked")
 public class ReflectionUtil {
 
     /**
@@ -46,11 +47,18 @@ public class ReflectionUtil {
             throw new NoSuchFieldException(String.format("%s, fieldName : %s", e.getMessage(), fieldName));
         }
 
+        setFieldAnyway(target, field, fieldObject);
+    }
+
+    public static void setFieldAnyway(Object target, Field field, Object inputFieldObject) throws IllegalAccessException {
         synchronized (field) {
             boolean savedAccessible = field.isAccessible();
-            field.setAccessible(true);
-            field.set(target, fieldObject);
-            field.setAccessible(savedAccessible);
+            try {
+                field.setAccessible(true);
+                field.set(target, inputFieldObject);
+            } finally {
+                field.setAccessible(savedAccessible);
+            }
         }
     }
 
@@ -81,17 +89,30 @@ public class ReflectionUtil {
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
      */
-    public static Object getFieldAnyway(Object target, Predicate<Field> filterForFindFirst) throws NoSuchFieldException, IllegalAccessException {
-        Field field = getFieldMetaAnyway(target.getClass(), filterForFindFirst);
-
-        Object result;
+    public static Object getFieldAnyway(Object target, Field field) throws IllegalAccessException {
         synchronized (field) {
             boolean savedAccessible = field.isAccessible();
-            field.setAccessible(true);
-            result = field.get(target);
-            field.setAccessible(savedAccessible);
+            try {
+                field.setAccessible(true);
+                return field.get(target);
+            } finally {
+                field.setAccessible(savedAccessible);
+            }
         }
-        return result;
+    }
+
+    /**
+     * weakness to capsulization, multithread programming
+     * so, jdk 1.9 deprecated about setAccessible(boolean).
+     *
+     * @param target
+     * @return filterForFindFirst
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
+    public static Object getFieldAnyway(Object target, Predicate<Field> filterForFindFirst) throws NoSuchFieldException, IllegalAccessException {
+        Field field = getFieldMetaAnyway(target.getClass(), filterForFindFirst);
+        return getFieldAnyway(target, field);
     }
 
     /**
@@ -203,9 +224,12 @@ public class ReflectionUtil {
         Object result;
         synchronized (method) {
             boolean savedAccessible = method.isAccessible();
-            method.setAccessible(true);
-            result = method.invoke(target, argsForInvoke);
-            method.setAccessible(savedAccessible);
+            try {
+                method.setAccessible(true);
+                result = method.invoke(target, argsForInvoke);
+            } finally {
+                method.setAccessible(savedAccessible);
+            }
         }
         return result;
     }
@@ -282,9 +306,12 @@ public class ReflectionUtil {
         Object result;
         synchronized (method) {
             boolean savedAccessible = method.isAccessible();
-            method.setAccessible(true);
-            result = method.invoke(null, argsForInvoke);
-            method.setAccessible(savedAccessible);
+            try {
+                method.setAccessible(true);
+                result = method.invoke(null, argsForInvoke);
+            } finally {
+                method.setAccessible(savedAccessible);
+            }
         }
         return result;
     }
@@ -370,9 +397,12 @@ public class ReflectionUtil {
         Object result;
         synchronized (ctor) {
             boolean savedAccessible = ctor.isAccessible();
-            ctor.setAccessible(true);
-            result = ctor.newInstance(argsForInvoke);
-            ctor.setAccessible(savedAccessible);
+            try {
+                ctor.setAccessible(true);
+                result = ctor.newInstance(argsForInvoke);
+            } finally {
+                ctor.setAccessible(savedAccessible);
+            }
         }
         return result;
     }

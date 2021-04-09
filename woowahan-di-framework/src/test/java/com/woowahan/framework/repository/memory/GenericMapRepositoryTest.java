@@ -2,6 +2,8 @@ package com.woowahan.framework.repository.memory;
 
 import com.woowahan.framework.throwable.*;
 import com.woowahan.framework.web.annotation.model.Id;
+import com.woowahan.framework.web.annotation.model.IdAutoChangeableIfExists;
+import com.woowahan.framework.web.model.id.DefaultIntegerIdAutoIncrementModel;
 import com.woowahan.util.reflect.ReflectionUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,24 +17,37 @@ import static org.junit.jupiter.api.Assertions.*;
  * Created by Jaeseong on 2021/04/07
  * Git Hub : https://github.com/AnJaeSeongS2
  */
+@SuppressWarnings("unchecked")
 class GenericMapRepositoryTest {
 
     GenericMapRepository<TestModel> repo;
+    GenericMapRepository<TestModelIdAutoIncrement> repoIdAutoIncrementTest;
 
     @BeforeEach
     void initRepo() {
         repo = new GenericMapRepository<>();
+        repoIdAutoIncrementTest = new GenericMapRepository<>();
     }
 
     @Test
     void post() throws FailedRestException, NoSuchFieldException, IllegalAccessException {
-        assertThrows(FailedPostException.class, () -> repo.post(new TestModel(null, "name")));
         repo.post(new TestModel(1, "name1"));
         assertThrows(FailedPostException.class, () -> repo.post(new TestModel(1, "name")));
         repo.post(new TestModel(2, "name2"));
         Map<Object, TestModel> dataMap = (Map) ReflectionUtil.getFieldAnyway(repo,"dataMap");
         assertEquals("name1", dataMap.get(1).name);
         assertEquals("name2", dataMap.get(2).name);
+    }
+
+    @Test
+    void postAutoChanger() throws FailedPostException, NoSuchFieldException, IllegalAccessException {
+        repoIdAutoIncrementTest.post(new TestModelIdAutoIncrement(null, "name"));
+        repoIdAutoIncrementTest.post(new TestModelIdAutoIncrement(null, "name1"));
+        repoIdAutoIncrementTest.post(new TestModelIdAutoIncrement(2, "name2"));
+        Map<Object, TestModelIdAutoIncrement> dataMap = (Map) ReflectionUtil.getFieldAnyway(repoIdAutoIncrementTest,"dataMap");
+        assertEquals("name", dataMap.get(1).name);
+        assertEquals("name1", dataMap.get(2).name);
+        assertEquals("name2", dataMap.get(3).name);
     }
 
     @Test
@@ -68,7 +83,6 @@ class GenericMapRepositoryTest {
         TestModel originalModel = new TestModel(1, "name");
         repo.post(originalModel);
 
-
         Map<Object, TestModel> dataMap = (Map) ReflectionUtil.getFieldAnyway(repo,"dataMap");
         assertEquals(originalModel, dataMap.get(1));
 
@@ -90,6 +104,18 @@ class GenericMapRepositoryTest {
         assertTrue(datas.contains(originalModel));
         assertTrue(datas.contains(originalModel2));
         assertFalse(datas.contains(noAddedModel));
+    }
+}
+
+class TestModelIdAutoIncrement extends DefaultIntegerIdAutoIncrementModel {
+
+    @IdAutoChangeableIfExists
+    private Integer id;
+    public String name;
+
+    public TestModelIdAutoIncrement(Integer id, String name) {
+        this.id = id;
+        this.name = name;
     }
 }
 

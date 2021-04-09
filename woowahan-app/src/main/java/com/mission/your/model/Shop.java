@@ -1,22 +1,24 @@
 package com.mission.your.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.woowahan.framework.web.annotation.model.Id;
+import com.woowahan.framework.web.annotation.model.IdAutoChangeableIfExists;
+import com.woowahan.framework.web.model.id.DefaultIntegerIdAutoIncrementModel;
 
 import java.beans.ConstructorProperties;
 
 /**
  * Shop 모델.
  * Model Id는 Integer id field이다.
+ * id필드가 곂친 것이 insert시도되면, AutoIncrement된다.
  *
  * Created by Jaeseong on 2021/04/06
  * Git Hub : https://github.com/AnJaeSeongS2
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Shop {
+public class Shop extends DefaultIntegerIdAutoIncrementModel {
 
-    @Id
+    @IdAutoChangeableIfExists
     private Integer id;
     private String name;
     private String address;

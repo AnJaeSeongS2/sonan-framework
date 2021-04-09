@@ -76,7 +76,7 @@
 | 66 |framework 사용 고객이, logging을 직접 app코드에 추가하고 싶지 않을 것이다. framework차원에서 알아서 비지니스 로직에서 logging 되게끔 작업한다.<br />고객은 예외만 던지면 된다. | WORKING | 30% | x | x | x |
 | 67 |**(부가기능)** Repository구현체의 경우, 고객이 직접 vendor를 선택하게끔 돼 버렸는데, app코드에서는 vendor무관히 코딩가능하게 개선할 것. | REJECT | 0% | x | x | x |
 | 68 |method reflection 수행에 대해. <br /><br />@RequestMapping method인 경우, value에 variable {aaa} 로 추가가능하다.<br />해당 method 내의 param중에 variable과 getName이 같은 param Parameter에 String to XXXX convert를 진행해 주입해준다.<br /><br /><br />@Autowired Constructor 인 경우, value[]에 값이 있으면 해당 beanName기반으로 해당 method내의 param들 순서대로 beanName으로서 getBean을 처리해준다. <br />getBean된 내용을 param Parameter에 주입해준다. | DONE | 100% | 04-07 | 04-07 | 3h |
-| 69 |DispatcherServlet 입장에서 route 처리 시나리오 정리.<br /><br />Map<String, Set<RequestMethod<br />url : /shops/aaa/bbb/ccc -> shops 검색 -> x | WORKING | 50% | 04-08 |  | 2h |
+| 69 |DispatcherServlet 입장에서 router 처리 시나리오 정리.<br /><br />Map<String, Set<RequestMethod<br />url : /shops/aaa/bbb/ccc -> shops 검색 -> x | WORKING | 50% | 04-08 |  | 2h |
 | 70 |Url <-> Path \| PathVariableName \| PathVariable , encoding, decoding 지원 UrlUtil추가. | WORKING | 100% | 04-07 | 04-07 | 4h |
 | 71 |servletContainer 기동 타이밍에 bean pre-initialize 기본 지원.<br />차후 lazy-initialize 지원 할 것. | DONE | 100% | 04-07 | 04-07 | 1h |
 | 72 |BeanDefinition에 BeanRegistrable annotation 에 대한 정보도 추가. 이 또한 cannonicalName으로 취득한다. (for MetaClassLoader <-> AppClassLoader) | DONE | 100% | 04-07 | 04-07 | 30m |
@@ -91,4 +91,6 @@
 | 81 |Route 처리 규칙 변경 안내<br />로직 속도 개선을 위해 /shops/{id} 가 아닌 /shops/#{id} 처럼 #을 encodedvariable앞에 붙이도록 정책화. | DONE(문서화) | 100% | - | - | - |
 | 82 |APP 개발 (미완) | TIMEOUT | 60% | - | - | - |
 | 83 |logback Marker 조건문에도 추가. | DONE | 100% | 04-08 | 04-08 | 10m |
+| 84 |[최적화]<br />DispatcherServlet에서 취득한 정보로 router 처리할 때 별도 single thread EM으로 처리되게끔 할 지 여부 파악중...<br /> * 지금 repo는 memory cached이기때문에, IO job이 아니므로 EM처리해도된다. cached의 invalidate는 별도 thread에서 알아서 진행해 줄것. 따라서, 현 프로젝트의 shop api  service의 동작은 em구조로 가는 것이 더 효율 적이다.<br /> get : post,put,delete 비중이 99:1 정도로 판단되는 shop 데이터 특성상, thread 생성을 최소화할 em구조가 나아보인다.<br />em이 받을 event 는 dispatch될 route정보와 requestBody가 포함되며, HttpServletResponse.getWriter()도 포함된다.<br /><br />get은 thread생성 1회<br /><br /><br />/resources/static/index.html 파일로 viewResolver가 반환하려고한다면, 이는 Event thread에서는 IO잡을 하지 않게끔 해야한다.<br />event thread에서 작업결과 view Resolver 처리할 때, ViewResolver가 hasIO true일 경우에 별도 thread로 IO잡을 해준다. | WORKING |  |  |  |  |
+| 85 |Model에서 Id로 지정된 field가 곂칠 경우 IdAutoChanger handler를 달 수 있는 기능 추가. (ex: DefaultIntegerIdAutoIncrementModel)<br />GenericMapRepository에 우선 적용. | DONE | 100% | 04-09 | 04-08 | 2h |
 
