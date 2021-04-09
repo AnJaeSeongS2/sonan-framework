@@ -79,46 +79,47 @@ public class Router implements ControllerLifecycleInvocation {
         for (int i = 0; i < params.length; i++) {
             if (methodAndPathVariableModelMap.getValue().containsKey(i)) {
                 int indexOnUrl = methodAndPathVariableModelMap.getValue().get(i).getVariableIndexOnUrl();
-                Object convertedObject = routePathAndPathVariables.getValue()[indexOnUrl];
+                Object injectedObject = routePathAndPathVariables.getValue()[indexOnUrl];
                 try {
-                    convertedObject = ReflectionUtil.invokeStaticMethod(params[i].getType(), "valueOf", new Class[]{String.class}, convertedObject);
+                    injectedObject = ReflectionUtil.invokeStaticMethod(params[i].getType(), "valueOf", new Class[]{String.class}, injectedObject);
                 } catch (Exception e) {
                     if (logger.isDebugEnabled(Markers.MESSAGE.get()))
-                        logger.debug(Markers.MESSAGE.get(), String.format("cannot convert PathVariable String to %s. original Value : %s", params[i].getType(), convertedObject)); // 아직 convertedObject 는 original이다.
+                        logger.debug(Markers.MESSAGE.get(), String.format("cannot convert PathVariable String to %s. original Value : %s", params[i].getType(), injectedObject)); // 아직 convertedObject 는 original이다.
                 }
-                paramBound.add(convertedObject);
+                paramBound.add(injectedObject);
             } else {
-                paramBound.add(genObjectIfRequestBodyMapping(params[i], requestBody));
+                paramBound.add(genConvertedObjectIfHasRequestBodyAnnotation(params[i], requestBody));
             }
         }
 
         Object resultInvoked = routedMethod.invoke(methodToControllerObject.get(routedMethod), paramBound.toArray());
-        return genConvertedObjectIfHasResponseBodyAnnotation(resultInvoked, routedMethod);
+        return genConvertedObjectIfHasResponseBodyAnnotation(routedMethod, resultInvoked);
     }
 
-    private Object genObjectIfRequestBodyMapping(Parameter param, @Nullable String requestBody) {
-        if (param.getAnnotation(RequestBody.class) == null)
-            return null;
+    private @Nullable Object genConvertedObjectIfHasRequestBodyAnnotation(Parameter param, @Nullable String requestBody) {
+        if (requestBody == null || param.getAnnotation(RequestBody.class) == null)
+            return requestBody;
         try {
+            // @RequestBody 이므로, requestBody String value를 Jsonutil로 Object화 해준다.
             return JacksonUtil.getInstance().fromJson(requestBody, param.getType());
         } catch (Exception e) {
-            // 회원정보일 수 있으므로 requestBody 자체를 찍으면 안된다.
+            // 회원정보일 수 있으므로 정보 자체를 찍으면 안된다.
             if (logger.isWarnEnabled())
-                logger.warn(String.format("cannot convert requestBody String to Object with Jackson. so, return null. objectType: %s", param.getType()), e);
+                logger.warn(String.format("Failed convert requestBody to Object (by @RequestBody). so, return null. objectType: %s", param.getType()), e);
+            return requestBody;
         }
-        return null;
     }
 
-    private Object genConvertedObjectIfHasResponseBodyAnnotation(Object resultInvoked, Method routedMethod) {
-        try {
-            if (routedMethod.getAnnotation(ResponseBody.class) != null) {
-                // @ResponseBody 이므로, Return value를 JsonUtil로 jsonString화 해준다.
-                return JacksonUtil.getInstance().toJson(resultInvoked);
-            }
+    private @Nullable Object genConvertedObjectIfHasResponseBodyAnnotation(Method method, @Nullable Object resultInvoked) {
+        if (resultInvoked == null || method.getAnnotation(ResponseBody.class) == null)
             return resultInvoked;
+        try {
+            // @ResponseBody 이므로, Return value를 JsonUtil로 jsonString화 해준다.
+            return JacksonUtil.getInstance().toJson(resultInvoked);
         } catch (Exception e) {
+            // 회원정보일 수 있으므로 정보 자체를 찍으면 안된다.
             if (logger.isWarnEnabled())
-                logger.warn(String.format("Failed convert result to JsonString (by @ResponseBody). so, return original result. Class: %s, Method: %s", methodToControllerObject.get(routedMethod), routedMethod));
+                logger.warn(String.format("Failed convert result to JsonString (by @ResponseBody). so, return original result. Class: %s, Method: %s", methodToControllerObject.get(method), method));
             return resultInvoked;
         }
     }

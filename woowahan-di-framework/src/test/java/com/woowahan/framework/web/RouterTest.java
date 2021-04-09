@@ -74,7 +74,7 @@ class RouterTest {
         assertEquals("bbbb", controller.models.get(1).name);
 
         // @ResponseBody
-        assertEquals("null", router.route("/models/#5", RequestMethod.GET, null));
+        assertEquals(null, router.route("/models/#5", RequestMethod.GET, null));
         String expectedResponseBody = JacksonUtil.getInstance().toJson(controller.models.get(1));
         assertEquals(expectedResponseBody, router.route("/models/#1", RequestMethod.GET, null));
 
