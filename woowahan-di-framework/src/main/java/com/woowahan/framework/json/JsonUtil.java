@@ -2,6 +2,8 @@ package com.woowahan.framework.json;
 
 import com.woowahan.framework.json.throwable.FailedConvertJsonException;
 
+import java.util.Collection;
+
 /**
  * TODO: json-support 모듈을 별도로 생성하고, 타 vendor 구현체를 사용하는 방식은 spi를 따른다.
  * TODO: default spi 구현체는 JacksonUtil일 것.
@@ -27,5 +29,14 @@ public interface JsonUtil {
      * @param targetClassForConvert
      * @return
      */
-    Object fromJson(String srcJson, Class<?> targetClassForConvert) throws FailedConvertJsonException;
+    <M> M fromJson(String srcJson, Class<M> targetClassForConvert) throws FailedConvertJsonException;
+
+    /**
+     * Json String -> Model Object.
+     * @param srcJson
+     * @param targetCollectionClassForConvert
+     * @param targetMemberClassForConvert
+     * @return
+     */
+    <C extends Collection, M> C fromJson(String srcJson, Class<C> targetCollectionClassForConvert, Class<M> targetMemberClassForConvert)  throws FailedConvertJsonException;
 }

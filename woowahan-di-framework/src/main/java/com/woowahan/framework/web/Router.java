@@ -101,7 +101,7 @@ public class Router implements ControllerLifecycleInvocation {
         if (param.getAnnotation(RequestBody.class) == null)
             return null;
         try {
-            return JacksonUtil.fromJson(requestBody, param.getType());
+            return JacksonUtil.getInstance().fromJson(requestBody, param.getType());
         } catch (Exception e) {
             // 회원정보일 수 있으므로 requestBody 자체를 찍으면 안된다.
             if (logger.isWarnEnabled())

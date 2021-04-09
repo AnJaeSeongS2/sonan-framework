@@ -38,7 +38,7 @@ public class ShopController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getAll() throws FailedGetException, FailedConvertJsonException {
-        return JacksonUtil.toJson(shopRepo.getAll());
+        return JacksonUtil.getInstance().toJson(shopRepo.getAll());
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -53,11 +53,11 @@ public class ShopController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public String delete(@PathVariable("id") Integer id) throws FailedDeleteException, FailedConvertJsonException {
-        return JacksonUtil.toJson(shopRepo.delete(id));
+        return JacksonUtil.getInstance().toJson(shopRepo.delete(id));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String get(@PathVariable("id") Integer id) throws FailedGetException, FailedConvertJsonException {
-        return JacksonUtil.toJson(shopRepo.get(id));
+        return JacksonUtil.getInstance().toJson(shopRepo.get(id));
     }
 }
