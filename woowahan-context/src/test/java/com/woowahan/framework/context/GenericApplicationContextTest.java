@@ -139,18 +139,16 @@ class GenericApplicationContextTest {
     }
 
     @Test
-    void getBeanSingleton() {
-        assertDoesNotThrow(() -> {
-            BeanIdentifier id = new BeanIdentifier(ClassWithoutBeanRegistrableAnnotation.class.getCanonicalName(), null);
-            BeanDefinition definition = new BeanDefinition(id, Scope.SINGLETON);
-            assertDoesNotThrow(() -> rootApplicationContext.register(definition));
-            Object singleton1 = rootApplicationContext.getBean(id);
-            Object singleton2 = rootApplicationContext.getBean(id);
-            assertTrue(singleton1 == singleton2);
+    void getBeanSingleton() throws BeanNotFoundException {
+        BeanIdentifier id = new BeanIdentifier(ClassWithoutBeanRegistrableAnnotation.class.getCanonicalName(), null);
+        BeanDefinition definition = new BeanDefinition(id, Scope.SINGLETON);
+        assertDoesNotThrow(() -> rootApplicationContext.register(definition));
+        Object singleton1 = rootApplicationContext.getBean(id);
+        Object singleton2 = rootApplicationContext.getBean(id);
+        assertTrue(singleton1 == singleton2);
 
-            Object singleton3 = childApplicationContext.getBean(id);
-            assertTrue(singleton1 == singleton3);
-        });
+        Object singleton3 = childApplicationContext.getBean(id);
+        assertTrue(singleton1 == singleton3);
     }
 
     @Test

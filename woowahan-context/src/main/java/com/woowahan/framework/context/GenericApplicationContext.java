@@ -1,9 +1,6 @@
 package com.woowahan.framework.context;
 
-import com.woowahan.framework.context.annotation.Autowired;
-import com.woowahan.framework.context.annotation.BeanVariable;
-import com.woowahan.framework.context.annotation.Controller;
-import com.woowahan.framework.context.annotation.Service;
+import com.woowahan.framework.context.annotation.*;
 import com.woowahan.framework.context.bean.BeanDefinition;
 import com.woowahan.framework.context.bean.BeanIdentifier;
 import com.woowahan.framework.context.bean.BeanManager;
@@ -37,9 +34,13 @@ import java.util.function.Function;
  */
 public class GenericApplicationContext<T> extends ApplicationContext {
     private static final Logger logger = LoggerFactory.getLogger(GenericApplicationContext.class);
+    private static final String REGIST_WITHOUT_ANNOTATION = "REGIST_WITHOUT_ANNOTATION";
+
     @Nullable
     private final ApplicationContext parent;
-    private final Set<BeanDefinition> beanDefs;
+    // Service, Controller 들의 classCanonicalName 이 key로 쓰인다.
+    // "" key에는 Annotation기반 외의 방법으로 등록된 beanDefintion이 들어간다.
+    private final Map<String, Set<BeanDefinition>> beanDefs;
     private final Map<BeanIdentifier, BeanDefinition> beanIdToDef;
     private final ClassLoader beanClassLoader;
 
@@ -70,7 +71,11 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         this.contextHolder = contextHolder;
         this.getterRootApplicationContext = getterRootApplicationContext;
 
-        this.beanDefs = Collections.newSetFromMap(new ConcurrentHashMap<>());
+        this.beanDefs = new ConcurrentHashMap<>();
+        this.beanDefs.put(REGIST_WITHOUT_ANNOTATION, ConcurrentHashMap.newKeySet());
+        for (BeanRegistrable value : BeanRegistrable.values()) {
+            this.beanDefs.put(value.getBeanRegistrableAnnotationType().getCanonicalName(), ConcurrentHashMap.newKeySet());
+        }
         this.beanIdToDef = new ConcurrentHashMap<>();
         this.singletonBeans = new ConcurrentHashMap<>();
         this.singletonBeansControllerLifecycleInvocations = new CopyOnWriteArrayList<>();
@@ -110,15 +115,20 @@ public class GenericApplicationContext<T> extends ApplicationContext {
     }
 
     @Override
-    synchronized public void register(BeanDefinition definition) throws BeanDefinitionNotRegisteredException {
+    public synchronized void register(BeanDefinition definition) throws BeanDefinitionNotRegisteredException {
         if (beanIdToDef.containsKey(definition.getId())) {
             throw new BeanDefinitionNotRegisteredException(definition.getId().toString(), definition.toString());
         }
 
-        beanDefs.add(definition);
-        beanIdToDef.put(definition.getId(), definition);
-        if (logger.isTraceEnabled(Markers.LIFE_CYCLE.get()))
-            logger.trace(Markers.LIFE_CYCLE.get(), "finish register BeanDefinition as " + definition);
+        Set<BeanDefinition> beanDefSet = this.beanDefs.get(definition.getBeanRegistableAnnotationCanonicalName() == null ? REGIST_WITHOUT_ANNOTATION : definition.getBeanRegistableAnnotationCanonicalName());
+        if (beanDefSet == null) {
+            if (logger.isWarnEnabled(Markers.LIFE_CYCLE.get()))
+                logger.warn(Markers.LIFE_CYCLE.get(), String.format("not supported BeanDefinition. show %s. current BeanDefinition : %s.", BeanRegistrable.class.getCanonicalName(), definition));
+            return;
+        }
+        this.beanIdToDef.put(definition.getId(), definition);
+        if (logger.isDebugEnabled(Markers.LIFE_CYCLE.get()))
+            logger.debug(Markers.LIFE_CYCLE.get(), String.format("finish register BeanDefinition. current BeanDefinition : %s", definition));
     }
 
     /**
@@ -252,16 +262,16 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         this.singletonBeans = new ConcurrentHashMap<>();
         this.singletonBeansControllerLifecycleInvocations = new CopyOnWriteArrayList<>();
 
-        for (BeanDefinition beanDef : beanDefs) {
-            if (beanDef.isSingleton() && Service.class.getCanonicalName().equals(beanDef.getBeanRegistableAnnotationCanonicalName())) {
-                getBean(beanDef);
-            }
-        }
-
-        for (BeanDefinition beanDef : beanDefs) {
-            if (beanDef.isSingleton() && !Service.class.getCanonicalName().equals(beanDef.getBeanRegistableAnnotationCanonicalName())) {
-                getBean(beanDef);
-            }
+        for (BeanRegistrable beanRegistrable : BeanRegistrable.getBeanRegistrableByOrder()) {
+            beanDefs.get(beanRegistrable.getBeanRegistrableAnnotationType().getCanonicalName()).forEach(beanDef -> {
+                try {
+                    if (beanDef.isSingleton())
+                        getBean(beanDef);
+                } catch (BeanCreationFailedException e) {
+                    if (logger.isWarnEnabled(Markers.LIFE_CYCLE.get()))
+                        logger.warn(Markers.LIFE_CYCLE.get(), String.format("Failed BeanCreation as Singletion. current BeanDefinition : %s", beanDef));
+                }
+            });
         }
     }
 }
