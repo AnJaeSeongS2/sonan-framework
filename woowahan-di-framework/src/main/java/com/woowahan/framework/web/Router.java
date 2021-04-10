@@ -4,6 +4,8 @@ import com.woowahan.framework.context.annotation.Service;
 import com.woowahan.framework.context.bean.lifecycle.ControllerLifecycleInvocation;
 import com.woowahan.framework.json.JacksonUtil;
 import com.woowahan.framework.web.annotation.*;
+import com.woowahan.framework.web.protocol.RequestMessage;
+import com.woowahan.framework.web.protocol.ResponseMessage;
 import com.woowahan.framework.web.throwable.FailedRouteException;
 import com.woowahan.framework.web.util.UrlUtil;
 import com.woowahan.logback.support.Markers;
@@ -26,17 +28,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * Route도 @Service이다.
  * Route BigO(1)로 처리하기 위해, request 날리는 측이 PathVariable임을 알려줄 수 있게끔 api개선이 이루어졌다.
  *
- * 요청이 a/#(b1 URLEncoded)#(b2 URLEncoded)/c/d/#(e URLEncoded).GET 이라면,
+ * 요청이 a/@{b1 URLEncoded}@{b2 URLEncoded}/c/d/@{e URLEncoded}.GET 이라면,
  * variable 부분을 variable[]로 정리해둔다.
- * a/#{}#{}/c/d/#{} routePath를 찾아내 GET에 해당하는 Method와 pathVariableName[]를 찾는다.
+ * a/@{}@{}/c/d/@{} routePath를 찾아내 GET에 해당하는 Method와 pathVariableName[]를 찾는다.
  * 찾은 것에서 pathVariableName[] 을 통해 pathVariableName을 알아낸다.
  * 찾은 Method를 call할 때, pathVariableName 기반으로 variable String을 paramType에 맞게 casting해서 inject해준다.
  *
- * !!!! bigO 를 1로 하기위해 요구사항중 localhost:8080/shops/1 이 아닌 localhost:8080/shops/#1 로 수정해 진행한다. !!!!
+ * !!!! bigO 를 1로 하기위해 요구사항중 localhost:8080/shops/1 이 아닌 localhost:8080/shops/@1 로 수정해 진행한다. !!!!
  * Created by Jaeseong on 2021/04/07
  * Git Hub : https://github.com/AnJaeSeongS2
  */
 
+//TODO: 직접 invoke 유틸로 뺄것.
+@SuppressWarnings("unchecked")
 @Service
 public class Router implements ControllerLifecycleInvocation {
     private static final Logger logger = LoggerFactory.getLogger(Router.class);
@@ -50,17 +54,32 @@ public class Router implements ControllerLifecycleInvocation {
         routePathToMethod = new ConcurrentHashMap<>();
         methodToControllerObject = new ConcurrentHashMap<>();
     }
-
     /**
      * route처리 돼서 매핑돼있는 Method가 invoke된다.
      *
-     * @param url
-     * @param requestMethod
+     * @see RequestMessage
+     * @see ResponseMessage
+     * @param requestMessage
      * @throws FailedRouteException
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public Object route(String url, RequestMethod requestMethod, @Nullable String requestBody) throws FailedRouteException, InvocationTargetException, IllegalAccessException {
+    public ResponseMessage route(RequestMessage requestMessage) throws FailedRouteException, InvocationTargetException, IllegalAccessException {
+        return route(requestMessage.getUrl(), RequestMethod.valueOf(requestMessage.getRequestMethod()), requestMessage.getMessage(), requestMessage.getVendor());
+    }
+
+    /**
+     * route처리 돼서 매핑돼있는 Method가 invoke된다.
+     *
+     * @see com.woowahan.framework.web.protocol.Vendor
+     * @param url
+     * @param requestMethod
+     * @param vendor
+     * @throws FailedRouteException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     */
+    public ResponseMessage route(String url, RequestMethod requestMethod, @Nullable String requestBody, String vendor) throws FailedRouteException, InvocationTargetException, IllegalAccessException {
         Map.Entry<String, String[]> routePathAndPathVariables = UrlUtil.genRoutePathAndPathVariablesFromUrl(url);
         Map<RequestMethod, Map.Entry<Method, Map<Integer, PathVariableModel>>> methodMap = routePathToMethod.get(routePathAndPathVariables.getKey());
         if (methodMap == null) {
@@ -88,14 +107,22 @@ public class Router implements ControllerLifecycleInvocation {
                 }
                 paramBound.add(injectedObject);
             } else {
-                paramBound.add(genConvertedObjectIfHasRequestBodyAnnotation(params[i], requestBody));
+                Object convertedObject = genConvertedObjectIfHasRequestBodyAnnotation(params[i], requestBody);
+                paramBound.add(convertedObject);
             }
         }
 
         Object resultInvoked = routedMethod.invoke(methodToControllerObject.get(routedMethod), paramBound.toArray());
-        return genConvertedObjectIfHasResponseBodyAnnotation(routedMethod, resultInvoked);
+        Map.Entry<Object, Boolean> convertedObjectAndIsResolved = genConvertedObjectIfHasResponseBodyAnnotation(routedMethod, resultInvoked);
+        return new ResponseMessage(vendor, convertedObjectAndIsResolved.getValue(), convertedObjectAndIsResolved.getKey() == null ? null : convertedObjectAndIsResolved.getKey().toString());
     }
 
+    /**
+     * convertedObject 를 반환한다.
+     * @param param
+     * @param requestBody
+     * @return
+     */
     private @Nullable Object genConvertedObjectIfHasRequestBodyAnnotation(Parameter param, @Nullable String requestBody) {
         if (requestBody == null || param.getAnnotation(RequestBody.class) == null)
             return requestBody;
@@ -110,24 +137,30 @@ public class Router implements ControllerLifecycleInvocation {
         }
     }
 
-    private @Nullable Object genConvertedObjectIfHasResponseBodyAnnotation(Method method, @Nullable Object resultInvoked) {
+    /**
+     * convertedObject 와 isResovled 여부를 반환한다.
+     * @param method
+     * @param resultInvoked
+     * @return
+     */
+    private Map.Entry<@Nullable Object, Boolean> genConvertedObjectIfHasResponseBodyAnnotation(Method method, @Nullable Object resultInvoked) {
         if (resultInvoked == null || method.getAnnotation(ResponseBody.class) == null)
-            return resultInvoked;
+            return new AbstractMap.SimpleEntry(resultInvoked, false);
         try {
             // @ResponseBody 이므로, Return value를 JsonUtil로 jsonString화 해준다.
-            return JacksonUtil.getInstance().toJson(resultInvoked);
+            return new AbstractMap.SimpleEntry(JacksonUtil.getInstance().toJson(resultInvoked), true);
         } catch (Exception e) {
             // 회원정보일 수 있으므로 정보 자체를 찍으면 안된다.
             if (logger.isWarnEnabled())
                 logger.warn(String.format("Failed convert result to JsonString (by @ResponseBody). so, return original result. Class: %s, Method: %s", methodToControllerObject.get(method), method));
-            return resultInvoked;
+            return new AbstractMap.SimpleEntry(resultInvoked, false);
         }
     }
 
     /**
      * Route에 RequestMapping method가 등록된다.
      * @see com.woowahan.framework.context.annotation.Controller 에 대한 bean이 framework 기동 타이밍에 자동 한다.
-     * @param urlOnRequestMapping example: a/b/#{id}#{id2}/d/e/#{id3}
+     * @param urlOnRequestMapping example: a/b/@{id}@{id2}/d/e/@{id3}
      */
     public void register(String urlOnRequestMapping, RequestMethod[] requestMethods, Method method, Object controller) {
         // routePathAndPathVariableNames same as Map<routePath, Map<RequestMethod, Map.Entry<Method, pathVariableName[]>>>
@@ -205,6 +238,9 @@ public class Router implements ControllerLifecycleInvocation {
         }
         if (src.length() != 0 && UrlUtil.PATH_SEPARATOR.charAt(0) == src.charAt(src.length() - 1)) {
             substringEnd = src.length() - 1;
+        }
+        if (substringStart >= substringEnd) {
+            return "";
         }
         return src.substring(substringStart, substringEnd);
     }

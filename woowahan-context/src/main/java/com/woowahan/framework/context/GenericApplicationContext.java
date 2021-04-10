@@ -202,7 +202,7 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         }
         if (logger.isTraceEnabled(Markers.LIFE_CYCLE.get()))
             logger.trace(Markers.LIFE_CYCLE.get(), "success createBean as " + bean);
-        if (definition.isSingleton() && Controller.class.getCanonicalName().equals(definition.getBeanClassCanonicalName())) {
+        if (definition.isSingleton() && Controller.class.getCanonicalName().equals(definition.getBeanRegistableAnnotationCanonicalName())) {
             for (Object beanWantToInvocation: singletonBeansControllerLifecycleInvocations) {
                 try {
                     ReflectionUtil.invokeMethod(beanWantToInvocation, "invokeAfterControllerCreation", new Class[]{Object.class}, new Object[]{bean});

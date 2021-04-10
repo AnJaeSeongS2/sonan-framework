@@ -2,6 +2,7 @@ package com.woowahan.framework.context.bean;
 
 import com.woowahan.framework.context.bean.throwable.BeanException;
 import com.woowahan.framework.context.bean.throwable.BeanNotFoundException;
+import com.woowahan.framework.context.bean.throwable.BeanManagerNotInitializedException;
 import com.woowahan.logback.support.Markers;
 import com.woowahan.util.annotation.Nullable;
 import org.slf4j.Logger;
@@ -43,19 +44,27 @@ public class BeanManager {
             logger.info(Markers.LIFE_CYCLE.get(), String.format("Initalized BeanManager. beanDefinitionRegistry : %s", beanDefinitionRegistry));
     }
 
-    public boolean IsInitialized() {
+    public boolean isInitialized() {
         return beanHolder != null && beanDefinitionRegistry != null;
     }
 
-    public Object getBean(Class<?> beanClazz, @Nullable String beanName) throws BeanNotFoundException {
+    public Object getBean(Class<?> beanClazz, @Nullable String beanName) throws BeanNotFoundException, BeanManagerNotInitializedException {
+        checkInitialized();
         return beanHolder.getBean(new BeanIdentifier(beanClazz.getCanonicalName(), beanName));
     }
 
-    public Object getBean(BeanIdentifier beanId) throws BeanNotFoundException {
+    public Object getBean(BeanIdentifier beanId) throws BeanNotFoundException, BeanManagerNotInitializedException {
+        checkInitialized();
         return beanHolder.getBean(beanId);
     }
 
-    public void register(BeanDefinition definition) throws BeanException {
+    public void register(BeanDefinition definition) throws BeanException, BeanManagerNotInitializedException {
+        checkInitialized();
         beanDefinitionRegistry.register(definition);
+    }
+
+    public void checkInitialized() throws BeanManagerNotInitializedException {
+        if (!isInitialized())
+            throw new BeanManagerNotInitializedException("BeanManager is not initialized.");
     }
 }

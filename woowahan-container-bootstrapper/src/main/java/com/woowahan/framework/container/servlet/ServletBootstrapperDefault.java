@@ -5,7 +5,8 @@ import com.woowahan.framework.container.lifecycle.SimpleLifeCycle;
 import com.woowahan.framework.container.lifecycle.StaticLifeCycleEventBus;
 import com.woowahan.framework.container.server.TomcatWebServer;
 import com.woowahan.framework.container.server.TomcatWebServerFactory;
-import com.woowahan.framework.container.server.filter.CharacterEncodingFilter;
+import com.woowahan.framework.container.servlet.filter.CachedRequestBodyFilter;
+import com.woowahan.framework.container.servlet.filter.CharacterEncodingFilter;
 import com.woowahan.framework.container.throwable.BootingFailException;
 import com.woowahan.framework.context.ApplicationContext;
 import com.woowahan.framework.context.GenericApplicationContext;
@@ -83,8 +84,10 @@ public class ServletBootstrapperDefault implements ContainerBootstrapper {
         servletRegistration.setLoadOnStartup(1);
         servletRegistration.addMapping("/");
 
-        FilterRegistration.Dynamic filterRegistration = servletContext.addFilter("encodingFilter", new CharacterEncodingFilter());
+        FilterRegistration.Dynamic filterRegistration = servletContext.addFilter("CharacterEncodingFilter", new CharacterEncodingFilter());
         filterRegistration.addMappingForUrlPatterns(null, false, "/*");
+        FilterRegistration.Dynamic registrationCachedRequestBodyFiler = servletContext.addFilter("CachedRequestBodyFilter", new CachedRequestBodyFilter());
+        registrationCachedRequestBodyFiler.addMappingForUrlPatterns(null, false, "/*");
 
         if (servletContext.getAttribute(ApplicationContext.ROOT_APPLICATION_CONTEXT_ATTRIBUTE_KEY) == null) {
             rootAppCtx = new GenericApplicationContext<>(null, servletContext, (servletCtx) ->
@@ -101,7 +104,7 @@ public class ServletBootstrapperDefault implements ContainerBootstrapper {
             }
 
             // TODO: lazy-initialize 옵션은 향후 지원.
-            // bean pre-initialize
+            // pre-initialize beans
             refreshAllBeans();
         } catch (Exception e) {
             if (logger.isErrorEnabled(Markers.LIFE_CYCLE.get()))

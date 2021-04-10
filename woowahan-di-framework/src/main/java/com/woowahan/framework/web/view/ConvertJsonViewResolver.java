@@ -18,11 +18,11 @@ public class ConvertJsonViewResolver extends ViewResolver {
     }
 
     @Override
-    public void resolveToClient(Object beforeResolve, HttpServletRequest req, HttpServletResponse resp) throws FailedViewResolveException {
+    public Object resolve(Object beforeResolve, HttpServletRequest req, HttpServletResponse resp) throws FailedViewResolveException {
         try {
             // light job. so, work on this thread.
-            resp.getWriter().write(JacksonUtil.getInstance().toJson(beforeResolve));
-        } catch (FailedConvertJsonException | IOException e) {
+            return JacksonUtil.getInstance().toJson(beforeResolve);
+        } catch (FailedConvertJsonException e) {
             throw new FailedViewResolveException(e.getMessage(), e);
         }
     }

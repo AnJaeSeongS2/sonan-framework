@@ -1,5 +1,6 @@
 package com.woowahan.framework.repository.memory;
 
+import com.woowahan.framework.repository.RepositoryAccessibleAll;
 import com.woowahan.framework.throwable.FailedDeleteException;
 import com.woowahan.framework.throwable.FailedGetException;
 import com.woowahan.framework.throwable.FailedPostException;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
  * Git Hub : https://github.com/AnJGenericMapRepositoryaeSeongS2
  */
 @SuppressWarnings("unchecked")
-public class GenericMapRepository<ElementClazz> {
+public class GenericMapRepository<ElementClazz> implements RepositoryAccessibleAll<ElementClazz> {
     private static final Logger logger = LoggerFactory.getLogger(GenericMapRepository.class);
 
     private Map<Object, ElementClazz> dataMap;
@@ -142,7 +143,7 @@ public class GenericMapRepository<ElementClazz> {
         return dataMap.get(elementId);
     }
 
-    private boolean contains(Object elementId) {
+    public boolean contains(Object elementId) {
         return dataMap.containsKey(elementId);
     }
 
@@ -152,5 +153,9 @@ public class GenericMapRepository<ElementClazz> {
      */
     public List<ElementClazz> getAll() throws FailedGetException {
         return dataMap.values().stream().collect(Collectors.toList());
+    }
+
+    public void deleteAll() throws FailedDeleteException {
+        dataMap.clear();
     }
 }

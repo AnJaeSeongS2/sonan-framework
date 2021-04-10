@@ -1,10 +1,11 @@
-package com.woowahan.framework.container.server.filter;
+package com.woowahan.framework.container.servlet.filter;
 
 import javax.servlet.*;
 import java.io.IOException;
 
+import static com.woowahan.framework.container.servlet.Constants.DEFAULT_ENCODING;
+
 public class CharacterEncodingFilter implements Filter {
-    private static final String DEFAULT_ENCODING = "UTF-8";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {

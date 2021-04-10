@@ -26,6 +26,7 @@ import java.util.Set;
  * Created by Jaeseong on 2021/04/04
  * Git Hub : https://github.com/AnJaeSeongS2
  */
+@SuppressWarnings("unchecked")
 public class BeanDefinitionHolder {
     private static final Logger logger = LoggerFactory.getLogger(BeanDefinitionHolder.class);
     private static final String SYSTEM_BASE_PACKAGE = "com.woowahan.framework";
