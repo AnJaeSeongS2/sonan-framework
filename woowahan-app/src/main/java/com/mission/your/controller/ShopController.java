@@ -6,6 +6,7 @@ import com.woowahan.framework.context.annotation.Autowired;
 import com.woowahan.framework.context.annotation.BeanVariable;
 import com.woowahan.framework.context.annotation.Controller;
 import com.woowahan.framework.json.throwable.FailedConvertJsonException;
+import com.woowahan.framework.repository.RepositoryAccessibleAll;
 import com.woowahan.framework.throwable.FailedDeleteException;
 import com.woowahan.framework.throwable.FailedGetException;
 import com.woowahan.framework.throwable.FailedPostException;
@@ -27,10 +28,10 @@ import java.util.List;
 public class ShopController {
 
     // TODO: app개발자가 repo vendor를 직접 지정해서 코딩하는게 아니라, 사용자입장에서는 vendor무관히 코딩가능하게 개선할 것.
-    private final ShopMemoryMapRepository shopRepo;
+    private final RepositoryAccessibleAll<Shop> shopRepo;
 
     @Autowired
-    protected ShopController(@BeanVariable ShopMemoryMapRepository shopRepo) {
+    public ShopController(@BeanVariable ShopMemoryMapRepository shopRepo) {
         this.shopRepo = shopRepo;
     }
 
@@ -44,17 +45,18 @@ public class ShopController {
         shopRepo.post(shop);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/@{id}", method = RequestMethod.PUT)
     public void put(@PathVariable("id") Integer id, @RequestBody Shop shop) throws FailedPutException {
+        shop.setId(id);
         shopRepo.put(shop);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/@{id}", method = RequestMethod.DELETE)
     public @ResponseBody Shop delete(@PathVariable("id") Integer id) throws FailedDeleteException, FailedConvertJsonException {
         return shopRepo.delete(id);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/@{id}", method = RequestMethod.GET)
     public @ResponseBody Shop get(@PathVariable("id") Integer id) throws FailedGetException, FailedConvertJsonException {
         return shopRepo.get(id);
     }

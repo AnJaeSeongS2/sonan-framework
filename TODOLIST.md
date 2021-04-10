@@ -88,9 +88,13 @@
 | 78 |ViewResolver 가 @Service로 등록돼야한다. ResourceViewResolver, JsonStringViewResolver 2가지가 필요하다.<br />ResourceViewResolver 는 String반환일때 동작하며, prefix `resources/static` suffix`.html` 이렇게 붙여 사용 가능하다.<br />JsonStringViewResolver 는 그외에 Object -> JsonStr 변환을 시도해 응답한다.<br />이마저도 실패하면, 원본 Object로 응답하려 시도한다. | WORKING | 70% | 04-08 | x | 1h |
 | 79 |Dispatcher SErvlet에서 Request기반으로 적절히 Route 처리한다. | WORKING | 80% | 04-08 | x | 3h |
 | 80 |Bean을 외부에서도 활용할 수 있게 BeanManager를 추가. BeanManager 는 GenericApplicationContext를 사용할 시, RootApplicationContext를 활용하게끔 초기화된다. | DONE | 100% | 04-08 | 04-08 | 1h |
-| 81 |Route 처리 규칙 변경 안내<br />로직 속도 개선을 위해 /shops/{id} 가 아닌 /shops/#{id} 처럼 #을 encodedvariable앞에 붙이도록 정책화. | DONE(문서화) | 100% | - | - | - |
-| 82 |APP 개발 (미완) | TIMEOUT | 60% | - | - | - |
+| 81 |Route 처리 규칙 변경 안내<br />로직 속도 개선을 위해 /shops/{id} 가 아닌 /shops/@{id} 처럼 #을 encodedvariable앞에 붙이도록 정책화. | DONE(문서화) | 100% | - | - | - |
+| 82 |APP 개발 | WORKING | 60% | 04-10 | - | 30m |
 | 83 |logback Marker 조건문에도 추가. | DONE | 100% | 04-08 | 04-08 | 10m |
 | 84 |[최적화]<br />DispatcherServlet에서 취득한 정보로 router 처리할 때 별도 single thread EM으로 처리되게끔 할 지 여부 파악중...<br /> * 지금 repo는 memory cached이기때문에, IO job이 아니므로 EM처리해도된다. cached의 invalidate는 별도 thread에서 알아서 진행해 줄것. 따라서, 현 프로젝트의 shop api  service의 동작은 em구조로 가는 것이 더 효율 적이다.<br /> get : post,put,delete 비중이 99:1 정도로 판단되는 shop 데이터 특성상, thread 생성을 최소화할 em구조가 나아보인다.<br />em이 받을 event 는 dispatch될 route정보와 requestBody가 포함되며, HttpServletResponse.getWriter()도 포함된다.<br /><br />get은 thread생성 1회<br /><br /><br />/resources/static/index.html 파일로 viewResolver가 반환하려고한다면, 이는 Event thread에서는 IO잡을 하지 않게끔 해야한다.<br />event thread에서 작업결과 view Resolver 처리할 때, ViewResolver가 hasIO true일 경우에 별도 thread로 IO잡을 해준다. | WORKING |  |  |  |  |
 | 85 |Model에서 Id로 지정된 field가 곂칠 경우 IdAutoChanger handler를 달 수 있는 기능 추가. (ex: DefaultIntegerIdAutoIncrementModel)<br />GenericMapRepository에 우선 적용. | DONE | 100% | 04-09 | 04-09 | 2h |
+| 86 |Repository 인터페이스 세분화.<br /><br />Repository < RepositoryAccessibleAll < GenericMapRepository | DONE | 100% | 04-10 | 04-10 | 30m |
+| 87 |Url PathVariable Prefix # -> @로 변경. (#은 해시뱅 쓰이므로 reuqestUri로 포함되지 않는다.) | DONE | 100% | 04-10 | 04-10 | 30m |
+| 88   | 각종 Filter (CaracterEncodingFilter, ChachedRequestBodyFiler) 추가 및 연결 | DONE         | 100% | 04-10 | 04-10 | 30m |
+| 89   |                                                              |              |  |  |  |  |
 
