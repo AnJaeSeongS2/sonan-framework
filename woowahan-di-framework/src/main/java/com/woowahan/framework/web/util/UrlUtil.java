@@ -19,19 +19,19 @@ public class UrlUtil {
     public static final String URL_CHAR_SET = "UTF-8";
     public static final String PATH_SEPARATOR = "/";
     private static final Logger logger = LoggerFactory.getLogger(UrlUtil.class);
-    private static final String PATH_VARIABLE_PREFIX = "#";
-    private static final String PATH_VARIABLE_BIND_TEMP = "#{}";
+    private static final String PATH_VARIABLE_PREFIX = "@";
+    private static final String PATH_VARIABLE_BIND_TEMP = "@{}";
 
-    // ex: #{id1}#{id2}
-    // match1 : #{id1}
-    // match2 : #{id2}
-    private static final Pattern PATH_ELEMENT_PATH_VARIABLE_ON_REQUEST_MAPPING = Pattern.compile("(#\\{)([\\w]+)}");
+    // ex: @{id1}@{id2}
+    // match1 : @{id1}
+    // match2 : @{id2}
+    private static final Pattern PATH_ELEMENT_PATH_VARIABLE_ON_REQUEST_MAPPING = Pattern.compile("(@\\{)([\\w]+)}");
     private static final Pattern PATH_SEPARATOR_PATTERN = Pattern.compile("/");
 
     /**
      * routePath를 반환한다.
-     * @param url example: /a/#id1_URL_ENCODED#id2_URL_ENCODED/c/d/#id3_URL_ENCODED
-     * @return example: /a/#{}#{}/c/d/#{}
+     * @param url example: /a/@id1_URL_ENCODED@id2_URL_ENCODED/c/d/@id3_URL_ENCODED
+     * @return example: /a/@{}@{}/c/d/@{}
      */
     public static String genRoutePathFromUrl(String url) {
         return genRoutePathAndPathVariablesFromUrl(url).getKey();
@@ -40,8 +40,8 @@ public class UrlUtil {
 
     /**
      * routePath와 pathVariables를 반환한다.
-     * @param url example: /a/#id1_URL_ENCODED#id2_URL_ENCODED/c/d/#id3_URL_ENCODED
-     * @return example: { /a/#{}#{}/c/d/#{} , (decoded) [id1value, id2value, id3value]}
+     * @param url example: /a/@id1_URL_ENCODED@id2_URL_ENCODED/c/d/@id3_URL_ENCODED
+     * @return example: { /a/@{}@{}/c/d/@{} , (decoded) [id1value, id2value, id3value]}
      */
     public static Map.Entry<String, String[]> genRoutePathAndPathVariablesFromUrl(String url) {
         List<String> pathVariables = new ArrayList<>();
@@ -69,10 +69,10 @@ public class UrlUtil {
     }
 
     /**
-     * encoding된 값이라면, List에 decode해서 넣고, currentPath로는 #{}으로 반환한다.
+     * encoding된 값이라면, List에 decode해서 넣고, currentPath로는 @{}으로 반환한다.
      *
      * @param pathElemMaybeEncoded
-     * @return ex: #{} or #{}#{} or pathElemMaybeEncoded
+     * @return ex: @{} or @{}@{} or pathElemMaybeEncoded
      */
     private static Map.Entry<String, List<String>> genCurrentPathElementByMaybeUrlEncoded(String pathElemMaybeEncoded) {
         List<String> pathVariables = new ArrayList<>();
@@ -93,10 +93,10 @@ public class UrlUtil {
     }
 
     /**
-     * variableName 이 있다면, list에 그것을 넣고 currentPath로는 #{}으로 반환한다.
+     * variableName 이 있다면, list에 그것을 넣고 currentPath로는 @{}으로 반환한다.
      *
-     * @param pathElemMaybeVariableName ex: #{id1} or #{id1}#{id2} or shops
-     * @return ex: #{} or #{}#{} or pathElemMaybeVariableName
+     * @param pathElemMaybeVariableName ex: @{id1} or @{id1}@{id2} or shops
+     * @return ex: @{} or @{}@{} or pathElemMaybeVariableName
      */
     public static Map.Entry<String, List<String>> genCurrentPathElementAndPathVariableNames(String pathElemMaybeVariableName) {
         List<String> pathVariableNames = new ArrayList<>();
@@ -116,8 +116,8 @@ public class UrlUtil {
 
     /**
      * routePath를 반환한다.
-     * @param urlOnRequestMapping example: /a/#{id1}#{id2}/c/d/#{id3}
-     * @return example: /a/#{}#{}/c/d/#{}
+     * @param urlOnRequestMapping example: /a/@{id1}@{id2}/c/d/@{id3}
+     * @return example: /a/@{}@{}/c/d/@{}
      */
     public static String genRoutePathFromUrlOnRequestMapping(String urlOnRequestMapping) {
         return genRoutePathAndPathVariableNamesFromUrlOnRequestMapping(urlOnRequestMapping).getKey();
@@ -126,8 +126,8 @@ public class UrlUtil {
     /**
      * routePath와 pathVariableNames를 반환한다.
      *
-     * @param urlOnRequestMapping example: /a/#{id1}#{id2}/c/d/#{id3}
-     * @return example: { /a/#{}#{}/c/d/#{} , [id1, id2, id3]}
+     * @param urlOnRequestMapping example: /a/@{id1}@{id2}/c/d/@{id3}
+     * @return example: { /a/@{}@{}/c/d/@{} , [id1, id2, id3]}
      */
     public static Map.Entry<String, String[]> genRoutePathAndPathVariableNamesFromUrlOnRequestMapping(String urlOnRequestMapping) {
         List<String> pathVariables = new ArrayList<>();

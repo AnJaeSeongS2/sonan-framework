@@ -8,6 +8,7 @@ import com.woowahan.framework.throwable.FailedGetException;
 import com.woowahan.framework.throwable.FailedPostException;
 import com.woowahan.framework.throwable.FailedPutException;
  import com.woowahan.framework.web.annotation.*;
+ import com.woowahan.framework.web.protocol.Vendor;
  import com.woowahan.framework.web.throwable.FailedRouteException;
 import com.woowahan.util.reflect.ReflectionUtil;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class RouterTest {
         Router router = (Router) ReflectionUtil.newInstanceAnyway(Router.class);
         TestController controller = new TestController();
         Method method = ReflectionUtil.getMethodMetaAnyway(TestController.class, (methodOfController) -> methodOfController.getName().equals("delete"));
-        router.register("/a/#{id1}#{id2}/c/d/#{id3}", new RequestMethod[]{RequestMethod.GET, RequestMethod.DELETE}, method, controller);
+        router.register("/a/@{id1}@{id2}/c/d/@{id3}", new RequestMethod[]{RequestMethod.GET, RequestMethod.DELETE}, method, controller);
         Map<Method, Object> methodToControllerObject = (Map<Method, Object>) ReflectionUtil.getFieldAnyway(router, "methodToControllerObject");
         assertEquals(controller, methodToControllerObject.get(method));
     }
@@ -50,9 +51,9 @@ class RouterTest {
         Map<String, Map<RequestMethod, Map.Entry<Method, Map<Integer, PathVariableModel>>>> routePathToMethod = (Map<String, Map<RequestMethod, Map.Entry<Method, Map<Integer, PathVariableModel>>>>) ReflectionUtil.getFieldAnyway(router, "routePathToMethod");
         assertNotNull(routePathToMethod.get("/models"));
         assertNotNull(routePathToMethod.get("/models").get(RequestMethod.GET));
-        assertNotNull(routePathToMethod.get("/models/#{}").get(RequestMethod.GET));
+        assertNotNull(routePathToMethod.get("/models/@{}").get(RequestMethod.GET));
         assertEquals(2, routePathToMethod.get("/models").size());
-        assertEquals(3, routePathToMethod.get("/models/#{}").size());
+        assertEquals(3, routePathToMethod.get("/models/@{}").size());
     }
 
     @Test
@@ -62,21 +63,20 @@ class RouterTest {
         router.invokeAfterControllerCreation(controller);
 
         // dummy api routing test
-        assertEquals("deleteDone3null", router.route("/models/#3", RequestMethod.DELETE, null));
-        assertEquals("getAll", router.route("/models", RequestMethod.GET, null));
+        assertEquals("getAll", router.route("/models", RequestMethod.GET, null, Vendor.UNKNOWN.name()).getMessage());
 
         // real work api test.
-        assertThrows(InvocationTargetException.class, () -> router.route("/models", RequestMethod.POST, "{\"id\": null, \"name\": \"aaaa\"}"));
-        assertNull(router.route("/models", RequestMethod.POST, "{\"id\": 1, \"name\": \"aaaa\"}"));
-        assertNull(router.route("/models/#1", RequestMethod.PUT, "{\"name\": \"bbbb\"}"));
+        assertThrows(InvocationTargetException.class, () -> router.route("/models", RequestMethod.POST, "{\"id\": null, \"name\": \"aaaa\"}", Vendor.UNKNOWN.name()).getMessage());
+        assertNull(router.route("/models", RequestMethod.POST, "{\"id\": 1, \"name\": \"aaaa\"}", Vendor.UNKNOWN.name()).getMessage());
+        assertNull(router.route("/models/@1", RequestMethod.PUT, "{\"name\": \"bbbb\"}", Vendor.UNKNOWN.name()).getMessage());
         assertEquals("bbbb", controller.models.get(1).name);
-        assertThrows(InvocationTargetException.class, () -> router.route("/models/#3", RequestMethod.PUT, "{\"name\": \"cccc\"}"));
+        assertThrows(InvocationTargetException.class, () -> router.route("/models/@3", RequestMethod.PUT, "{\"name\": \"cccc\"}", Vendor.UNKNOWN.name()).getMessage());
         assertEquals("bbbb", controller.models.get(1).name);
 
         // @ResponseBody
-        assertEquals(null, router.route("/models/#5", RequestMethod.GET, null));
+        assertEquals(null, router.route("/models/@5", RequestMethod.GET, null, Vendor.UNKNOWN.name()).getMessage());
         String expectedResponseBody = JacksonUtil.getInstance().toJson(controller.models.get(1));
-        assertEquals(expectedResponseBody, router.route("/models/#1", RequestMethod.GET, null));
+        assertEquals(expectedResponseBody, router.route("/models/@1", RequestMethod.GET, null, Vendor.UNKNOWN.name()).getMessage());
 
     }
 }
@@ -99,7 +99,7 @@ class TestController {
         models.put(model.getId(), model);
     }
 
-    @RequestMapping(value = "/#{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/@{id}", method = RequestMethod.PUT)
     public void put(@PathVariable("id") Integer id, @RequestBody Model model) throws FailedPutException {
         if (id == null || !models.containsKey(id)) {
             throw new FailedPutException("");
@@ -108,7 +108,7 @@ class TestController {
         models.put(id, model);
     }
 
-    @RequestMapping(value = "/#{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/@{id}", method = RequestMethod.GET)
     public @ResponseBody Model get(@PathVariable("id") Integer id, String noBound) throws FailedGetException, FailedConvertJsonException {
         return models.get(id);
     }
@@ -120,7 +120,7 @@ class TestController {
     }
 
     // delete : dummy api for routing test
-    @RequestMapping(value = "/#{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/@{id}", method = RequestMethod.DELETE)
     public String delete(@PathVariable("id") Integer id, String noBound) throws FailedDeleteException {
         return "deleteDone" + id + noBound;
     }

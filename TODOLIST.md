@@ -5,7 +5,7 @@
 * 제외할 목표: 부차기능, FE관련 기능, 선택과 집중에 반하는 기능
 * **2일 남은 상황의 목표**: 1일 > BeanDefinition기반으로 AutoWired annotation이 붙어있는 곳에 injection. 2일 > jackson 사용부 web module측에 추가 및 app 개발완료.
 * Route 처리 규칙 변경 안내
-  routing 속도 개선을 위해 /shops/{id} 가 아닌 /shops/#{id} 처럼 #을 encodedvariable앞에 붙이도록 정책화.
+  routing 속도 개선을 위해 /shops/{id} 가 아닌 /shops/@{id} 처럼 #을 encodedvariable앞에 붙이도록 정책화.
 * **제출시점에 마무리 못한 부분 : 추가 소요시간 1일 예상.**
   * View Resolver 동작처리
   * Response 전달

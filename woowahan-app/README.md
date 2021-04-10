@@ -14,7 +14,7 @@
             ```
         - 가게 단건 조회
             ```
-            curl localhost:8080/shops/#1 -X GET -H 'Content-Type: application/json'
+            curl localhost:8080/shops/@1 -X GET -H 'Content-Type: application/json'
             ```
         - 가게 추가
             ```
@@ -22,11 +22,11 @@
             ```
         - 가게 수정
             ```
-            curl localhost:8080/shops/#1 -X PUT -H 'Content-Type: application/json' -d "{\"name\": \"우아한 가게\", \"address\": \"배민시 배민동 123-1\"}"
+            curl localhost:8080/shops/@1 -X PUT -H 'Content-Type: application/json' -d "{\"name\": \"우아한 가게\", \"address\": \"배민시 배민동 123-1\"}"
             ```
         - 가게 삭제
             ```
-            curl localhost:8080/shops/#1 -X DELETE -H 'Content-Type: application/json'
+            curl localhost:8080/shops/@1 -X DELETE -H 'Content-Type: application/json'
             ```
         
     - 가게 최소 스팩

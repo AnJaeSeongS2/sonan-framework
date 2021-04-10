@@ -59,7 +59,7 @@
 			"response": []
 		},
 		{
-			"name": "/shops/#{id}",
+			"name": "/shops/@{id}",
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -76,7 +76,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/shops/1",
+					"raw": "localhost:8080/shops/@1",
 					"host": [
 						"localhost"
 					],
@@ -90,7 +90,7 @@
 			"response": []
 		},
 		{
-			"name": "/shops/#{id}",
+			"name": "/shops/@{id}",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -100,7 +100,7 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:8080/shops/1",
+					"raw": "localhost:8080/shops/@1",
 					"host": [
 						"localhost"
 					],
@@ -114,7 +114,7 @@
 			"response": []
 		},
 		{
-			"name": "/shops/#{id}",
+			"name": "/shops/@{id}",
 			"request": {
 				"method": "DELETE",
 				"header": [
@@ -124,7 +124,7 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:8080/shops/1",
+					"raw": "localhost:8080/shops/@1",
 					"host": [
 						"localhost"
 					],
