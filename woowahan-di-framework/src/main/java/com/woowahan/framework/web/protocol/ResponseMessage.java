@@ -10,17 +10,17 @@ import com.woowahan.util.annotation.Nullable;
  * Created by Jaeseong on 2021/04/10
  * Git Hub : https://github.com/AnJaeSeongS2
  */
-public class ResponseMessage {
-    private final String vendor;
-    private final boolean isResolvedMessage;
-    private final String message; // ex: servlet's responseBody.
+public class ResponseMessage implements Message {
+    protected final String vendor;
 
-    public ResponseMessage(@Nullable String vendor, boolean isResolvedMessage, String message) {
+    @Nullable
+    protected final Object message; // ex: servlet's responseBody.
+
+    public ResponseMessage(@Nullable String vendor, @Nullable Object message) {
         if (vendor == null)
             this.vendor = Vendor.UNKNOWN.name();
         else
             this.vendor = vendor;
-        this.isResolvedMessage = isResolvedMessage;
         this.message = message;
     }
 
@@ -28,11 +28,8 @@ public class ResponseMessage {
         return vendor;
     }
 
-    public String getMessage() {
+    @Override
+    public @Nullable Object getMessage() {
         return message;
-    }
-
-    public boolean isResolvedMessage() {
-        return isResolvedMessage;
     }
 }

@@ -1,5 +1,6 @@
 package com.woowahan.framework.container.servlet;
 
+import com.woowahan.framework.web.protocol.Message;
 import com.woowahan.framework.web.protocol.RequestMessage;
 import com.woowahan.framework.web.protocol.Vendor;
 
@@ -21,7 +22,7 @@ public class ServletRequestMessageReceiver {
     private ServletRequestMessageReceiver() {
     }
 
-    public RequestMessage receive(HttpServletRequest req) throws IOException {
+    public Message receive(HttpServletRequest req) throws IOException {
         if (req instanceof CachedRequestBodyHttpServletRequest) {
             return new RequestMessage(Vendor.SERVLET.name(), req.getRequestURI(), req.getMethod(), ((CachedRequestBodyHttpServletRequest) req).getCachedRequestBody());
         }

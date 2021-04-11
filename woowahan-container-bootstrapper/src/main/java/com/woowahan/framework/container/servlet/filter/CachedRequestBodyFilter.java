@@ -7,7 +7,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-import static com.woowahan.framework.container.servlet.Constants.APPLICATION_CONTEXT_TYPE_REQ;
+import static com.woowahan.framework.container.servlet.Constants.APPLICATION_CONTENT_TYPE_REQ;
 
 /**
  * @see CachedRequestBodyHttpServletRequest
@@ -23,7 +23,7 @@ public class CachedRequestBodyFilter implements Filter {
     }
 
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain filterChain) throws IOException, ServletException {
-        if (APPLICATION_CONTEXT_TYPE_REQ.equals(req.getContentType())) {
+        if (APPLICATION_CONTENT_TYPE_REQ.equals(req.getContentType())) {
             filterChain.doFilter(new CachedRequestBodyHttpServletRequest((HttpServletRequest) req), resp);
             return;
         }

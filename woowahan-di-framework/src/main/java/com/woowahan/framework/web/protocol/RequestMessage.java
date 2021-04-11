@@ -11,12 +11,14 @@ import com.woowahan.util.annotation.Nullable;
  * Git Hub : https://github.com/AnJaeSeongS2
  */
 public class RequestMessage implements Message {
-    private final String vendor;
-    private final String url;
-    private final String requestMethod;
-    private final String message; //ex: requestBody on Servlet.
+    @Nullable
+    protected final String vendor;
+    protected final String url;
+    protected final String requestMethod;
+    @Nullable
+    protected final Object message; //ex: requestBody on Servlet.
 
-    public RequestMessage(@Nullable String vendor, String url, @Nullable String requestMethod, String message) {
+    public RequestMessage(@Nullable String vendor, String url, @Nullable String requestMethod, @Nullable Object message) {
         if (vendor == null)
             this.vendor = Vendor.UNKNOWN.name();
         else
@@ -38,7 +40,7 @@ public class RequestMessage implements Message {
         this.message = message;
     }
 
-    public String getVendor() {
+    public @Nullable String getVendor() {
         return vendor;
     }
 
@@ -46,7 +48,8 @@ public class RequestMessage implements Message {
         return url;
     }
 
-    public String getMessage() {
+    @Override
+    public @Nullable Object getMessage() {
         return message;
     }
 

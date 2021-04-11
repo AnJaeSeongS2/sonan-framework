@@ -97,8 +97,9 @@
 | 87 |Url PathVariable Prefix # -> @로 변경. (#은 해시뱅 쓰이므로 reuqestUri로 포함되지 않는다.) | DONE | 100% | 04-10 | 04-10 | 30m |
 | 88   | 각종 Filter (CaracterEncodingFilter, ChachedRequestBodyFiler) 추가 및 연결 | DONE         | 100% | 04-10 | 04-10 | 30m |
 | 89   | TODO: HttpServletRequest, HttpServletResponse 사용 Test코드 개선<br />현재로서는 규모가 큰 Request,Response 객체들도 Mock을 사용하려 의도했으나, 진짜 실효성있는 테스트가 되고 있는 지 모르겠으므로,  상위단계의 Test 코드 작성은 토이프로젝트 이후 공부이후 개선한다.<br />규모가 작은 클래스 개발이 이래서 중요하다. | PAUSE        | 20% | 04-10 | 04-10 | 1h. |
-| 90 | ViewResolver 를 Message인터페이스 기반으로 진행하게끔 변경 |  |  |  |  |  |
-| 91 | **container-bootstrapper와 mvc간의 loose coupling 설계<**br /> container-bootstrapper측에서는 ContainerVendorSelection을 App에서 Configuration으로서 등록하지 않았으면 default처리되도록할 것. <br />ContainerVendorSelection에 의해 (SyncServlet -> 에 해당하는 Req/Resp MessageSender pick as ParentInterface. <br /> ContainerVendorSelection에 의해  SyncServlet -> 에 해당하는 ModelResovlerList, ViewResovlerList set도 vendor별로 따로 pick as ParentInterface. <br />ResponseMessageSender(상속받은) (autoWired) -> send(Object vendorRequestObject, ResponseMessage) |  |  |  |  |  |
+| 90 | ViewResolver 를 Message인터페이스 기반으로 진행하게끔 변경 | DONE | 100% | 04-11 | 04-11 | 다른 task에서 계산됨. |
+| 91 | **container-bootstrapper와 mvc간의 loose coupling 설계**<br /> 1. container-bootstrapper측에서는 ContainerVendorSelection을 App에서 Configuration으로서 등록하지 않았으면 default처리되도록할 것. <br />2. ContainerVendorSelection에 의해 (SyncServlet -> 에 해당하는 Req/Resp MessageSender pick as ParentInterface. <br />3. ContainerVendorSelection에 의해  SyncServlet -> 에 해당하는 ModelResovlerList, ViewResovlerList(private add ) 도 vendor별로 따로 pick as ParentInterface. <br />4. ResponseMessageSender(상속받은) (autoWired) -> send(Object vendorRequestObject, ResponseMessage) | DONE | 100% | 04-11 | 04-11 | 4h |
 | 92 | BeanRegistrable Annotation들이 BeanDefinition으로 등록되는 순서와 refreshBean시 생성되는 순서를 아래와 같이 변경. <br />Configuration > Bean > Service > Controller > Repository | DONE | 100% | 04-11 | 04-11 | 30m |
-|  |  |  |  |  |  |  |
+| 93 | **모듈간에 domain 구분, loose-coupling을 고려한 설계**:<br />Message, MessageReceiver, MessageSender, MessageResolver 체계. | DONE | 100% | 04-11 | 04-11 | 4h |
+| 94   | InternalResourceViewResolver 등록 on Container-bootstrapper servlet모듈측. |  | | | | |
 

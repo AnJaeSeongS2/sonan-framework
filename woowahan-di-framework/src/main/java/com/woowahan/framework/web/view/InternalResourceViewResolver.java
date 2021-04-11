@@ -22,21 +22,25 @@ import java.net.URL;
  * Created by Jaeseong on 2021/04/08
  * Git Hub : https://github.com/AnJaeSeongS2
  */
-public class InternalResourceViewResolver extends ViewResolver {
-    private static final Logger logger = LoggerFactory.getLogger(InternalResourceViewResolver.class);
-    private String prefix;
-    private String suffix;
-    private String contentType;
 
-    public InternalResourceViewResolver(int priority, String prefix, String suffix, String contentType) {
-        super(priority);
-        this.prefix = prefix;
-        this.suffix = suffix;
-        this.contentType = contentType;
-    }
+public class InternalResourceViewResolver {
 
-    public Object resolve(Object beforeResolve, HttpServletRequest req, HttpServletResponse resp) throws FailedViewResolveException, IOException {
-
+}
+//public class InternalResourceViewResolver extends ViewResolver {
+//    private static final Logger logger = LoggerFactory.getLogger(InternalResourceViewResolver.class);
+//    private String prefix;
+//    private String suffix;
+//    private String contentType;
+//
+//    public InternalResourceViewResolver(int priority, String prefix, String suffix, String contentType) {
+//        super(priority);
+//        this.prefix = prefix;
+//        this.suffix = suffix;
+//        this.contentType = contentType;
+//    }
+//
+//    public Object resolve(Object beforeResolve, HttpServletRequest req, HttpServletResponse resp) throws FailedViewResolveException, IOException {
+//
         // TODO: NOT WOKRING. NOT YET.
 //
 //        String resourcePath = prefix + beforeResolve + suffix;
@@ -88,6 +92,6 @@ public class InternalResourceViewResolver extends ViewResolver {
 //            resp.setStatus(404);
 //            resp.getWriter().write("Not Found Resource.");
 //        }
-        return null;
-    }
-}
+//        return null;
+//    }
+//}

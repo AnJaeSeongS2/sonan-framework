@@ -7,12 +7,14 @@ import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotGeneratedE
 import com.woowahan.logback.support.Markers;
 import com.woowahan.util.annotation.Nullable;
 import com.woowahan.util.classloader.FirstChildOnBasePackageClassLoader;
+import com.woowahan.util.reflect.ReflectionUtil;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URLClassLoader;
 import java.util.HashSet;
 import java.util.Set;
@@ -81,8 +83,23 @@ public class BeanDefinitionHolder {
             Set<Class<?>> beanRegistrableClasses = new HashSet<>();
             for (Class<? extends Annotation> annotationType : BeanRegistrable.getBeanRegistrableAnnotationTypeSet(ElementType.TYPE)) {
                 if (useBeanMetaFinderForSystem) {
-                    Set<Class<?>> beanClasses = beanMetaFinderForSystem.getTypesAnnotatedWith((Class<? extends Annotation>) beanMetaClassLoader.loadClass(annotationType.getCanonicalName()));
-                    beanRegistrableClasses.addAll(beanClasses);
+                    Class<? extends Annotation> currentAnno = (Class<? extends Annotation>) beanMetaClassLoader.loadClass(annotationType.getCanonicalName());
+                    Set<Class<?>> beanClasses = beanMetaFinderForSystem.getTypesAnnotatedWith(currentAnno);
+                    beanClasses.forEach(beanClass -> {
+                        try {
+                            String wantToRegistrableClass = (String) ReflectionUtil.invokeMethod(beanClass.getAnnotation(currentAnno), "classCanonicalName");
+                            if ("".equals(wantToRegistrableClass)) {
+                                // use original class
+                                beanRegistrableClasses.add(beanClass);
+                            } else {
+                                // use wantToRegistrableClass
+                                beanRegistrableClasses.add(beanMetaClassLoader.loadClass(wantToRegistrableClass));
+                            }
+
+                        } catch (Exception e) {
+
+                        }
+                    });
                 }
 
                 if (useBeanMetaFinder) {

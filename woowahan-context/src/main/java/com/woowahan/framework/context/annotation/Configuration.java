@@ -17,4 +17,5 @@ public @interface Configuration {
      * @return beanName
      */
     String value() default "";
+    String classCanonicalName() default "";
 }

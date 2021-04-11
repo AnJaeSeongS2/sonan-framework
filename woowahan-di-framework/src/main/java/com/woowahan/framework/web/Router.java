@@ -1,11 +1,15 @@
 package com.woowahan.framework.web;
 
 import com.woowahan.framework.context.annotation.Service;
+import com.woowahan.framework.context.bean.BeanManager;
 import com.woowahan.framework.context.bean.lifecycle.ControllerLifecycleInvocation;
 import com.woowahan.framework.json.JacksonUtil;
 import com.woowahan.framework.web.annotation.*;
+import com.woowahan.framework.web.protocol.MessageResolver;
+import com.woowahan.framework.web.protocol.ResponseMessageResolverArrayList;
 import com.woowahan.framework.web.protocol.RequestMessage;
 import com.woowahan.framework.web.protocol.ResponseMessage;
+import com.woowahan.framework.web.throwable.FailedResolveException;
 import com.woowahan.framework.web.throwable.FailedRouteException;
 import com.woowahan.framework.web.util.UrlUtil;
 import com.woowahan.logback.support.Markers;
@@ -39,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Git Hub : https://github.com/AnJaeSeongS2
  */
 
-//TODO: 직접 invoke 유틸로 뺄것.
+//TODO: 직접 Method.invoke 하는 것을 ReflectionUtil 사용하게끔
 @SuppressWarnings("unchecked")
 @Service
 public class Router implements ControllerLifecycleInvocation {
@@ -65,7 +69,7 @@ public class Router implements ControllerLifecycleInvocation {
      * @throws IllegalAccessException
      */
     public ResponseMessage route(RequestMessage requestMessage) throws FailedRouteException, InvocationTargetException, IllegalAccessException {
-        return route(requestMessage.getUrl(), RequestMethod.valueOf(requestMessage.getRequestMethod()), requestMessage.getMessage(), requestMessage.getVendor());
+        return route(requestMessage.getUrl(), RequestMethod.valueOf(requestMessage.getRequestMethod()), String.valueOf(requestMessage.getMessage()), requestMessage.getVendor());
     }
 
     /**
@@ -113,12 +117,38 @@ public class Router implements ControllerLifecycleInvocation {
         }
 
         Object resultInvoked = routedMethod.invoke(methodToControllerObject.get(routedMethod), paramBound.toArray());
-        Map.Entry<Object, Boolean> convertedObjectAndIsResolved = genConvertedObjectIfHasResponseBodyAnnotation(routedMethod, resultInvoked);
-        return new ResponseMessage(vendor, convertedObjectAndIsResolved.getValue(), convertedObjectAndIsResolved.getKey() == null ? null : convertedObjectAndIsResolved.getKey().toString());
+        ResponseMessage messageBeforeResolve = new ResponseMessage(vendor, genConvertedObjectIfHasResponseBodyAnnotation(routedMethod, resultInvoked));
+        ResponseMessage messageAfterResolve = messageBeforeResolve;
+
+        // let's resolve message.
+        ResponseMessageResolverArrayList resolverList = null;
+        try {
+            resolverList = (ResponseMessageResolverArrayList) BeanManager.getInstance().getBean(ResponseMessageResolverArrayList.class, null);
+            for (MessageResolver messageResolver : resolverList) {
+                // resolve by order.
+                try {
+                    messageAfterResolve = (ResponseMessage) messageResolver.resolve(messageBeforeResolve);
+                } catch (FailedResolveException e) {
+                    // retry next resolve.
+                    // using immutable messageBeforeResolve
+                }
+                // resolve success.
+                break;
+            }
+        } catch (Exception e) {
+            if (logger.isWarnEnabled())
+                logger.warn(String.format("ResponseMessageResolverArrayList's bean is not exists."));
+        }
+        return messageAfterResolve;
     }
 
     /**
      * convertedObject 를 반환한다.
+     *
+     *
+     * 이거, 다른 곳으로 옮겨야한다.
+     * @RequestBody resolver로 옮긴다.
+     *
      * @param param
      * @param requestBody
      * @return
@@ -138,22 +168,23 @@ public class Router implements ControllerLifecycleInvocation {
     }
 
     /**
-     * convertedObject 와 isResovled 여부를 반환한다.
+     * convertedObject를 반환한다.
+     *
      * @param method
      * @param resultInvoked
      * @return
      */
-    private Map.Entry<@Nullable Object, Boolean> genConvertedObjectIfHasResponseBodyAnnotation(Method method, @Nullable Object resultInvoked) {
+    private @Nullable Object genConvertedObjectIfHasResponseBodyAnnotation(Method method, @Nullable Object resultInvoked) {
         if (resultInvoked == null || method.getAnnotation(ResponseBody.class) == null)
-            return new AbstractMap.SimpleEntry(resultInvoked, false);
+            return resultInvoked;
         try {
             // @ResponseBody 이므로, Return value를 JsonUtil로 jsonString화 해준다.
-            return new AbstractMap.SimpleEntry(JacksonUtil.getInstance().toJson(resultInvoked), true);
+            return JacksonUtil.getInstance().toJson(resultInvoked);
         } catch (Exception e) {
             // 회원정보일 수 있으므로 정보 자체를 찍으면 안된다.
             if (logger.isWarnEnabled())
                 logger.warn(String.format("Failed convert result to JsonString (by @ResponseBody). so, return original result. Class: %s, Method: %s", methodToControllerObject.get(method), method));
-            return new AbstractMap.SimpleEntry(resultInvoked, false);
+            return resultInvoked;
         }
     }
 

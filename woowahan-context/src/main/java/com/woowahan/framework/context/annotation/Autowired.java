@@ -12,7 +12,7 @@ import java.lang.annotation.*;
  * Git Hub : https://github.com/AnJaeSeongS2
  */
 // 우선 적용 target
-@Target({ElementType.CONSTRUCTOR})
+@Target({ElementType.CONSTRUCTOR, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Autowired {

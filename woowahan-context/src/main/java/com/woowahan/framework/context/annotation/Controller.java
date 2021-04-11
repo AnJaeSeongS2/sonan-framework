@@ -20,4 +20,5 @@ public @interface Controller {
      * @return beanName
      */
     String value() default "";
+    String classCanonicalName() default "";
 }

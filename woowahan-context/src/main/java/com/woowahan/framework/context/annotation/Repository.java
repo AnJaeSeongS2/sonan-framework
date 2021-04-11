@@ -21,4 +21,5 @@ public @interface Repository {
      * @return beanName
      */
     String value() default "";
+    String classCanonicalName() default "";
 }

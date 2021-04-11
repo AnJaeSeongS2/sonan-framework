@@ -1,9 +1,7 @@
 package com.woowahan.framework.web.view;
 
-import com.woowahan.framework.context.annotation.Autowired;
-import com.woowahan.framework.context.annotation.BeanVariable;
-import com.woowahan.framework.web.protocol.Message;
 import com.woowahan.framework.web.protocol.MessageResolver;
+import com.woowahan.framework.web.protocol.ResponseMessage;
 import com.woowahan.framework.web.protocol.MessageSender;
 import com.woowahan.framework.web.throwable.FailedResolveException;
 import com.woowahan.util.collection.ClassWithPriority;
@@ -18,10 +16,9 @@ import java.io.IOException;
  * Created by Jaeseong on 2021/04/08
  * Git Hub : https://github.com/AnJaeSeongS2
  */
-public abstract class ViewResolver extends ClassWithPriority implements MessageResolver {
+public abstract class ModelResolver extends ClassWithPriority implements MessageResolver {
 
-
-    public ViewResolver(int priority) {
+    public ModelResolver(int priority) {
         super(priority);
     }
 
@@ -32,8 +29,7 @@ public abstract class ViewResolver extends ClassWithPriority implements MessageR
      * @param sender
      * @throws FailedResolveException
      */
-    @Autowired
-    public void resolve(Message messageBeforeResolve, @BeanVariable MessageSender sender) throws FailedResolveException, IOException {
+    public void resolve(ResponseMessage messageBeforeResolve, MessageSender sender) throws FailedResolveException, IOException {
         sender.send(resolve(messageBeforeResolve));
     }
 }

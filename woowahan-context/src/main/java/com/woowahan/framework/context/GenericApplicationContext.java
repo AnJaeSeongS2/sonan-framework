@@ -126,6 +126,7 @@ public class GenericApplicationContext<T> extends ApplicationContext {
                 logger.warn(Markers.LIFE_CYCLE.get(), String.format("not supported BeanDefinition. show %s. current BeanDefinition : %s.", BeanRegistrable.class.getCanonicalName(), definition));
             return;
         }
+        beanDefSet.add(definition);
         this.beanIdToDef.put(definition.getId(), definition);
         if (logger.isDebugEnabled(Markers.LIFE_CYCLE.get()))
             logger.debug(Markers.LIFE_CYCLE.get(), String.format("finish register BeanDefinition. current BeanDefinition : %s", definition));
@@ -263,15 +264,20 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         this.singletonBeansControllerLifecycleInvocations = new CopyOnWriteArrayList<>();
 
         for (BeanRegistrable beanRegistrable : BeanRegistrable.getBeanRegistrableByOrder()) {
-            beanDefs.get(beanRegistrable.getBeanRegistrableAnnotationType().getCanonicalName()).forEach(beanDef -> {
-                try {
-                    if (beanDef.isSingleton())
-                        getBean(beanDef);
-                } catch (BeanCreationFailedException e) {
-                    if (logger.isWarnEnabled(Markers.LIFE_CYCLE.get()))
-                        logger.warn(Markers.LIFE_CYCLE.get(), String.format("Failed BeanCreation as Singletion. current BeanDefinition : %s", beanDef));
-                }
-            });
+            createSingletonBeans(beanRegistrable.getBeanRegistrableAnnotationType().getCanonicalName());
         }
+        createSingletonBeans(REGIST_WITHOUT_ANNOTATION);
+    }
+
+    private void createSingletonBeans(String beanDefsKey) {
+        beanDefs.get(beanDefsKey).forEach(beanDef -> {
+            try {
+                if (beanDef.isSingleton())
+                    getBean(beanDef);
+            } catch (BeanCreationFailedException e) {
+                if (logger.isWarnEnabled(Markers.LIFE_CYCLE.get()))
+                    logger.warn(Markers.LIFE_CYCLE.get(), String.format("Failed BeanCreation as Singletion. current BeanDefinition : %s", beanDef));
+            }
+        });
     }
 }
