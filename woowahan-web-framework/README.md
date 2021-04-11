@@ -1,4 +1,4 @@
-# woowahan-di-framework (woowahan-mvc-framework로 모듈명 변경예정)
+# woowahan-web-framework (수정: `woowahan-di-framework`에서 이름 변경됨.)
 
 ## 구현 방향 설정
 * `TODOLIST.md`를 작성하고, 지속적으로 관리할 것입니다. (DONE) 
@@ -14,7 +14,7 @@
 
 ---
 ## 원본 문서 
-`woowahan-di-framework` 은 `HttpServlet` 의 빈 껍데기뿐인 구현체 `DispatcherServlet`를 가지고 있습니다.
+`woowahan-di-framework`(수정: `woowahan-web-framework`으로 모듈 변경됨.) 은 `HttpServlet` 의 빈 껍데기뿐인 구현체 `DispatcherServlet`를 가지고 있습니다.
 
 ```java
 public class DispatcherServlet extends HttpServlet {

@@ -61,6 +61,7 @@ public class GenericMapRepository<ElementClazz> implements RepositoryAccessibleA
             id = idAndField.getKey();
             if (id == null) {
                 id = latestPostedId;
+                IdExtractor.setId(element, latestPostedId);
             }
 
             for (Annotation annotation : idAndField.getValue().getAnnotations()) {

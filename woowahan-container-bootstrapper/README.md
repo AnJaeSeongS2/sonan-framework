@@ -4,4 +4,6 @@
 
 ## 요구사항
 1. `다른 was | servlet container | netty 등등`으로도 확장가능한 설계.
-2. servlet을 container로 사용할 경우, `servlet 3.1` 이상을 지원하는 만 정상 동작.
+
+## 결과
+* 완료.

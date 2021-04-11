@@ -1,4 +1,4 @@
-# woowahan-di-support
+# woowahan-di-support (미사용. Dependency에서 제외됨.)
 
 ## WoowahanLocalVariableTableParameterNameDiscoverer
 

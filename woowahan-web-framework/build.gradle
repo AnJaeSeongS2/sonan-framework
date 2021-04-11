@@ -1,6 +1,6 @@
 dependencies {
     compile project(":woowahan-logback-support")
-// spring-core 는 무겁다. 따라서 경량화를 위해 spring-core를 가진 woowahan-di-support는 미사용한다.
+// spring-core를 가진 woowahan-di-support는 미사용한다. 기왕 만드는 거 spring dependency를 제거한다.
 //    compile project(":woowahan-di-support")
     compile project(":woowahan-context")
     compile("javax.servlet:jstl:1.2")

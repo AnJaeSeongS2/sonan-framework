@@ -28,6 +28,14 @@ class IdExtractorTest {
     }
 
     @Test
+    void setId() {
+        IdExtractor.setId(model, "changed");
+        assertEquals("changed", IdExtractor.getId(model));
+        IdExtractor.setId(model, "aaa");
+        assertEquals("aaa", IdExtractor.getId(model));
+    }
+
+    @Test
     void getIdClass() {
         assertEquals(String.class, IdExtractor.getIdClass(TestModel.class));
         assertEquals(Integer.class, IdExtractor.getIdClass(TestModelNoId.class));

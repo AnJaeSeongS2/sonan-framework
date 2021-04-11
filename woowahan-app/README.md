@@ -1,7 +1,7 @@
 # woowahan-app
 
 `resources/static/index.html` 에는 가게를 조회, 수정, 삭제 할 수 있는 어플리케이션이 작성되어 있습니다.
-`woowahan-di-framework` 를 사용하여 어플리케이션을 완성해주세요.
+`woowahan-di-framework`(수정: `woowahan-web-framework`으로 모듈 변경됨.) 를 사용하여 어플리케이션을 완성해주세요.
 
 ## 요구사항에서 마이너 수정한 사항
 

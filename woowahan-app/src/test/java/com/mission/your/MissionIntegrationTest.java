@@ -3,9 +3,7 @@ package com.mission.your;
 import com.woowahan.framework.container.lifecycle.StaticLifeCycleEventBus;
 import com.woowahan.framework.container.throwable.BootingFailException;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
@@ -57,8 +55,25 @@ public class MissionIntegrationTest {
 
         HttpGet getRequest = new HttpGet("http://localhost:8080/shops/@1");
         CloseableHttpResponse getResponse = HttpClientBuilder.create().build().execute(getRequest);
-        assertEquals(HttpStatus.SC_OK, postResponse.getStatusLine().getStatusCode());
+        assertEquals(HttpStatus.SC_OK, getResponse.getStatusLine().getStatusCode());
 
-        // TODO: make tests
+        HttpPut putRequest = new HttpPut("http://localhost:8080/shops/@2");
+        String putBody = "{\n" +
+                "    \"name\": \"updated2\",\n" +
+                "    \"address\": \"updated2\"\n" +
+                "}";
+        StringEntity requestEntityPut = new StringEntity(putBody, "utf-8");
+        requestEntityPut.setContentType(new BasicHeader("Content-Type", "application/json"));
+        putRequest.setEntity(requestEntityPut);
+        CloseableHttpResponse putResponse = HttpClientBuilder.create().build().execute(putRequest);
+        assertEquals(HttpStatus.SC_OK, putResponse.getStatusLine().getStatusCode());
+
+        HttpDelete deleteRequest = new HttpDelete("http://localhost:8080/shops/@1");
+        CloseableHttpResponse deleteResponse = HttpClientBuilder.create().build().execute(deleteRequest);
+        assertEquals(HttpStatus.SC_OK, deleteResponse.getStatusLine().getStatusCode());
+
+        HttpGet getRequestAll = new HttpGet("http://localhost:8080/shops");
+        CloseableHttpResponse getResponseAll = HttpClientBuilder.create().build().execute(getRequestAll);
+        assertEquals(HttpStatus.SC_OK, getResponseAll.getStatusLine().getStatusCode());
     }
 }

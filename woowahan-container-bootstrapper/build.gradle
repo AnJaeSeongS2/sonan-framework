@@ -1,7 +1,7 @@
 dependencies {
     compile project(":woowahan-logback-support")
     compile project(":woowahan-context")
-    compile project(":woowahan-di-framework")
+    compile project(":woowahan-web-framework")
     compile("javax.servlet:jstl:1.2")
     compile("javax.servlet:javax.servlet-api:3.1.0")
     compile("ch.qos.logback:logback-classic:${logbackVersion}")

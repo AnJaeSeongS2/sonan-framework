@@ -100,5 +100,5 @@
 | 96   | InternalResourceViewResolver를 도입으로 static resource를 client에게 제공 가능해짐.<br />현재 개발기(Dev) 에서 static resource에 대한 client 제공 정상 확인. | DONE | 100% | 04-12 | 04-12 | 2h |
 | 97   | Resource File 관련 메타처리 관련 Enum으로 정리.              | DONE | 100% | 04-12 | 04-12 | 20m |
 | 98   | app.js 에서 shops data를 tag용 data에 binding하지 못하던 버그 해결. | DONE | 100% | 04-12 | 04-12 | 30m |
-| 99   | 마무리 문서화                                                | DONE | 100% | 04-12 | 04-12 | 10m |
+| 99   | 마무리 문서화, 모듈 정리<br />woowahan-di-framework -> woowahan-web-framework로 변경. | DONE | 100% | 04-12 | 04-12 | 10m |
 

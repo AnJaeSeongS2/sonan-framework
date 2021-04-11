@@ -48,6 +48,7 @@ public class ServletBootstrapperDefault implements ContainerBootstrapper {
             StaticLifeCycleEventBus.send(SimpleLifeCycle.AFTER_START_EVENT);
             if (logger.isDebugEnabled(Markers.LIFE_CYCLE.get()))
                 logger.debug(Markers.LIFE_CYCLE.get(), "success booting ServletBootstrapperDefault");
+            printSuccessStart();
         } catch (Exception e) {
             if (logger.isErrorEnabled(Markers.LIFE_CYCLE.get()))
                 logger.error(Markers.LIFE_CYCLE.get(), "fail booting ServletBootstrapperDefault", e);
@@ -90,7 +91,7 @@ public class ServletBootstrapperDefault implements ContainerBootstrapper {
     /**
      * html, css, js 같은 resource를 client에게 제공한다. Serlvet이 제공해주는 DefaultServlet을 사용한다.
      * ViewResolver 로 작성하려했던 기반은 MessageResolver 에서 확인 가능하다.
-     * 
+     *
      * DispatcherServlet으로만 동작가능하게 개선 중... 미사용 될 예정.
      * @see com.woowahan.framework.web.protocol.MessageResolver
      *
@@ -144,4 +145,20 @@ public class ServletBootstrapperDefault implements ContainerBootstrapper {
         rootAppCtx.refreshInstances();
     }
 
+    /**
+     * woowahan web FW booting success.
+     */
+    private void printSuccessStart() {
+        if (logger.isInfoEnabled(Markers.LIFE_CYCLE.get()))
+            logger.info(Markers.LIFE_CYCLE.get(), "\n" +
+"                                          _                                     _      ______  _    _ \n" +
+"                                         | |                                   | |     |  ___|| |  | |\n" +
+"__      __  ___    ___  __      __  __ _ | |__    __ _  _ __   __      __  ___ | |__   | |_   | |  | |\n" +
+"\\ \\ /\\ / / / _ \\  / _ \\ \\ \\ /\\ / / / _` || '_ \\  / _` || '_ \\  \\ \\ /\\ / / / _ \\| '_ \\  |  _|  | |/\\| |\n" +
+" \\ V  V / | (_) || (_) | \\ V  V / | (_| || | | || (_| || | | |  \\ V  V / |  __/| |_) | | |    \\  /\\  /\n" +
+"  \\_/\\_/   \\___/  \\___/   \\_/\\_/   \\__,_||_| |_| \\__,_||_| |_|   \\_/\\_/   \\___||_.__/  \\_|     \\/  \\/ \n" +
+"                                                                                                      \n" +
+"                                                                                                      \n" +
+"success booting woowahan web framework with container.");
+    }
 }

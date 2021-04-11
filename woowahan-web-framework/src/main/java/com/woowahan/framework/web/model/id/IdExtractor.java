@@ -31,6 +31,21 @@ public class IdExtractor {
         }
     }
 
+    public static void setId(Object targetModel, Object id) {
+        try {
+            Field idField = ReflectionUtil.getFieldMetaAnyway(targetModel.getClass(), (field) -> {
+                for (Annotation declaredAnnotation : field.getDeclaredAnnotations()) {
+                    if (declaredAnnotation instanceof Id || declaredAnnotation instanceof IdAutoChangeableIfExists) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+            ReflectionUtil.setFieldAnyway(targetModel, idField, id);
+        } catch (Exception e) {
+        }
+    }
+
     public static Map.Entry<Object, Field> getIdAndField(Object targetModel) throws IllegalAccessException, NoSuchFieldException {
         Field field = getIdField(targetModel);
         Object id = ReflectionUtil.getFieldAnyway(targetModel, field);

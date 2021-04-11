@@ -2,7 +2,7 @@ rootProject.name = 'woowahan-di'
 include 'woowahan-java-util'
 include 'woowahan-logback-support'
 include 'woowahan-context'
-include 'woowahan-di-framework'
+include 'woowahan-web-framework'
 // spring-core 는 무겁다. 따라서 경량화를 위해 spring-core를 가진 woowahan-di-support는 미사용한다.
 //include 'woowahan-di-support'
 include 'woowahan-container-bootstrapper'
