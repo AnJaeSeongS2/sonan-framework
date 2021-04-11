@@ -1,12 +1,13 @@
 # woowahan-di-framework (woowahan-mvc-framework로 모듈명 변경예정)
 
-## 목표 설정
+## 구현 방향 설정
+* `TODOLIST.md`를 작성하고, 지속적으로 관리할 것입니다. (DONE) 
+  * 해당 파일에서 자세한 개발 이력 확인 가능
 * di에 대한 기능 구현을 우선 진행. (DONE)
-* 과제의 의도는 프로그래밍 습관체크라는 점을 명심. 구현의 아이디어도 과제 내용에 대해서 확장해야지. 프레임워크 기본 기능을 확장가능하게 개발해놓는 것을 목표로 설정할 것. ex) web > webflux | webmvc 처럼 공통 annotation은 parent module에 포함시킴. (DONE)
-* 이미 작성된 Annotation을 재사용할 것입니다. (DONE)
 * 요구사항을 매번 작업시작전에 재확인할 것입니다. (DONE)
 * 모듈 세분화하고 책임을 잘 분배할 것입니다. (DONE)
-* 구체적 업무관리는 TODOLIST.md를 확인 바랍니다.
+* 과제의 의도는 프로그래밍 습관체크라는 점을 명심. 구현의 아이디어도 과제 내용에 대해서 확장을 염두해 둬야함. 프레임워크 기본 기능을 확장가능하게 개발해놓는 것을 목표로 설정할 것. 도메인의 적절한 분리 ex) Message 인터페이스 기반 컴포넌트간 통신 | 타 모듈에서는 Servlet으로 컨테이너가 뜨는 지 조차 몰라도 되는 구조. (DONE)
+* `woowahan-di-support` 을 사용하지 않는다. (Spring-core dependency 제거.) (DONE)
 
 
 

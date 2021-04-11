@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Route도 @Service이다.
- * Route BigO(1)로 처리하기 위해, request 날리는 측이 PathVariable임을 알려줄 수 있게끔 api개선이 이루어졌다.
+ * Router도 @Service이다.
+ * Router BigO(1)로 처리하기 위해, request 날리는 측이 PathVariable임을 알려줄 수 있게끔 api개선이 이루어졌다.
  *
  * 요청이 a/@{b1 URLEncoded}@{b2 URLEncoded}/c/d/@{e URLEncoded}.GET 이라면,
  * variable 부분을 variable[]로 정리해둔다.

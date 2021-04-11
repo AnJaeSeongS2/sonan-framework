@@ -3,13 +3,8 @@
 * 목표: 7일차까지 기본기능 제공 계획을 짠다.  (**지체됨** > 최종 제출은 기본기능 구현까지만으로 마무리할 것. 시간과 무관히 지속적으로 확장, 유지보수를 염두한 개발을 한다.)
 * 추가 목표: 7일차까지 구현된 기본기능을 확장한 확장 기능 제공 계획을 짠다. (**지체됨** > 최종 제출은 기본기능 구현까지만으로 마무리할 것. 시간과 무관히 지속적으로 확장, 유지보수를 염두한 개발을 한다.)
 * 제외할 목표: 부차기능, FE관련 기능, 선택과 집중에 반하는 기능
-* **2일 남은 상황의 목표**: 1일 > BeanDefinition기반으로 AutoWired annotation이 붙어있는 곳에 injection. 2일 > jackson 사용부 web module측에 추가 및 app 개발완료.
 * Route 처리 규칙 변경 안내
-  routing 속도 개선을 위해 /shops/{id} 가 아닌 /shops/@{id} 처럼 #을 encodedvariable앞에 붙이도록 정책화.
-* **제출시점에 마무리 못한 부분 : 추가 소요시간 1일 예상.**
-  * View Resolver 동작처리
-  * Response 전달
-  * View Resovler, 사용자 app의 테스트 코드 작성
+  * routing 속도 개선을 위해 기존 api인 /shops/{id} 가 아닌 /shops/@{id} 으로 @을 encodedvariable앞에 붙이도록 정책화.
 
 
 | 색인 | 작업                                                         | 상태 | 달성률 | 예상 완료일 | 완료일 | 작업 소요시간 |
@@ -105,4 +100,5 @@
 | 96   | InternalResourceViewResolver를 도입으로 static resource를 client에게 제공 가능해짐.<br />현재 개발기(Dev) 에서 static resource에 대한 client 제공 정상 확인. | DONE | 100% | 04-12 | 04-12 | 2h |
 | 97   | Resource File 관련 메타처리 관련 Enum으로 정리.              | DONE | 100% | 04-12 | 04-12 | 20m |
 | 98   | app.js 에서 shops data를 tag용 data에 binding하지 못하던 버그 해결. | DONE | 100% | 04-12 | 04-12 | 30m |
+| 99   | 마무리 문서화                                                | DONE | 100% | 04-12 | 04-12 | 10m |
 
