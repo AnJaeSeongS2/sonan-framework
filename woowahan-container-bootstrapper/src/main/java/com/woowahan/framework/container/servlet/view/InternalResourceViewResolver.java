@@ -49,8 +49,8 @@ public class InternalResourceViewResolver extends ViewResolver {
             throw new ResourceNotFoundException("embedded tomcat case... (for development.)");
         } catch (ResourceNotFoundException e) {
             // dev embedded tomcat case... (for development.)
-            if (logger.isDebugEnabled(Markers.DEV.get()))
-                logger.debug(Markers.DEV.get(), String.format("Search resource on [ClassPath directory]. resourcePath : %s", resourcePath));
+            if (logger.isTraceEnabled(Markers.DEV.get()))
+                logger.trace(Markers.DEV.get(), String.format("Search resource on [ClassPath directory]. resourcePath : %s", resourcePath));
             ClassLoader searchRootClassLoader = Thread.currentThread().getContextClassLoader();
             if (Thread.currentThread().getContextClassLoader() instanceof ParallelWebappClassLoader) {
                 searchRootClassLoader = Thread.currentThread().getContextClassLoader().getParent();
@@ -59,8 +59,8 @@ public class InternalResourceViewResolver extends ViewResolver {
             for (URL url : ((URLClassLoader) searchRootClassLoader).getURLs()) {
                 URL resourceUrlOnEmbeddedCase = null;
                 try {
-                    if (logger.isDebugEnabled(Markers.DEV.get()))
-                        logger.debug(Markers.DEV.get(), String.format("Search resource on [%s]. resourcePath : %s", url.getPath(), resourcePath));
+                    if (logger.isTraceEnabled(Markers.DEV.get()))
+                        logger.trace(Markers.DEV.get(), String.format("Search resource on [%s]. resourcePath : %s", url.getPath(), resourcePath));
                     resourceUrlOnEmbeddedCase = Paths.get(url.getPath(), resourcePath).toUri().toURL();
                 } catch (MalformedURLException malformedURLException) {
                     // skip.

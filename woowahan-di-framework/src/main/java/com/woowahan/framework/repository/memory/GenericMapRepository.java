@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
  * @see com.woowahan.framework.web.annotation.model.Id 가 ElementClazz 클래스의 Field의에 붙어있다면, 해당 field를 Id로 활용한다.
  * com.woowahan.framework.web.annotation.model.Id 가 없다면, ElementClazz 객체의 hashCode 값을 id로 활용한다.
  *
+ * data가 삭제됐더라도, 이후 그 data의 id는 다른 생성에 재사용되지 않는다. (차후 로깅 처리 편의를 위해)
+ *
  * @Thread-safe
  * Created by Jaeseong on 2021/04/06
  * Git Hub : https://github.com/AnJGenericMapRepositoryaeSeongS2
@@ -36,7 +38,7 @@ public class GenericMapRepository<ElementClazz> implements RepositoryAccessibleA
     private static final Logger logger = LoggerFactory.getLogger(GenericMapRepository.class);
 
     private Map<Object, ElementClazz> dataMap;
-    private Integer autoId = 0;
+    private Object latestPostedId = null;
 
     public GenericMapRepository() {
         dataMap = new ConcurrentHashMap();
@@ -57,13 +59,16 @@ public class GenericMapRepository<ElementClazz> implements RepositoryAccessibleA
         try {
             Map.Entry<Object, Field> idAndField = IdExtractor.getIdAndField(element);
             id = idAndField.getKey();
+            if (id == null) {
+                id = latestPostedId;
+            }
 
             for (Annotation annotation : idAndField.getValue().getAnnotations()) {
                 if (annotation instanceof IdAutoChangeableIfExists) {
                     while (id == null || contains(id)) {
                         // id값이 없거나, 이미 id에 매칭되는 data가 존재하는 경우, id를 바꿔 다시 post요청을 시도한다.
                         if (logger.isWarnEnabled())
-                            logger.warn(String.format("this Model's id is null or id already contains on repo, so try to change id automatically. id : %s", id));
+                            logger.warn(String.format("this Model's id is null or id already contains on repo, so try to change id automatically. before id : %s", id));
                         if (element instanceof IdAutoChanger) {
                             id = ((IdAutoChanger) element).changeIdAuto();
                         } else {
@@ -72,10 +77,12 @@ public class GenericMapRepository<ElementClazz> implements RepositoryAccessibleA
                             break;
                         }
                     }
+                    latestPostedId = id;
                     break;
                 }
                 if (annotation instanceof Id) {
                     id = idAndField.getKey();
+                    latestPostedId = id;
                     break;
                 }
             }

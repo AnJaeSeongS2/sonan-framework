@@ -74,9 +74,10 @@ public class ServletResponseMessageSender {
             curStatus = status;
         if (contentType != null)
             curContentType = contentType;
-
-        resp.setStatus(curStatus == null ? 200 : curStatus);
-        resp.setContentType(curContentType == null ? DEFAULT_CONTENT_TYPE_RES : curContentType);
+        curStatus = curStatus == null ? 200 : curStatus;
+        curContentType = curContentType == null ? DEFAULT_CONTENT_TYPE_RES : curContentType;
+        resp.setStatus(curStatus);
+        resp.setContentType(curContentType);
         if (message != null) {
             try (Writer writer = resp.getWriter()) {
                 writer.write(String.valueOf(message.getMessage()));

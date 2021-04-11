@@ -14,16 +14,16 @@
             return axios.get('/shops', { headers: {'Content-Type': 'application/json'} })
         },
         getShop(id) {
-            return axios.get(`/shops/${id}`, { headers: {'Content-Type': 'application/json'} })
+            return axios.get(`/shops/@${id}`, { headers: {'Content-Type': 'application/json'} })
         },
         writeShop(data) {
             return axios.post('/shops', data, { headers: {'Content-Type': 'application/json'} })
         },
         updateShop(id, data) {
-            return axios.put(`/shops/${id}`, data, { headers: {'Content-Type': 'application/json'} })
+            return axios.put(`/shops/@${id}`, data, { headers: {'Content-Type': 'application/json'} })
         },
         deleteShop(id) {
-            return axios.delete(`/shops/${id}`, { headers: {'Content-Type': 'application/json'} })
+            return axios.delete(`/shops/@${id}`, { headers: {'Content-Type': 'application/json'} })
         }
     }
 
@@ -49,6 +49,7 @@
                 async getShops() {
                     try {
                         this.shops = await api.getShops()
+                        this.shops = this.shops.data
                     } catch (e) {
                         alert('가게 목록 호출에 실패하였습니다.')
                     }
@@ -155,8 +156,8 @@
                             {{/if}}
                         </div>
                         <div class="body">
-                            <ul><input type="text" id="shopName" value="{{shop.name}}"></ul>
-                            <ul><input type="text" id="shopAddress" value="{{shop.address}}"></ul>
+                            <ul>shop's name : <input type="text" id="shopName" value="{{shop.name}}"></ul>
+                            <ul>shop's address : <input type="text" id="shopAddress" value="{{shop.address}}"></ul>
                         </div>
                     </div>
                     `

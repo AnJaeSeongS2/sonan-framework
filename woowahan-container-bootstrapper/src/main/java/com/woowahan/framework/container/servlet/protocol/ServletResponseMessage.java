@@ -30,7 +30,7 @@ public class ServletResponseMessage extends ResponseMessage {
     }
 
     @Nullable
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
