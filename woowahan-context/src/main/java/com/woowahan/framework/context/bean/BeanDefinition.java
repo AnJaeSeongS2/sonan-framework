@@ -21,6 +21,8 @@ public class BeanDefinition {
     private Scope scope;
     @Nullable // beanKind
     private String beanRegistableAnnotationCanonicalName;
+    // 실제 생성되는 class의 name.
+    private String beanCreationClassCanonicalName;
 
     public BeanDefinition(BeanIdentifier id) {
         this(id, null, null);
@@ -32,6 +34,10 @@ public class BeanDefinition {
     }
 
     public BeanDefinition(BeanIdentifier id, @Nullable Scope scope, @Nullable String beanRegistableAnnotationCanonicalName) {
+        this(id, scope, beanRegistableAnnotationCanonicalName, id.getClassCanonicalName());
+    }
+
+    public BeanDefinition(BeanIdentifier id, @Nullable Scope scope, @Nullable String beanRegistableAnnotationCanonicalName, String beanCreationClassCanonicalName) {
         this.id = id;
         if (scope == null) {
             this.scope = Scope.SINGLETON;
@@ -42,6 +48,7 @@ public class BeanDefinition {
         if (beanRegistableAnnotationCanonicalName != null) {
             this.beanRegistableAnnotationCanonicalName = beanRegistableAnnotationCanonicalName;
         }
+        this.beanCreationClassCanonicalName = beanCreationClassCanonicalName;
     }
 
     public BeanDefinition(String beanClassCannonicalName) {
@@ -54,6 +61,9 @@ public class BeanDefinition {
 
     public BeanDefinition(String beanClassCannonicalName, @Nullable String beanName, @Nullable Scope scope, @Nullable String beanRegistableAnnotationCanonicalName) {
         this(new BeanIdentifier(beanClassCannonicalName, beanName), scope, beanRegistableAnnotationCanonicalName);
+    }
+    public BeanDefinition(String beanClassCannonicalName, @Nullable String beanName, @Nullable Scope scope, @Nullable String beanRegistableAnnotationCanonicalName, String beanCreationClassCanonicalName) {
+        this(new BeanIdentifier(beanClassCannonicalName, beanName), scope, beanRegistableAnnotationCanonicalName, beanCreationClassCanonicalName);
     }
 
     public boolean isPrototype() {
@@ -104,5 +114,9 @@ public class BeanDefinition {
 
     public String getBeanRegistableAnnotationCanonicalName() {
         return beanRegistableAnnotationCanonicalName;
+    }
+
+    public String getBeanCreationClassCanonicalName() {
+        return beanCreationClassCanonicalName;
     }
 }

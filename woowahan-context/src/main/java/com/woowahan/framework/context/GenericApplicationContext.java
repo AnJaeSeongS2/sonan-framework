@@ -156,7 +156,7 @@ public class GenericApplicationContext<T> extends ApplicationContext {
         if (logger.isTraceEnabled(Markers.LIFE_CYCLE.get()))
             logger.trace(Markers.LIFE_CYCLE.get(), "try createBean...");
 
-        Class<?> beanClazz = this.beanClassLoader.loadClass(definition.getBeanClassCanonicalName());
+        Class<?> beanClazz = this.beanClassLoader.loadClass(definition.getBeanCreationClassCanonicalName());
 
         // if has Constructor @Autowired annotation -> param has annotation BeanVariable -> check it -> getBean() all BeanVariable and injection that param.
         List<Object> boundObjects = new ArrayList<>();

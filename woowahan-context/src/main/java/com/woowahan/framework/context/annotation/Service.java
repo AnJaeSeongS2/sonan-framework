@@ -8,7 +8,7 @@ import java.lang.annotation.*;
  * Component annotation과 기능상엔 차이가 없으나, 정의를 구분한다.
  *
  * String value() return beanName
- * String classCanonicalName() is for support regist as parent class's object.
+ * String identifyClassCanonicalName() is for support regist as parent class's object.
  * @see {@link BeanRegistrable} BeanRegistrable에 포함된다.
  * Created by Jaeseong on 2021/04/04
  * Git Hub : https://github.com/AnJaeSeongS2
@@ -21,5 +21,5 @@ public @interface Service {
      * @return beanName
      */
     String value() default "";
-    String classCanonicalName() default "";
+    String identifyClassCanonicalName() default "";
 }

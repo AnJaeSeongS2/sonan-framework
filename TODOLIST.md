@@ -102,4 +102,5 @@
 | 92 | BeanRegistrable Annotation들이 BeanDefinition으로 등록되는 순서와 refreshBean시 생성되는 순서를 아래와 같이 변경. <br />Configuration > Bean > Service > Controller > Repository | DONE | 100% | 04-11 | 04-11 | 30m |
 | 93 | **모듈간에 domain 구분, loose-coupling을 고려한 설계**:<br />Message, MessageReceiver, MessageSender, MessageResolver 체계. | DONE | 100% | 04-11 | 04-11 | 4h |
 | 94   | InternalResourceViewResolver 등록 on Container-bootstrapper servlet모듈측. |  | | | | |
+| 95   | BeanDefinition에서 beanCreation Class Name과, beanIdentify Class Name을 분리 (for 상속관계인데 부모형태로 identify를 형성하고자 할 경우) | DONE | 100% | 04-12 | 04-12 | 1h |
 

@@ -83,23 +83,8 @@ public class BeanDefinitionHolder {
             Set<Class<?>> beanRegistrableClasses = new HashSet<>();
             for (Class<? extends Annotation> annotationType : BeanRegistrable.getBeanRegistrableAnnotationTypeSet(ElementType.TYPE)) {
                 if (useBeanMetaFinderForSystem) {
-                    Class<? extends Annotation> currentAnno = (Class<? extends Annotation>) beanMetaClassLoader.loadClass(annotationType.getCanonicalName());
-                    Set<Class<?>> beanClasses = beanMetaFinderForSystem.getTypesAnnotatedWith(currentAnno);
-                    beanClasses.forEach(beanClass -> {
-                        try {
-                            String wantToRegistrableClass = (String) ReflectionUtil.invokeMethod(beanClass.getAnnotation(currentAnno), "classCanonicalName");
-                            if ("".equals(wantToRegistrableClass)) {
-                                // use original class
-                                beanRegistrableClasses.add(beanClass);
-                            } else {
-                                // use wantToRegistrableClass
-                                beanRegistrableClasses.add(beanMetaClassLoader.loadClass(wantToRegistrableClass));
-                            }
-
-                        } catch (Exception e) {
-
-                        }
-                    });
+                    Set<Class<?>> beanClasses = beanMetaFinderForSystem.getTypesAnnotatedWith((Class<? extends Annotation>) beanMetaClassLoader.loadClass(annotationType.getCanonicalName()));
+                    beanRegistrableClasses.addAll(beanClasses);
                 }
 
                 if (useBeanMetaFinder) {
@@ -130,17 +115,29 @@ public class BeanDefinitionHolder {
             Scope beanScope = null;
             String beanName = null;
             String beanKind = null;
+            String beanIdentifyClassCanonicalName = null;
             for (Annotation anno : beanClass.getDeclaredAnnotations()) {
                 if (BeanRegistrable.contains(anno)) {
                     beanName = BeanRegistrable.getBeanName(anno);
                     beanKind = anno.annotationType().getCanonicalName();
+                    try {
+                        String curIdentifyClassCanonicalName = (String) ReflectionUtil.invokeMethod(anno, "identifyClassCanonicalName");
+                        if (!"".equals(curIdentifyClassCanonicalName)) {
+                            // use identifyClassCanonicalName
+                            beanIdentifyClassCanonicalName = curIdentifyClassCanonicalName;
+                        }
+                    } catch (Exception e) {
+
+                    }
+                    if (beanIdentifyClassCanonicalName == null)
+                        beanIdentifyClassCanonicalName = beanClass.getCanonicalName();
                 }
 
                 if (anno.annotationType() == com.woowahan.framework.context.annotation.Scope.class) {
                     beanScope = ((com.woowahan.framework.context.annotation.Scope) anno).value();
                 }
             }
-            return new BeanDefinition(beanClass.getCanonicalName(), beanName, beanScope, beanKind);
+            return new BeanDefinition(beanIdentifyClassCanonicalName, beanName, beanScope, beanKind, beanClass.getCanonicalName());
         } catch (Exception e) {
             throw new BeanDefinitionNotGeneratedException(e);
         }

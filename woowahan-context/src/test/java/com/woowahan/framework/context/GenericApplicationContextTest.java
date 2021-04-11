@@ -97,6 +97,15 @@ class GenericApplicationContextTest {
     }
 
     @Test
+    void createBeanWithIdentifyClassCanonicalName() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        BeanIdentifier id = new BeanIdentifier(ClassWithoutBeanRegistrableAnnotation.class.getCanonicalName(), null);
+        BeanDefinition definition = new BeanDefinition(ClassWithoutBeanRegistrableAnnotation.class.getCanonicalName(), null, Scope.SINGLETON, null, ClassWithoutBeanRegistrableAnnotationChild.class.getCanonicalName());
+        assertDoesNotThrow(() -> rootApplicationContext.register(definition));
+
+        assertTrue((ReflectionUtil.invokeMethodAnyway(rootApplicationContext, "createBean", new Class<?>[]{BeanDefinition.class}, definition)) instanceof ClassWithoutBeanRegistrableAnnotationChild);
+    }
+
+    @Test
     void refreshInstances() throws BeanNotFoundException, BeanCreationFailedException {
         BeanIdentifier id = new BeanIdentifier(Service1.class.getCanonicalName(), null);
         BeanDefinition definition = new BeanDefinition(id, null, Service.class.getCanonicalName());
@@ -164,6 +173,15 @@ class GenericApplicationContextTest {
 
     }
 }
+
+class ClassWithoutBeanRegistrableAnnotationChild extends ClassWithoutBeanRegistrableAnnotation{
+    public String name;
+
+    public ClassWithoutBeanRegistrableAnnotationChild() {
+        this.name = null;
+    }
+}
+
 
 class ClassWithoutBeanRegistrableAnnotation {
     public String name;
