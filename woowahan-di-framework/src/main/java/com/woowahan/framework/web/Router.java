@@ -1,15 +1,11 @@
 package com.woowahan.framework.web;
 
 import com.woowahan.framework.context.annotation.Service;
-import com.woowahan.framework.context.bean.BeanManager;
 import com.woowahan.framework.context.bean.lifecycle.ControllerLifecycleInvocation;
 import com.woowahan.framework.json.JacksonUtil;
 import com.woowahan.framework.web.annotation.*;
-import com.woowahan.framework.web.protocol.MessageResolver;
-import com.woowahan.framework.web.protocol.ResponseMessageResolverArrayList;
 import com.woowahan.framework.web.protocol.RequestMessage;
 import com.woowahan.framework.web.protocol.ResponseMessage;
-import com.woowahan.framework.web.throwable.FailedResolveException;
 import com.woowahan.framework.web.throwable.FailedRouteException;
 import com.woowahan.framework.web.util.UrlUtil;
 import com.woowahan.logback.support.Markers;
@@ -117,29 +113,7 @@ public class Router implements ControllerLifecycleInvocation {
         }
 
         Object resultInvoked = routedMethod.invoke(methodToControllerObject.get(routedMethod), paramBound.toArray());
-        ResponseMessage messageBeforeResolve = new ResponseMessage(vendor, genConvertedObjectIfHasResponseBodyAnnotation(routedMethod, resultInvoked));
-        ResponseMessage messageAfterResolve = messageBeforeResolve;
-
-        // let's resolve message.
-        ResponseMessageResolverArrayList resolverList = null;
-        try {
-            resolverList = (ResponseMessageResolverArrayList) BeanManager.getInstance().getBean(ResponseMessageResolverArrayList.class, null);
-            for (MessageResolver messageResolver : resolverList) {
-                // resolve by order.
-                try {
-                    messageAfterResolve = (ResponseMessage) messageResolver.resolve(messageBeforeResolve);
-                } catch (FailedResolveException e) {
-                    // retry next resolve.
-                    // using immutable messageBeforeResolve
-                }
-                // resolve success.
-                break;
-            }
-        } catch (Exception e) {
-            if (logger.isWarnEnabled())
-                logger.warn(String.format("ResponseMessageResolverArrayList's bean is not exists."));
-        }
-        return messageAfterResolve;
+        return new ResponseMessage(vendor, genConvertedObjectIfHasResponseBodyAnnotation(routedMethod, resultInvoked));
     }
 
     /**

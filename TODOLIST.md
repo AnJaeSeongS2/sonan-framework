@@ -15,42 +15,41 @@
 | 색인 | 작업                                                         | 상태 | 달성률 | 예상 완료일 | 완료일 | 작업 소요시간 |
 | ----|-------------------------------------------------------- | ---- | -----: | ----------: | -----: | ------------- |
 | 1|junit5 추가                                                | DONE | 100% | 04-04 | 04-04 | 1h |
-| 2|CRUD api 추가 (추가 요건 들어올 것을 대비한 설계, 확장가능한 설계) | TIMEOUT | 50% | 04-07 | 04-08 | 2h |
-| 3|**!(부차기능)**Test기반으로 RestDoc 추가                                  | TIMEOUT | 0% | x | x | x |
+| 2|CRUD api 추가 (추가 요건 들어올 것을 대비한 설계, 확장가능한 설계) | DONE | 100% | 04-07 | 04-11 | 2h |
+| 3|**!(부차기능)**RestDoc 추가                                  | TIMEOUT | 0% | x | x | x |
 | 4|logback 기반으로 의미있는 로그 추가                            | DONE | 100% | 04-04 | 04-08 | 30m |
 | 5|/ path진입시 resources/static 경로의 index.html 출력. InternalResourceViewResolver 구현할 것. 우선순위는 늦추도록.      | TIMEOUT | 30% | 04-07 | 04-08 | 30m |
-| 6|di (context 모듈 구현)                                                         | WORKING | 100% | 04-04 | 04-08 | 다른 task에서 계산됨. |
-| 7|DispatcherServlet 구현 (di , mvc 분리해야할 듯.)           | WORKING | 50% | 04-07 | x | 3h |
+| 6|di (context 모듈 구현)                                                         | DONE | 100% | 04-04 | 04-08 | 다른 task에서 계산됨. |
+| 7|DispatcherServlet 구현 (di , mvc 분리해야할 듯.)           | DONE | 100% | 04-07 | 04-12 | 5h |
 | 8|IoC container 구현 -> DI 제공 (reflection 사용.)           | DONE | 100% | 04-04 | 04-08 | 다른 task에서 계산됨. |
 | 9|정적 resource와 json응답처리 가능해야함. Fasterxml Jackson, resources/static 하위경로의 리소스를 내려줄 수 있어야함( view resolver기능) | TIMEOUT | 30% | 04-07 | x | 다른 task에서 계산됨. |
 | 10|**!(부차기능)**LifeCycle 관련 기능 추가 바람. (요구조건에는 없음. 그러나, app자체의 start가 완료됐을 때, log도 찍고 etc.. 해줘야 할 듯. 공통로직 관련되어...)<br />ControllerLifecylceInvocation은 추가됐다. | DONE | 100% | 04-07 | 04-07 | 1h |
-| 11|Tomcat기반으로 부팅되는 개념인 듯. (별도 모듈화가 좋을 듯. ex: was-bootstraper) | WORKING | 20% | 03-27 | x | 1h |
+| 11|Tomcat기반으로 부팅되는 개념인 듯. (별도 모듈화가 좋을 듯. ex: was-bootstraper) | DONE | 100% | 03-27 | 04-12 | 1h<br />다른 task에서 계산됨. |
 | 13|@Service, @Repository 클래스 스캔  빈 주입시 Service가 다른 Service를 주입하는 경우 고려 @Inject가 없는 경우 기본생성자를 이용하여 빈으로 등록 그 외 경우는 initializeInjectedBeans로 빈 등록 @Inject에 필요한 객체를 찾아서 주입 / 생성 기존의 @Controller를 스캔하는 ControllerScanner 클래스를 확장된 BeanScanner와 통합 | DONE | 100% | 04-07 | 04-07 | 다른 task에서 계산됨. |
-| 13.5 |Component 등록과정에서 고려할 점. <br />inner class, anonymous class | REJECT | 0% | x | x | x |
-| 14|@Configuration 어노테이션으로 빈 설정                     | REJECT | 0% | x | x | x |
+| 13.5 |Component 등록과정에서 고려할 점. <br />class <-> parent class | DONE | 100% | x | 04-12 | 다른 task에서 계산됨. |
+| 14|@Configuration 어노테이션으로 빈 설정                     | DONE | 100% | x | x | x |
 | 15|di , mvc 분리해야할 듯.<br />woowahan-context가 di용 context, bean을 담당하고,<br />woowahan-di-framework가 mvc기능을 하게 분화됨 <br />                                   | DONE | 100% | x | x | 1h |
-| 17|TomcatWebServer -> WebApplicationServer 로 변경, Tomcat 은 구현체중 하나로 간다. WebApplicationServer변경시 어떻게 대응할 것인지 고려함. SPI로 기본적으로는 Tomcat으로 구동되게 한다. | REJECT | 30% | 04-07 | 04-07 | 1h |
+| 17|SPI도입. 기본적으로는 Tomcat Servlet으로 구동되게 한다. | TIMEOUT | 30% | 04-07 | 04-07 | 1h |
 | 18|Gradle 개념 습득                                          | DONE | 완벽할 수 없다. | x | x | 2h |
 | 19|logback 사용법 습득 및 적용                               | DONE | 100% | 03-26 | 03-26 | 1h |
-| 20|**!(부차기능)**<br />servlet 3.0 NIO Servlet으로 구현할 까..? Transaction 필요도 없잖아. | REJECT | 0% | x | x | x |
-| 21|**!(부차기능)**<br />HandlersTypes interface for reducing class scanning time<br />https://opennote46.tistory.com/168 | REJECT | 0% | x | x | x |
-| 22|WebAppBackendFramework이므로, servlet 개념을 몰라도 작성가능하게 개발돼야한다. | WORKING | 50% | x | x | x |
-| 23 |gradlew 개념 습득<br />과제 이후 알아서 공부할 것. | REJECT | 0% | x | x | x |
+| 20|**!(부차기능)**<br />servlet 3.0 NIO Servlet으로 구현할 까..? Transaction 필요도 없잖아. | TIMEOUT | 0% | x | x | x |
+| 21|**!(부차기능)**<br />HandlersTypes interface for reducing class scanning time<br />https://opennote46.tistory.com/168 | TIMEOUT | 0% | x | x | x |
+| 22|WebApp개발용 Framework이므로, servlet 개념을 몰라도 작성가능하게 개발돼야한다.<br />app뿐만 아니라, 컴포넌트간에 개발할 때도 도메인 분리를 잘 해놔서, servlet에 국한되지 않더라도컴포넌트 개발이 가능한 상황으로 완료. | DONE | 100% | x | 04-12 | 다른 task에서 계산됨. |
 | 25 |bean 처리에 대한 기본 기능 스펙정리<br />multi same type bean 에 대한 충돌 처리<br />bean id 처리<br />bean scope처리<br /> | DONE | 100% | 03-30 | 04-01 | 다른 task에서 계산됨. |
-| 26 |**!(부차기능)**<br />transaction 처리 가 가능하게끔 확장 고려(Transaction - AOP - Bean) (bean입장에서는 transaction 처리가 될 것을 고려한 개발할 필요가 없다. 관심사가 나뉘어있음. Transaction moudle 측이 알아서 bean이 변화될 때 <<<< 처리를 추가로 하) | REJECT | 0% | x | x | x |
-| 27 |**!(부차기능)**<br />기본적인 aop 모듈은 필요할 듯. 공통 호출로직, 공통 비지니스 로직 상황별 로깅 관련 지원.<br />spring은 proxy기반 aop이므로, 기존 비지니스로직(target)은 proxy화 되고, proxy에서 상황별 advice로직과 본래 target 로직이 수행될 것이다. | REJECT | 0% | x | x | x |
+| 26 |**!(부차기능)**<br />transaction 처리 가 가능하게끔 확장 고려(Transaction - AOP - Bean) (bean입장에서는 transaction 처리가 될 것을 고려한 개발할 필요가 없다. 관심사가 나뉘어있음. Transaction moudle 측이 알아서 bean이 변화될 때 <<<< 처리를 추가로 하) | TIMEOUT | 0% | x | x | x |
+| 27 |**!(부차기능)**<br />spring은 proxy기반 aop이므로, 기존 비지니스로직(target)은 proxy화 되고, proxy에서 상황별 advice로직과 본래 target 로직이 수행될 것이다. | TIMEOUT | 0% | x | x | x |
 | 29 |**di module**<br />@Service, @Controller, @Configuration with ~~@Bean~~, @Autowired, ~~@Qulifier 필수 제공~~<br />미지원: @Lazy - MSA에서는 Lazy는 좋지 못하다. Readiness로 진입했을 때 최적의 성능을 보여주길 바람. | DONE | 100% | 04-07 | 04-07 | 다른 task에서 계산됨. |
 | 30 |@Repository 에 대응될 web 측의 repository 기본 구현체가 필요하다.<br />지금 app 은 repository로 memory를 쓴다고 가정하고 진행한다.<br />memory vendor의 기본 구현체를 만든다. | DONE | 100% | 04-05 | 04-05 | 1h |
 | 31 |**mvc module**<br />Controller내에서 **@RequestMapping** 으로 class, method에 처리. **@RequestBody** 로 json input을 java Object로 자동전환.<br />**@ResponseBody**로 java Object output을 json output으로 자동전환 (Jackson이 사용됨)<br />**@PathVariable**로  @RequestMapping에서 전달된 url내의 variable을 로직에서 제공받음.<br />Controller에 대해:<br />이 제품은, api호출시, data만 반환하면 되므로 RestController같은 annotation만 지원하면 된다. 차후 확장기능으로 view resolver가 추가되면, Controller기능도 추가지원할 수 있을 것... | DONE | 100% | 04-07 | 04-08 | 3h |
-| 32 |**!(부차기능)**<br />validation module**<br />유효성 검사 (di 책임은 아닌듯.) **@Valid, @InitBinder**<br />외부 origin에서의 접근 허용부분 처리**@CrossOrigin** | REJECT | 0% | x | x | x |
-| 33 |**!(부차기능)**<br />mvc (동기)건 webflux (비동기) 상관없이 component재사용을 고려해 개발. | REJECT | 0% | x | x | x |
-| 34 |**!(부차기능)**context @scope 관련 기능으로 singleton, prototype분만 아니라, request, session등도 구분가능하게 변경. | REJECT | 0% | x | x | x |
-| 35 |war로 패키징될 때, web.xml에 servlet지정 및 적용 테스트. | REJECT | 0% | x | x | x |
-| 36 |WebFlux를 밴치마킹하려면, RouteFunctions, RouteFunction 참고바람. | REJECT | 0% | x | x | x |
+| 32 |**!(부차기능)**<br />validation module**<br />유효성 검사 (di 책임은 아닌듯.) **@Valid, @InitBinder**<br />외부 origin에서의 접근 허용부분 처리**@CrossOrigin** | TIMEOUT | 0% | x | x | x |
+| 33 |**!(부차기능)**<br />mvc (동기)건 webflux (비동기) 상관없이 component재사용을 고려해 개발. | TIMEOUT | 0% | x | x | x |
+| 34 |**!(부차기능)**context @scope 관련 기능으로 singleton, prototype분만 아니라, request, session등도 구분가능하게 변경. | TIMEOUT | 0% | x | x | x |
+| 35 |war로 패키징될 때, web.xml에 servlet지정 및 적용 테스트. | TIMEOUT | 0% | x | x | x |
+| 36 |WebFlux를 밴치마킹하려면, RouteFunctions, RouteFunction 참고바람. | TIMEOUT | 0% | x | x | x |
 | 37 |**#woowahan-context** module 새로 추가. container-bootstrapper <-> context <-> di-framework  로 진행하고,  di-framework입장에서는, context가 servlet's context인 지, 다른 container 의 context를 통해서인 지 모르게 끔. | DONE | 100% | 03-30 | 04-01 | 30m |
 | 38 |DispatcherServlet구현시, HandlerMapping기반으로 dispatch되게끔 작성.<br />해당 핵심 기능을 Route class로 구현해놓음. | DONE | 100% | 04-07 | 04-08 | 다른 task에서 취합됨. |
 | 39 |Bean이 Context에 저장되게끔 진행.<br />BeanDefinition, BeanDefinition 기반으로 getBean이 처리되는 것을 원함.<br />Singleton, prototype만 지원. (이 과제는 session엔 관심이 없다.) | DONE    |   100% |       03-30 | 04-01 | 2h |
-| 42 |**(!오버스펙)** **context Hierarchy**<br />servlet-context에서 root-web-applicatoin-context, dispatcher's web-application-context를 구분하려면 아래를 참고.<br />https://codediver.tistory.com/147<br />https://jaehun2841.github.io/2018/10/21/2018-10-21-spring-context/#webxml-%EC%9D%B4%EB%9E%80<br />https://live-everyday.tistory.com/164 | WORKING | 30% | 03-30 | x | 3h |
+| 42 |**(!오버스펙)** **context Hierarchy**<br />servlet-context에서 root-web-applicatoin-context, dispatcher's web-application-context를 구분하려면 아래를 참고.<br />https://codediver.tistory.com/147<br />https://jaehun2841.github.io/2018/10/21/2018-10-21-spring-context/#webxml-%EC%9D%B4%EB%9E%80<br />https://live-everyday.tistory.com/164<br />Root, Child 지원 완료.<br />(테스트 코드로는 정상. 실적용은 root만 한 상황.) | DONE | 90%(테스트 코드로는 정상. 실적용은 root만 한 상황.) | 03-30 | 04-03 | 3h |
 | 43 |woowahan-java-util 추가. <br />NotNull, Nullable 가독성, 등을 위해 추가. | DONE | 100% | 03-31 | 03-31 | 30m |
 | 44 |Mockito 는 외부종속성이지만, test에만 사용하므로 요구사항 구현 제한에서 빠질 수 있다. 이를 활용해 ServletContext같은 것의 mocking처리를 한다. | WORKING | 60% | 03-31 | ~ | 30m |
 | 45 |1. BeanIdentifier : ClassName:BeanName<br />2. BeanDefinition : ClassName:BeanName:Scope<br />3. BeanDefinitionRegistry 구현체 추가. (ex: GenericApplicationContext)<br />bean에 대한 정보를 GenericApplicationContext에서 관리. | DONE | 100% | 03-31 | 04-01 | 3h |
@@ -89,9 +88,9 @@
 | 79 |Dispatcher SErvlet에서 Request기반으로 적절히 Route 처리한다. | WORKING | 80% | 04-08 | x | 3h |
 | 80 |Bean을 외부에서도 활용할 수 있게 BeanManager를 추가. BeanManager 는 GenericApplicationContext를 사용할 시, RootApplicationContext를 활용하게끔 초기화된다. | DONE | 100% | 04-08 | 04-08 | 1h |
 | 81 |Route 처리 규칙 변경 안내<br />로직 속도 개선을 위해 /shops/{id} 가 아닌 /shops/@{id} 처럼 #을 encodedvariable앞에 붙이도록 정책화. | DONE(문서화) | 100% | - | - | - |
-| 82 |APP 개발 | WORKING | 60% | 04-10 | - | 30m |
+| 82 |APP 개발<br />js 로직이 이상한 것을 확인 (04-12) -> 버그 수정 작업중. | WORKING | 60% | 04-10 | - | 30m |
 | 83 |logback Marker 조건문에도 추가. | DONE | 100% | 04-08 | 04-08 | 10m |
-| 84 |[최적화]<br />DispatcherServlet에서 취득한 정보로 router 처리할 때 별도 single thread EM으로 처리되게끔 할 지 여부 파악중...<br /> * 지금 repo는 memory cached이기때문에, IO job이 아니므로 EM처리해도된다. cached의 invalidate는 별도 thread에서 알아서 진행해 줄것. 따라서, 현 프로젝트의 shop api  service의 동작은 em구조로 가는 것이 더 효율 적이다.<br /> get : post,put,delete 비중이 99:1 정도로 판단되는 shop 데이터 특성상, thread 생성을 최소화할 em구조가 나아보인다.<br />em이 받을 event 는 dispatch될 route정보와 requestBody가 포함되며, HttpServletResponse.getWriter()도 포함된다.<br /><br />get은 thread생성 1회<br /><br /><br />/resources/static/index.html 파일로 viewResolver가 반환하려고한다면, 이는 Event thread에서는 IO잡을 하지 않게끔 해야한다.<br />event thread에서 작업결과 view Resolver 처리할 때, ViewResolver가 hasIO true일 경우에 별도 thread로 IO잡을 해준다. | WORKING | 50% | 04-10 | 04-10 | 2h |
+| 84 |[최적화]<br />DispatcherServlet에서 취득한 정보로 router 처리할 때 별도 single thread EM으로 처리되게끔 할 지 여부 파악중...<br /> * 지금 repo는 memory cached이기때문에, IO job이 아니므로 EM처리해도된다. cached의 invalidate는 별도 thread에서 알아서 진행해 줄것. 따라서, 현 프로젝트의 shop api  service의 동작은 em구조로 가는 것이 더 효율 적이다.<br /> get : post,put,delete 비중이 99:1 정도로 판단되는 shop 데이터 특성상, thread 생성을 최소화할 em구조가 나아보인다.<br />em이 받을 event 는 dispatch될 route정보와 requestBody가 포함되며, HttpServletResponse.getWriter()도 포함된다.<br /><br />get은 thread생성 1회<br /><br /><br />/resources/static/index.html 파일로 viewResolver가 반환하려고한다면, 이는 Event thread에서는 IO잡을 하지 않게끔 해야한다.<br />event thread에서 작업결과 view Resolver 처리할 때, ViewResolver가 hasIO true일 경우에 별도 thread로 IO잡을 해준다. | PAUSE | 50% | 04-10 | 04-10 | 2h |
 | 85 |Model에서 Id로 지정된 field가 곂칠 경우 IdAutoChanger handler를 달 수 있는 기능 추가. (ex: DefaultIntegerIdAutoIncrementModel)<br />GenericMapRepository에 우선 적용. | DONE | 100% | 04-09 | 04-09 | 2h |
 | 86 |Repository 인터페이스 세분화.<br /><br />Repository < RepositoryAccessibleAll < GenericMapRepository | DONE | 100% | 04-10 | 04-10 | 30m |
 | 87 |Url PathVariable Prefix # -> @로 변경. (#은 해시뱅 쓰이므로 reuqestUri로 포함되지 않는다.) | DONE | 100% | 04-10 | 04-10 | 30m |
@@ -101,6 +100,8 @@
 | 91 | **container-bootstrapper와 mvc간의 loose coupling 설계**<br /> 1. container-bootstrapper측에서는 ContainerVendorSelection을 App에서 Configuration으로서 등록하지 않았으면 default처리되도록할 것. <br />2. ContainerVendorSelection에 의해 (SyncServlet -> 에 해당하는 Req/Resp MessageSender pick as ParentInterface. <br />3. ContainerVendorSelection에 의해  SyncServlet -> 에 해당하는 ModelResovlerList, ViewResovlerList(private add ) 도 vendor별로 따로 pick as ParentInterface. <br />4. ResponseMessageSender(상속받은) (autoWired) -> send(Object vendorRequestObject, ResponseMessage) | DONE | 100% | 04-11 | 04-11 | 4h |
 | 92 | BeanRegistrable Annotation들이 BeanDefinition으로 등록되는 순서와 refreshBean시 생성되는 순서를 아래와 같이 변경. <br />Configuration > Bean > Service > Controller > Repository | DONE | 100% | 04-11 | 04-11 | 30m |
 | 93 | **모듈간에 domain 구분, loose-coupling을 고려한 설계**:<br />Message, MessageReceiver, MessageSender, MessageResolver 체계. | DONE | 100% | 04-11 | 04-11 | 4h |
-| 94   | InternalResourceViewResolver 등록 on Container-bootstrapper servlet모듈측. |  | | | | |
+| 94   | Container-bootstrapper servlet모듈측에서 DefaultServletViewResolverList를 ResponseMessageResolverArrayList 으로써 Bean으로 등록되게끔 함.(상속된 클래스를 부모 클래스로서 bean등록처리) | DONE | 100% | 04-11 | 04-11 | 2h |
 | 95   | BeanDefinition에서 beanCreation Class Name과, beanIdentify Class Name을 분리 (for 상속관계인데 부모형태로 identify를 형성하고자 할 경우) | DONE | 100% | 04-12 | 04-12 | 1h |
+| 96   | InternalResourceViewResolver를 도입으로 static resource를 client에게 제공 가능해짐.<br />현재 개발기(Dev) 에서 static resource에 대한 client 제공 정상 확인. | DONE | 100% | 04-12 | 04-12 | 2h |
+| 97   | Resource File 관련 메타처리 관련 Enum으로 정리.              | DONE | 100% | 04-12 | 04-12 | 20m |
 

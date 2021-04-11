@@ -4,9 +4,8 @@ import com.woowahan.framework.container.servlet.protocol.ServletMessageChannel;
 import com.woowahan.framework.container.servlet.protocol.ServletResponseMessage;
 import com.woowahan.framework.context.bean.BeanManager;
 import com.woowahan.framework.web.Router;
-import com.woowahan.framework.web.protocol.Message;
-import com.woowahan.framework.web.protocol.RequestMessage;
-import com.woowahan.framework.web.protocol.ResponseMessage;
+import com.woowahan.framework.web.protocol.*;
+import com.woowahan.framework.web.throwable.FailedResolveException;
 import com.woowahan.framework.web.throwable.FailedRouteException;
 import com.woowahan.logback.support.Markers;
 import org.slf4j.Logger;
@@ -24,7 +23,8 @@ import java.io.IOException;
  * 1. HttpServletRequest, HttpServletResponse 를 이용해 ServletMessageChannel을 만든다.
  * 2. ServletMessageChannel을 client에게서 전달받은 Message를 얻어낸다.
  * 3. Router에게 적절한 Controller로직을 태워주게 한 뒤 로직 이후 받은 Message를 받는다.
- * 4. ServletMessageChannel를 통해 전달받은 Message를 client로 제공한다.
+ * 4. 해당 Message를 ViewResolver 로직에 태운다.
+ * 4. ServletMessageChannel를 통해 Resolved Message를 client로 제공한다.
  *
  * HttpServletRequest, HttpServletResponse
  * Message 인터페이스 기반으로 ServletMessageChannel 이 활용된다.
@@ -102,21 +102,49 @@ public class DispatcherServlet extends HttpServlet {
                 respMessage = router.route(reqMessage);
             } catch (FailedRouteException e) {
                 if (logger.isDebugEnabled(Markers.MESSAGE.get()))
-                    logger.debug(Markers.MESSAGE.get(), String.format("Failed invoke Routed Method."));
+                    logger.debug(Markers.MESSAGE.get(), String.format("Failed invoke Routed Method. %s", e.getMessage()));
                 // 404 Not Found.
-                respMessage = new ServletResponseMessage(reqMessage.getVendor(), null, 404, null);
+                respMessage = new ServletResponseMessage(reqMessage.getVendor(), reqMessage.getUrl(), null, null);
             }
+
+            // let's resolve message.
+            respMessage = resolve(respMessage);
             if (logger.isTraceEnabled(Markers.MESSAGE.get()))
                 logger.trace(Markers.MESSAGE.get(), String.format("Success invoke Routed Method."));
             messageChannel.send(respMessage);
         } catch(Exception e) {
             if (logger.isErrorEnabled(Markers.MESSAGE.get()))
-                logger.error(Markers.MESSAGE.get(), String.format("Failed DispatcherServlet's service. %s"), e.toString());
+                logger.error(Markers.MESSAGE.get(), String.format("Failed DispatcherServlet's service. %s", e.getMessage()));
             if (logger.isTraceEnabled(Markers.MESSAGE.get()))
                 logger.trace(Markers.MESSAGE.get(), "Show DispatcherServlet's service Stacktrace", e);
             throw new ServletException(e.getMessage(), e);
         }
         if (logger.isTraceEnabled(Markers.MESSAGE.get()))
             logger.trace(Markers.MESSAGE.get(), String.format("Success DispatcherServlet's service."));
+    }
+
+    private ResponseMessage resolve(ResponseMessage messageBeforeResolve) {
+        ResponseMessage messageAfterResolve = messageBeforeResolve;
+
+        // let's resolve message.
+        ResponseMessageResolverArrayList resolverList = null;
+        try {
+            resolverList = (ResponseMessageResolverArrayList) BeanManager.getInstance().getBean(ResponseMessageResolverArrayList.class, null);
+            for (MessageResolver messageResolver : resolverList) {
+                // resolve by order.
+                try {
+                    messageAfterResolve = (ResponseMessage) messageResolver.resolve(messageBeforeResolve);
+                } catch (FailedResolveException e) {
+                    // retry next resolve.
+                    // using immutable messageBeforeResolve
+                }
+                // resolve success.
+                break;
+            }
+        } catch (Exception e) {
+            if (logger.isWarnEnabled())
+                logger.warn(String.format("ResponseMessageResolverArrayList's bean is not exists."));
+        }
+        return messageAfterResolve;
     }
 }

@@ -10,5 +10,10 @@ import java.io.IOException;
  */
 @FunctionalInterface
 public interface MessageReceiver {
+    /**
+     * client에게서 메시지(데이터)를 받아 Message로 반환한다.
+     * @return
+     * @throws IOException
+     */
     Message receive() throws IOException;
 }

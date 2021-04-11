@@ -10,5 +10,10 @@ import java.io.IOException;
  * Git Hub : https://github.com/AnJaeSeongS2
  */
 public interface MessageSender {
+    /**
+     * Message 있는 데이터 기반으로 응답을 client에게 제공한다.
+     * @param responseMessage
+     * @throws IOException
+     */
     void send(@Nullable Message responseMessage) throws IOException;
 }

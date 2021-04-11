@@ -3,8 +3,6 @@ package com.woowahan.framework.container.servlet.protocol;
 import com.woowahan.framework.web.protocol.ResponseMessage;
 import com.woowahan.util.annotation.Nullable;
 
-import static com.woowahan.framework.container.servlet.Constants.DEFAULT_CONTENT_TYPE_RES;
-
 /**
  * status, content-type 을 지정가능한, ResponseMessage.
  * immutable
@@ -13,24 +11,31 @@ import static com.woowahan.framework.container.servlet.Constants.DEFAULT_CONTENT
  * Git Hub : https://github.com/AnJaeSeongS2
  */
 public class ServletResponseMessage extends ResponseMessage {
-    protected final int status;
+
+    @Nullable
+    protected final Integer status;
+    @Nullable
     protected final String contentType;
 
     /**
-     * @param vendor : default
-     * @param message : default null
-     * @param status : default 404
-     * @param contentType : default DEFAULT_CONTENT_TYPE_RES's value.
+     * @param vendor
+     * @param message
+     * @param status
+     * @param contentType
      */
     public ServletResponseMessage(@Nullable String vendor, @Nullable Object message, @Nullable Integer status, @Nullable String contentType) {
         super(vendor, message);
-        if (status == null)
-            this.status = 200;
-        else
-            this.status = status;
-        if (contentType == null)
-            this.contentType = DEFAULT_CONTENT_TYPE_RES;
-        else
-            this.contentType = contentType;
+        this.status = status;
+        this.contentType = contentType;
+    }
+
+    @Nullable
+    public int getStatus() {
+        return status;
+    }
+
+    @Nullable
+    public String getContentType() {
+        return contentType;
     }
 }

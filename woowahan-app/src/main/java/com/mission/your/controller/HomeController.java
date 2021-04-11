@@ -12,10 +12,16 @@ import com.woowahan.framework.web.annotation.RequestMethod;
  */
 @Controller
 @RequestMapping("/")
-public class IndexController {
+public class HomeController {
 
     @RequestMapping(method = RequestMethod.GET)
+    public String home() {
+        return "index.html";
+    }
+
+    @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String index() {
-        return "index";
+        // redirect to home.
+        return "redirect:/";
     }
 }

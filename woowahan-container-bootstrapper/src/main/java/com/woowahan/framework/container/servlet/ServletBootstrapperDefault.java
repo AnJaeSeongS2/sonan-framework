@@ -16,6 +16,7 @@ import com.woowahan.framework.context.bean.throwable.BeanCreationFailedException
 import com.woowahan.framework.context.bean.throwable.BeanDefinitionNotGeneratedException;
 import com.woowahan.logback.support.Markers;
 import com.woowahan.util.annotation.Nullable;
+import org.apache.catalina.servlets.DefaultServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,7 @@ import java.net.URLClassLoader;
 
 public class ServletBootstrapperDefault implements ContainerBootstrapper {
     private static final Logger logger = LoggerFactory.getLogger(ServletBootstrapperDefault.class);
+    public static final String DEFAULT_SERVLET_NAME = "default";
     public static final String DISPATCHER_SERVLET_NAME = "dispatcherServlet";
 
     private TomcatWebServer webServer;
@@ -80,8 +82,30 @@ public class ServletBootstrapperDefault implements ContainerBootstrapper {
      * @throws ServletException
      */
     private void selfInitialize(ServletContext servletContext) throws ServletException {
-        ServletRegistration.Dynamic servletRegistration = servletContext.addServlet(DISPATCHER_SERVLET_NAME, new DispatcherServlet());
+        // DispatcherServlet으로만 동작하게끔 개선중...
+        // registerDefaultServlet(servletContext);
+        registerDispatcherServlet(servletContext);
+    }
+
+    /**
+     * html, css, js 같은 resource를 client에게 제공한다. Serlvet이 제공해주는 DefaultServlet을 사용한다.
+     * ViewResolver 로 작성하려했던 기반은 MessageResolver 에서 확인 가능하다.
+     * 
+     * DispatcherServlet으로만 동작가능하게 개선 중... 미사용 될 예정.
+     * @see com.woowahan.framework.web.protocol.MessageResolver
+     *
+     * @param servletContext
+     * @throws ServletException
+     */
+    private void registerDefaultServlet(ServletContext servletContext) throws ServletException {
+        ServletRegistration.Dynamic servletRegistration = servletContext.addServlet(DEFAULT_SERVLET_NAME, new DefaultServlet());
         servletRegistration.setLoadOnStartup(1);
+        servletRegistration.addMapping("/static/*");
+    }
+
+    private void registerDispatcherServlet(ServletContext servletContext) throws ServletException {
+        ServletRegistration.Dynamic servletRegistration = servletContext.addServlet(DISPATCHER_SERVLET_NAME, new DispatcherServlet());
+        servletRegistration.setLoadOnStartup(2);
         servletRegistration.addMapping("/");
 
         FilterRegistration.Dynamic filterRegistration = servletContext.addFilter("CharacterEncodingFilter", new CharacterEncodingFilter());
@@ -91,7 +115,7 @@ public class ServletBootstrapperDefault implements ContainerBootstrapper {
 
         if (servletContext.getAttribute(ApplicationContext.ROOT_APPLICATION_CONTEXT_ATTRIBUTE_KEY) == null) {
             rootAppCtx = new GenericApplicationContext<>(null, servletContext, (servletCtx) ->
-                (ApplicationContext) servletContext.getAttribute(ApplicationContext.ROOT_APPLICATION_CONTEXT_ATTRIBUTE_KEY)
+                    (ApplicationContext) servletContext.getAttribute(ApplicationContext.ROOT_APPLICATION_CONTEXT_ATTRIBUTE_KEY)
             );
             servletContext.setAttribute(ApplicationContext.ROOT_APPLICATION_CONTEXT_ATTRIBUTE_KEY, rootAppCtx);
         }

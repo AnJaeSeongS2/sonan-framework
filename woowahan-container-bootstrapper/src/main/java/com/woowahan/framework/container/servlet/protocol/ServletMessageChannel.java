@@ -5,6 +5,7 @@ import com.woowahan.framework.container.servlet.ServletResponseMessageSender;
 import com.woowahan.framework.web.protocol.Message;
 import com.woowahan.framework.web.protocol.MessageReceiver;
 import com.woowahan.framework.web.protocol.MessageSender;
+import com.woowahan.framework.web.protocol.MessageUtil;
 import com.woowahan.util.annotation.Nullable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +34,9 @@ public class ServletMessageChannel implements MessageReceiver, MessageSender {
 
     @Override
     public void send(@Nullable Message responseMessage) throws IOException {
-        ServletResponseMessageSender.getInstance().send(resp, responseMessage);
+        if (MessageUtil.isRedirectMessage(responseMessage))
+            ServletResponseMessageSender.getInstance().sendRedirect(resp, responseMessage);
+        else
+            ServletResponseMessageSender.getInstance().send(resp, responseMessage);
     }
 }
