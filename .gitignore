@@ -1,7 +1,9 @@
-.gradle
-.idea
-*/target
-*/build
-*/out
-*/logs
-/logs/
+.gradle/
+.idea/
+*/target/
+*/build/
+*/out/
+*/logs/
+logs/
+.DS_Store
+**/.DS_Store

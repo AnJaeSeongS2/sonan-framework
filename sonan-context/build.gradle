@@ -1,0 +1,7 @@
+dependencies {
+    compile project(":sonan-java-util")
+    compile project(":sonan-logback-support")
+    compile("ch.qos.logback:logback-classic:${logbackVersion}")
+    compile("org.reflections:reflections:0.9.11")
+    testImplementation("javax.servlet:javax.servlet-api:3.1.0")
+}

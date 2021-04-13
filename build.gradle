@@ -9,7 +9,7 @@ subprojects {
 
     sourceCompatibility = 1.8
 
-    group = 'woowabros'
+    group = 'sonan organization since 1991'
     version = '1.0-SNAPSHOT'
 
     repositories {

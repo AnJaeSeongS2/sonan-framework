@@ -1,10 +1,8 @@
 # TODOLIST
 
-* 목표: 7일차까지 기본기능 제공 계획을 짠다.  (**지체됨** > 최종 제출은 기본기능 구현까지만으로 마무리할 것. 시간과 무관히 지속적으로 확장, 유지보수를 염두한 개발을 한다.)
-* 추가 목표: 7일차까지 구현된 기본기능을 확장한 확장 기능 제공 계획을 짠다. (**지체됨** > 최종 제출은 기본기능 구현까지만으로 마무리할 것. 시간과 무관히 지속적으로 확장, 유지보수를 염두한 개발을 한다.)
-* 제외할 목표: 부차기능, FE관련 기능, 선택과 집중에 반하는 기능
+* 목표: 20일 내에 종료.
 * Route 처리 규칙 변경 안내
-  * routing 속도 개선을 위해 기존 api인 /shops/{id} 가 아닌 /shops/@{id} 으로 @을 encodedvariable앞에 붙이도록 정책화.
+  * routing 속도 개선을 위해 기존 api인 /users/{id} 가 아닌 /users/@{id} 으로 @을 encodedvariable앞에 붙이도록 정책화.
 
 
 | 색인 | 작업                                                         | 상태 | 달성률 | 예상 완료일 | 완료일 | 작업 소요시간 |
@@ -23,7 +21,7 @@
 | 13|@Service, @Repository 클래스 스캔  빈 주입시 Service가 다른 Service를 주입하는 경우 고려 @Inject가 없는 경우 기본생성자를 이용하여 빈으로 등록 그 외 경우는 initializeInjectedBeans로 빈 등록 @Inject에 필요한 객체를 찾아서 주입 / 생성 기존의 @Controller를 스캔하는 ControllerScanner 클래스를 확장된 BeanScanner와 통합 | DONE | 100% | 04-07 | 04-07 | 다른 task에서 계산됨. |
 | 13.5 |Component 등록과정에서 고려할 점. <br />class <-> parent class | DONE | 100% | x | 04-12 | 다른 task에서 계산됨. |
 | 14|@Configuration 어노테이션으로 빈 설정                     | DONE | 100% | x | x | x |
-| 15|di , mvc 분리해야할 듯.<br />woowahan-context가 di용 context, bean을 담당하고,<br />woowahan-di-framework가 mvc기능을 하게 분화됨 <br />                                   | DONE | 100% | x | x | 1h |
+| 15|di , mvc 분리해야할 듯.<br />sonan-context가 di용 context, bean을 담당하고,<br />sonan-di-framework가 mvc기능을 하게 분화됨 <br />                                   | DONE | 100% | x | x | 1h |
 | 17|SPI도입. 기본적으로는 Tomcat Servlet으로 구동되게 한다. | TIMEOUT | 30% | 04-07 | 04-07 | 1h |
 | 18|Gradle 개념 습득                                          | DONE | 완벽할 수 없다. | x | x | 2h |
 | 19|logback 사용법 습득 및 적용                               | DONE | 100% | 03-26 | 03-26 | 1h |
@@ -41,11 +39,11 @@
 | 34 |**!(부차기능)**context @scope 관련 기능으로 singleton, prototype분만 아니라, request, session등도 구분가능하게 변경. | TIMEOUT | 0% | x | x | x |
 | 35 |war로 패키징될 때, web.xml에 servlet지정 및 적용 테스트. | TIMEOUT | 0% | x | x | x |
 | 36 |WebFlux를 밴치마킹하려면, RouteFunctions, RouteFunction 참고바람. | TIMEOUT | 0% | x | x | x |
-| 37 |**#woowahan-context** module 새로 추가. container-bootstrapper <-> context <-> di-framework  로 진행하고,  di-framework입장에서는, context가 servlet's context인 지, 다른 container 의 context를 통해서인 지 모르게 끔. | DONE | 100% | 03-30 | 04-01 | 30m |
+| 37 |**#sonan-context** module 새로 추가. container-bootstrapper <-> context <-> di-framework  로 진행하고,  di-framework입장에서는, context가 servlet's context인 지, 다른 container 의 context를 통해서인 지 모르게 끔. | DONE | 100% | 03-30 | 04-01 | 30m |
 | 38 |DispatcherServlet구현시, HandlerMapping기반으로 dispatch되게끔 작성.<br />해당 핵심 기능을 Route class로 구현해놓음. | DONE | 100% | 04-07 | 04-08 | 다른 task에서 취합됨. |
 | 39 |Bean이 Context에 저장되게끔 진행.<br />BeanDefinition, BeanDefinition 기반으로 getBean이 처리되는 것을 원함.<br />Singleton, prototype만 지원. (이 과제는 session엔 관심이 없다.) | DONE    |   100% |       03-30 | 04-01 | 2h |
 | 42 |**(!오버스펙)** **context Hierarchy**<br />servlet-context에서 root-web-applicatoin-context, dispatcher's web-application-context를 구분하려면 아래를 참고.<br />https://codediver.tistory.com/147<br />https://jaehun2841.github.io/2018/10/21/2018-10-21-spring-context/#webxml-%EC%9D%B4%EB%9E%80<br />https://live-everyday.tistory.com/164<br />Root, Child 지원 완료.<br />(테스트 코드로는 정상. 실적용은 root만 한 상황.) | DONE | 90%(테스트 코드로는 정상. 실적용은 root만 한 상황.) | 03-30 | 04-03 | 3h |
-| 43 |woowahan-java-util 추가. <br />NotNull, Nullable 가독성, 등을 위해 추가. | DONE | 100% | 03-31 | 03-31 | 30m |
+| 43 |sonan-java-util 추가. <br />NotNull, Nullable 가독성, 등을 위해 추가. | DONE | 100% | 03-31 | 03-31 | 30m |
 | 44 |Mockito 는 외부종속성이지만, test에만 사용하므로 요구사항 구현 제한에서 빠질 수 있다. 이를 활용해 ServletContext같은 것의 mocking처리를 한다. | WORKING | 60% | 03-31 | ~ | 30m |
 | 45 |1. BeanIdentifier : ClassName:BeanName<br />2. BeanDefinition : ClassName:BeanName:Scope<br />3. BeanDefinitionRegistry 구현체 추가. (ex: GenericApplicationContext)<br />bean에 대한 정보를 GenericApplicationContext에서 관리. | DONE | 100% | 03-31 | 04-01 | 3h |
 | 47 |logback-support 모듈 추가. <br />logbook 사용에 공통화될 부분, 및 정책을 이 모듈에 공통화. | DONE | 100% | 04-01 | 04-01 | 30m |
@@ -62,7 +60,7 @@
 | 58 |[java-util] reflection invokeMethod, getField, setField 관련 유틸 추가. 및 XXXXAnyway 버전의 method 들은 테스트에서만 사용하는 reflection임을 명시.<br />reflection util의 기능 분리. 및 autoWired기능에 쓸 것을 염두해두고 reflection기능 자체별로 별도 클래스에 제대로 구현할 것.<br />[reopen] constructor util 추가. Predicate기반 filter사용가능하게끔 추가. ReflectionUtil class로 다시 통합. | DONE | 100% | 04-05 | 04-05 | 5h |
 | 59 |[context] cloud 지원시, container가 warming-up 시간이 존재하는 것은 좋지 않다. singleton bean 들은 pre-initialize하자.<br />bean initialize to ApplicationContext -> bean's inner Injection 진행 -> injection을 위해 getBean이 진행됨 -> 필요에 따라 bean initialize가 연쇄될 수 있음. | DONE | 100% | 04-07 | 04-07 | 1h |
 | 60 |Model을 통해 Repository에 등록하는 매커니즘을 ID기반으로 진행되게끔 구현.<br />Model에게서 Id를 추출할 유틸 생성 | DONE | 100% | 04-05 | 04-05 | 1h |
-| 61 |**(!! 중요 )** 최종 jar파일의 경량화를 위해 Spring-core dependency 를 가진 woowahan-di-support를 사용하지 않는다.<br /><br />woowahan-di-support가 org.springframework:spring-core:5.1.9.RELEASE 를 dependency로 가지고있어서 Reflection처리를 support하려고 하고있으나, 이런 dependency를 가져서 jar가 무거워진다.<br />리플렉션 처리는 java-util module로 알아서 구현한다. | DONE | 100% | 04-05 | 04-05 | 다른 task에서 계산됨. |
+| 61 |**(!! 중요 )** 최종 jar파일의 경량화를 위해 Spring-core dependency 를 가지지 않게 한다.<br />리플렉션 처리는 java-util module로 알아서 구현한다. | DONE | 100% | 04-05 | 04-05 | 다른 task에서 계산됨. |
 | 62 |framework를 사용하는 고객이 App을 작성할 때, Test코드를 적게 작성하도록 고려한 개발을 한다. <br /> 각종 기본 구현체, 각종 Annotation기반 구현을 지원한다. | WORKING | 50% | 04-04 | x | x |
 | 63 |Type 과 내부 method에 달려있는 @RequestMapping 의 value (path)에 대한 parsing util을 추가한다. | DONE         |            100% |       04-08 |  04-08 | 3h                         |
 | 64 |Model <-> Jackson json을 이 가능하게끔 유틸화 | DONE | 100% | 04-06 | 04-06 | 다른 task에서 계산됨. |
@@ -70,7 +68,7 @@
 | 66 |framework 사용 고객이, logging을 직접 app코드에 추가하고 싶지 않을 것이다. framework차원에서 알아서 비지니스 로직에서 logging 되게끔 작업한다.<br />고객은 예외만 던지면 된다. | WORKING | 30% | x | x | x |
 | 67 |**(부가기능)** Repository구현체의 경우, 고객이 직접 vendor를 선택하게끔 돼 버렸는데, app코드에서는 vendor무관히 코딩가능하게 개선할 것. | REJECT | 0% | x | x | x |
 | 68 |method reflection 수행에 대해. <br /><br />@RequestMapping method인 경우, value에 variable {aaa} 로 추가가능하다.<br />해당 method 내의 param중에 variable과 getName이 같은 param Parameter에 String to XXXX convert를 진행해 주입해준다.<br /><br /><br />@Autowired Constructor 인 경우, value[]에 값이 있으면 해당 beanName기반으로 해당 method내의 param들 순서대로 beanName으로서 getBean을 처리해준다. <br />getBean된 내용을 param Parameter에 주입해준다. | DONE | 100% | 04-07 | 04-07 | 3h |
-| 69 |DispatcherServlet 입장에서 router 처리 시나리오 정리.<br /><br />Map<String, Set<RequestMethod<br />url : /shops/aaa/bbb/ccc -> shops 검색 -> x | WORKING | 50% | 04-08 |  | 2h |
+| 69 |DispatcherServlet 입장에서 router 처리 시나리오 정리.<br /><br />Map<String, Set<RequestMethod<br />url : /users/aaa/bbb/ccc -> users 검색 -> x | WORKING | 50% | 04-08 |  | 2h |
 | 70 |Url <-> Path \| PathVariableName \| PathVariable , encoding, decoding 지원 UrlUtil추가. | WORKING | 100% | 04-07 | 04-07 | 4h |
 | 71 |servletContainer 기동 타이밍에 bean pre-initialize 기본 지원.<br />차후 lazy-initialize 지원 할 것. | DONE | 100% | 04-07 | 04-07 | 1h |
 | 72 |BeanDefinition에 BeanRegistrable annotation 에 대한 정보도 추가. 이 또한 cannonicalName으로 취득한다. (for MetaClassLoader <-> AppClassLoader) | DONE | 100% | 04-07 | 04-07 | 30m |
@@ -82,10 +80,10 @@
 | 78 |ViewResolver 가 @Service로 등록돼야한다. ResourceViewResolver, JsonStringViewResolver 2가지가 필요하다.<br />ResourceViewResolver 는 String반환일때 동작하며, prefix `resources/static` suffix`.html` 이렇게 붙여 사용 가능하다.<br />JsonStringViewResolver 는 그외에 Object -> JsonStr 변환을 시도해 응답한다.<br />이마저도 실패하면, 원본 Object로 응답하려 시도한다. | WORKING | 70% | 04-08 | x | 1h |
 | 79 |Dispatcher SErvlet에서 Request기반으로 적절히 Route 처리한다. | WORKING | 80% | 04-08 | x | 3h |
 | 80 |Bean을 외부에서도 활용할 수 있게 BeanManager를 추가. BeanManager 는 GenericApplicationContext를 사용할 시, RootApplicationContext를 활용하게끔 초기화된다. | DONE | 100% | 04-08 | 04-08 | 1h |
-| 81 |Route 처리 규칙 변경 안내<br />로직 속도 개선을 위해 /shops/{id} 가 아닌 /shops/@{id} 처럼 #을 encodedvariable앞에 붙이도록 정책화. | DONE(문서화) | 100% | - | - | - |
+| 81 |Route 처리 규칙 변경 안내<br />로직 속도 개선을 위해 /users/{id} 가 아닌 /users/@{id} 처럼 #을 encodedvariable앞에 붙이도록 정책화. | DONE(문서화) | 100% | - | - | - |
 | 82 |APP 개발<br />js 로직이 이상한 것을 확인 (04-12) -> 버그 수정 작업중. | WORKING | 60% | 04-10 | - | 30m |
 | 83 |logback Marker 조건문에도 추가. | DONE | 100% | 04-08 | 04-08 | 10m |
-| 84 |[최적화]<br />DispatcherServlet에서 취득한 정보로 router 처리할 때 별도 single thread EM으로 처리되게끔 할 지 여부 파악중...<br /> * 지금 repo는 memory cached이기때문에, IO job이 아니므로 EM처리해도된다. cached의 invalidate는 별도 thread에서 알아서 진행해 줄것. 따라서, 현 프로젝트의 shop api  service의 동작은 em구조로 가는 것이 더 효율 적이다.<br /> get : post,put,delete 비중이 99:1 정도로 판단되는 shop 데이터 특성상, thread 생성을 최소화할 em구조가 나아보인다.<br />em이 받을 event 는 dispatch될 route정보와 requestBody가 포함되며, HttpServletResponse.getWriter()도 포함된다.<br /><br />get은 thread생성 1회<br /><br /><br />/resources/static/index.html 파일로 viewResolver가 반환하려고한다면, 이는 Event thread에서는 IO잡을 하지 않게끔 해야한다.<br />event thread에서 작업결과 view Resolver 처리할 때, ViewResolver가 hasIO true일 경우에 별도 thread로 IO잡을 해준다. | PAUSE | 50% | 04-10 | 04-10 | 2h |
+| 84 |[최적화]<br />DispatcherServlet에서 취득한 정보로 router 처리할 때 별도 single thread EM으로 처리되게끔 할 지 여부 파악중...<br /> * 지금 repo는 memory cached이기때문에, IO job이 아니므로 EM처리해도된다. cached의 invalidate는 별도 thread에서 알아서 진행해 줄것. 따라서, 현 프로젝트의 user api  service의 동작은 em구조로 가는 것이 더 효율 적이다.<br /> get : post,put,delete 비중이 99:1 정도로 판단되는 user 데이터 특성상, thread 생성을 최소화할 em구조가 나아보인다.<br />em이 받을 event 는 dispatch될 route정보와 requestBody가 포함되며, HttpServletResponse.getWriter()도 포함된다.<br /><br />get은 thread생성 1회<br /><br /><br />/resources/static/index.html 파일로 viewResolver가 반환하려고한다면, 이는 Event thread에서는 IO잡을 하지 않게끔 해야한다.<br />event thread에서 작업결과 view Resolver 처리할 때, ViewResolver가 hasIO true일 경우에 별도 thread로 IO잡을 해준다. | PAUSE | 50% | 04-10 | 04-10 | 2h |
 | 85 |Model에서 Id로 지정된 field가 곂칠 경우 IdAutoChanger handler를 달 수 있는 기능 추가. (ex: DefaultIntegerIdAutoIncrementModel)<br />GenericMapRepository에 우선 적용. | DONE | 100% | 04-09 | 04-09 | 2h |
 | 86 |Repository 인터페이스 세분화.<br /><br />Repository < RepositoryAccessibleAll < GenericMapRepository | DONE | 100% | 04-10 | 04-10 | 30m |
 | 87 |Url PathVariable Prefix # -> @로 변경. (#은 해시뱅 쓰이므로 reuqestUri로 포함되지 않는다.) | DONE | 100% | 04-10 | 04-10 | 30m |
@@ -99,6 +97,7 @@
 | 95   | BeanDefinition에서 beanCreation Class Name과, beanIdentify Class Name을 분리 (for 상속관계인데 부모형태로 identify를 형성하고자 할 경우) | DONE | 100% | 04-12 | 04-12 | 1h |
 | 96   | InternalResourceViewResolver를 도입으로 static resource를 client에게 제공 가능해짐.<br />현재 개발기(Dev) 에서 static resource에 대한 client 제공 정상 확인. | DONE | 100% | 04-12 | 04-12 | 2h |
 | 97   | Resource File 관련 메타처리 관련 Enum으로 정리.              | DONE | 100% | 04-12 | 04-12 | 20m |
-| 98   | app.js 에서 shops data를 tag용 data에 binding하지 못하던 버그 해결. | DONE | 100% | 04-12 | 04-12 | 30m |
-| 99   | 마무리 문서화, 모듈 정리<br />woowahan-di-framework -> woowahan-web-framework로 변경. | DONE | 100% | 04-12 | 04-12 | 10m |
+| 98   | app.js 에서 users data를 tag용 data에 binding하지 못하던 버그 해결. | DONE | 100% | 04-12 | 04-12 | 30m |
+| 99   | 마무리 문서화, 모듈 정리<br />sonan-di-framework -> sonan-web로 변경. | DONE | 100% | 04-12 | 04-12 | 10m |
+| 100 | package명 정리 및 불필요 문서 제거. | DONE | 100% | 04-13 | 04-13 | 1h |
 
